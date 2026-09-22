@@ -1,35 +1,461 @@
 <!DOCTYPE html>
+
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>PanelMarket Admin Girişi</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#070a0f;color:#f5f7fb;font-family:Inter,Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px}.box{width:min(430px,100%);background:#0d131b;border:1px solid #1c2633;border-radius:20px;padding:30px;box-shadow:0 30px 100px #0008}.logo{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#1677ff,#7347ff);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;margin-bottom:18px}.logo span{color:#fff}.box h1{margin:0;font-size:27px}.box p{color:#778599;margin:8px 0 25px}.field{margin-bottom:15px}.field label{display:block;color:#9aa7b8;font-size:13px;font-weight:700;margin-bottom:7px}.field input{width:100%;height:48px;background:#070c12;border:1px solid #222e3d;border-radius:10px;color:#fff;padding:0 13px;outline:none}.field input:focus{border-color:#368cff}.btn{width:100%;height:48px;border:0;border-radius:10px;background:#1677ff;color:#fff;font-weight:800;cursor:pointer}.btn:disabled{opacity:.55}.alert{display:none;padding:12px;border-radius:10px;margin-bottom:15px;font-size:14px;line-height:1.45}.alert.show{display:block}.error{background:#251117;border:1px solid #572832;color:#ff9aa4}.success{background:#0b2119;border:1px solid #1d5a43;color:#67d9a5}.hint{margin-top:16px;font-size:12px;color:#65748a;text-align:center}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  background:#070a0f;
+  color:#f5f7fb;
+  font-family:Inter,Arial,sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px
+}
+.box{
+  width:min(430px,100%);
+  background:#0d131b;
+  border:1px solid #1c2633;
+  border-radius:20px;
+  padding:30px;
+  box-shadow:0 30px 100px #0008
+}
+.logo{
+  width:52px;
+  height:52px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#1677ff,#7347ff);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  font-weight:900;
+  margin-bottom:18px
+}
+.logo span{color:#fff}
+.box h1{margin:0;font-size:27px}
+.box p{color:#778599;margin:8px 0 25px}
+.field{margin-bottom:15px}
+.field label{
+  display:block;
+  color:#9aa7b8;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:7px
+}
+.field input{
+  width:100%;
+  height:48px;
+  background:#070c12;
+  border:1px solid #222e3d;
+  border-radius:10px;
+  color:#fff;
+  padding:0 13px;
+  outline:none
+}
+.field input:focus{border-color:#368cff}
+.btn{
+  width:100%;
+  height:48px;
+  border:0;
+  border-radius:10px;
+  background:#1677ff;
+  color:#fff;
+  font-weight:800;
+  cursor:pointer
+}
+.btn:disabled{opacity:.55}
+.alert{
+  display:none;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:15px;
+  font-size:14px;
+  line-height:1.45
+}
+.alert.show{display:block}
+.error{
+  background:#251117;
+  border:1px solid #572832;
+  color:#ff9aa4
+}
+.success{
+  background:#0b2119;
+  border:1px solid #1d5a43;
+  color:#67d9a5
+}
+.hint{
+  margin-top:16px;
+  font-size:12px;
+  color:#65748a;
+  text-align:center
+}
 </style>
+
 </head>
+
 <body>
+
 <div class="box">
-<div class="logo">P</div>
-<h1>PanelMarket Admin</h1>
-<p>Yönetim paneline giriş yap</p>
-<div id="alert" class="alert"></div>
-<form id="form">
-<div class="field"><label>E-posta</label><input id="email" type="email" autocomplete="username" required></div>
-<div class="field"><label>Şifre</label><input id="password" type="password" autocomplete="current-password" required></div>
-<button class="btn" id="btn" type="submit">ADMİN GİRİŞİ YAP</button>
-</form>
-<div class="hint">Bu sayfa yalnızca admin hesabı içindir.<br>Demo: demo@panelmarket.com / 12345678</div>
+
+  <div class="logo">P</div>
+
+  <h1>PanelMarket Admin</h1>
+  <p>Yönetim paneline giriş yap</p>
+
+  <div id="alert" class="alert"></div>
+
+  <form id="form">
+
+```
+<div class="field">
+  <label>E-posta</label>
+  <input
+    id="email"
+    type="email"
+    autocomplete="username"
+    required
+  >
 </div>
+
+<div class="field">
+  <label>Şifre</label>
+  <input
+    id="password"
+    type="password"
+    autocomplete="current-password"
+    required
+  >
+</div>
+
+<button class="btn" id="btn" type="submit">
+  ADMİN GİRİŞİ YAP
+</button>
+```
+
+  </form>
+
+  <div class="hint">
+    Bu sayfa yalnızca admin hesabı içindir.<br>
+    Demo: demo@panelmarket.com / 12345678
+  </div>
+
+</div>
+
 <script>
 'use strict';
-const tokenKey='panelmarket_token';
-const alertEl=document.getElementById('alert');
-function alertMsg(msg,type='error'){alertEl.textContent=msg;alertEl.className='alert show '+type}
-async function request(url,options={}){const r=await fetch(url,{...options,headers:{'Accept':'application/json','Content-Type':'application/json',...(options.headers||{})},credentials:'include',cache:'no-store'});let d={};try{d=await r.json()}catch{}if(!r.ok){const e=new Error(d.error||d.message||('HTTP '+r.status));e.status=r.status;e.data=d;throw e}return d}
-async function checkExisting(){try{const token=localStorage.getItem(tokenKey)||sessionStorage.getItem(tokenKey)||'';const headers={'Accept':'application/json'};if(token)headers.Authorization='Bearer '+token;const r=await fetch('/api/admin/me?t='+Date.now(),{headers,credentials:'include',cache:'no-store'});let d={};try{d=await r.json()}catch{}if(r.ok){const u=d.user||d.admin||d;const ok=d.is_admin===true||d.isAdmin===true||u.is_admin===true||u.isAdmin===true||u.admin===true;if(ok){window.location.replace('/admin.html');return true}}}catch(e){console.log(e)}return false}
+
+/*
+ * PANELMARKET API
+ * API adresi artık doğrudan Render sunucusuna bağlı.
+ */
+const API_BASE = 'https://panelmarket.onrender.com';
+const tokenKey = 'panelmarket_token';
+
+const alertEl = document.getElementById('alert');
+
+function alertMsg(msg, type = 'error') {
+  alertEl.textContent = msg;
+  alertEl.className = 'alert show ' + type;
+}
+
+async function request(endpoint, options = {}) {
+
+  const url = API_BASE + endpoint;
+
+  const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    ...(options.headers || {})
+  };
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+    credentials: 'include',
+    cache: 'no-store'
+  });
+
+  let data = {};
+
+  try {
+    data = await response.json();
+  } catch (_) {}
+
+  if (!response.ok) {
+
+    const message =
+      data.error ||
+      data.message ||
+      ('HTTP ' + response.status);
+
+    const error = new Error(message);
+    error.status = response.status;
+    error.data = data;
+
+    throw error;
+  }
+
+  return data;
+}
+
+
+/*
+ * Zaten giriş yapılmış mı?
+ */
+async function checkExisting() {
+
+  try {
+
+    const token =
+      localStorage.getItem(tokenKey) ||
+      sessionStorage.getItem(tokenKey) ||
+      '';
+
+    const headers = {
+      'Accept': 'application/json'
+    };
+
+    if (token) {
+      headers.Authorization = 'Bearer ' + token;
+    }
+
+    const response = await fetch(
+      API_BASE + '/api/admin/me?t=' + Date.now(),
+      {
+        headers,
+        credentials: 'include',
+        cache: 'no-store'
+      }
+    );
+
+    let data = {};
+
+    try {
+      data = await response.json();
+    } catch (_) {}
+
+    if (response.ok) {
+
+      const user =
+        data.user ||
+        data.admin ||
+        data;
+
+      const isAdmin =
+        data.is_admin === true ||
+        data.isAdmin === true ||
+        user.is_admin === true ||
+        user.isAdmin === true ||
+        user.admin === true;
+
+      if (isAdmin) {
+        window.location.replace('/admin.html');
+        return true;
+      }
+    }
+
+  } catch (error) {
+    console.log('Mevcut admin oturumu kontrolü:', error);
+  }
+
+  return false;
+}
+
+
+/*
+ * Sayfa açıldığında mevcut oturumu kontrol et.
+ */
 checkExisting();
-document.getElementById('form').addEventListener('submit',async e=>{e.preventDefault();const btn=document.getElementById('btn');btn.disabled=true;btn.textContent='GİRİŞ YAPILIYOR...';alertEl.className='alert';try{const data=await request('/api/admin/login',{method:'POST',body:JSON.stringify({email:document.getElementById('email').value.trim(),password:document.getElementById('password').value})});if(data.token){localStorage.setItem(tokenKey,data.token)}if(data.user){localStorage.setItem('panelmarket_user',JSON.stringify(data.user))}const token=localStorage.getItem(tokenKey)||'';const r=await fetch('/api/admin/me?t='+Date.now(),{headers:{'Accept':'application/json','Authorization':'Bearer '+token},credentials:'include',cache:'no-store'});let d={};try{d=await r.json()}catch{}if(!r.ok){throw new Error(d.error||'Bu hesap admin yetkisine sahip değil.')}const u=d.user||d.admin||d;const ok=d.is_admin===true||d.isAdmin===true||u.is_admin===true||u.isAdmin===true||u.admin===true;if(!ok){throw new Error('Bu hesap admin yetkisine sahip değil.')}localStorage.setItem('panelmarket_user',JSON.stringify(u));alertMsg('Admin girişi başarılı.','success');setTimeout(()=>window.location.replace('/admin.html'),300)}catch(err){console.error(err);try{localStorage.removeItem(tokenKey);sessionStorage.removeItem(tokenKey);localStorage.removeItem('panelmarket_user');sessionStorage.removeItem('panelmarket_user')}catch{}alertMsg(err.message||'Admin girişi yapılamadı.')}finally{btn.disabled=false;btn.textContent='ADMİN GİRİŞİ YAP'}});
+
+
+/*
+ * ADMIN LOGIN
+ */
+document.getElementById('form').addEventListener(
+  'submit',
+  async function(e) {
+
+    e.preventDefault();
+
+    const btn = document.getElementById('btn');
+
+    const email =
+      document.getElementById('email').value.trim();
+
+    const password =
+      document.getElementById('password').value;
+
+    btn.disabled = true;
+    btn.textContent = 'GİRİŞ YAPILIYOR...';
+
+    alertEl.className = 'alert';
+
+    try {
+
+      /*
+       * Kesin endpoint:
+       * https://panelmarket.onrender.com/api/admin/login
+       */
+      const data = await request(
+        '/api/admin/login',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            email,
+            password
+          })
+        }
+      );
+
+
+      /*
+       * Token kaydet
+       */
+      if (data.token) {
+        localStorage.setItem(
+          tokenKey,
+          data.token
+        );
+      }
+
+      if (data.user) {
+        localStorage.setItem(
+          'panelmarket_user',
+          JSON.stringify(data.user)
+        );
+      }
+
+
+      /*
+       * Admin yetkisini tekrar doğrula
+       */
+      const token =
+        localStorage.getItem(tokenKey) || '';
+
+      const verifyHeaders = {
+        'Accept': 'application/json'
+      };
+
+      if (token) {
+        verifyHeaders.Authorization =
+          'Bearer ' + token;
+      }
+
+      const verifyResponse = await fetch(
+        API_BASE +
+        '/api/admin/me?t=' +
+        Date.now(),
+        {
+          headers: verifyHeaders,
+          credentials: 'include',
+          cache: 'no-store'
+        }
+      );
+
+      let verifyData = {};
+
+      try {
+        verifyData = await verifyResponse.json();
+      } catch (_) {}
+
+
+      if (!verifyResponse.ok) {
+
+        throw new Error(
+          verifyData.error ||
+          verifyData.message ||
+          'Admin oturumu doğrulanamadı.'
+        );
+      }
+
+
+      const user =
+        verifyData.user ||
+        verifyData.admin ||
+        verifyData;
+
+      const isAdmin =
+        verifyData.is_admin === true ||
+        verifyData.isAdmin === true ||
+        user.is_admin === true ||
+        user.isAdmin === true ||
+        user.admin === true;
+
+
+      if (!isAdmin) {
+        throw new Error(
+          'Bu hesap admin yetkisine sahip değil.'
+        );
+      }
+
+
+      localStorage.setItem(
+        'panelmarket_user',
+        JSON.stringify(user)
+      );
+
+
+      alertMsg(
+        'Admin girişi başarılı.',
+        'success'
+      );
+
+
+      setTimeout(function() {
+        window.location.replace('/admin.html');
+      }, 300);
+
+    } catch (error) {
+
+      console.error(
+        'PanelMarket Admin Login Error:',
+        error
+      );
+
+      try {
+        localStorage.removeItem(tokenKey);
+        sessionStorage.removeItem(tokenKey);
+        localStorage.removeItem('panelmarket_user');
+        sessionStorage.removeItem('panelmarket_user');
+      } catch (_) {}
+
+
+      /*
+       * Kullanıcıya gerçek hatayı göster.
+       */
+      if (error.status === 404) {
+
+        alertMsg(
+          'Admin API bulunamadı. Sunucu: ' +
+          API_BASE +
+          ' /api/admin/login'
+        );
+
+      } else {
+
+        alertMsg(
+          error.message ||
+          'Admin girişi yapılamadı.'
+        );
+      }
+
+    } finally {
+
+      btn.disabled = false;
+      btn.textContent = 'ADMİN GİRİŞİ YAP';
+    }
+
+  }
+);
 </script>
+
 </body>
 </html>
