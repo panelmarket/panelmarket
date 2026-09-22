@@ -905,20 +905,18 @@ app.get(
    ADMIN - ME
 ========================================================= */
 
-app.get(
-  "/api/admin/me",
-  requireAuth,
-  requireAdmin,
-  async (req, res) => {
-    const adminUser = {
-      id: req.adminUser.id,
-      name: req.adminUser.name,
-      email: req.adminUser.email,
-      balance: money(req.adminUser.balance),
+app.get("/api/admin/me", requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const adminUser = req.adminUser;
 
-      is_admin: true,
-      isAdmin: true
-    };
+    if (!adminUser) {
+      return res.status(403).json({
+        ok: false,
+        authenticated: true,
+        is_admin: false,
+        message: "Admin yetkisi bulunamadı."
+      });
+    }
 
     return res.json({
       ok: true,
@@ -927,11 +925,33 @@ app.get(
       is_admin: true,
       isAdmin: true,
 
-      user: adminUser,
-      admin: adminUser
+      user: {
+        id: adminUser.id,
+        name: adminUser.name,
+        email: adminUser.email,
+        balance: Number(adminUser.balance || 0),
+        is_admin: true,
+        isAdmin: true
+      },
+
+      admin: {
+        id: adminUser.id,
+        name: adminUser.name,
+        email: adminUser.email,
+        balance: Number(adminUser.balance || 0),
+        is_admin: true,
+        isAdmin: true
+      }
+    });
+  } catch (error) {
+    console.error("ADMIN ME ERROR:", error);
+
+    return res.status(500).json({
+      ok: false,
+      message: "Admin bilgisi alınamadı."
     });
   }
-);
+});
 
 /* =========================================================
    ADMIN - PRODUCTS
