@@ -10,6 +10,10 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+/* =========================================================
+   SUPABASE
+========================================================= */
+
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -25,6 +29,8 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   process.exit(1);
 }
 
+console.log("SUPABASE URL:", SUPABASE_URL);
+
 const supabase = createClient(
   SUPABASE_URL,
   SUPABASE_SERVICE_ROLE_KEY,
@@ -35,6 +41,10 @@ const supabase = createClient(
     }
   }
 );
+
+/* =========================================================
+   EXPRESS
+========================================================= */
 
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
@@ -133,6 +143,10 @@ const licenses = {
   }
 };
 
+/* =========================================================
+   YARDIMCI FONKSİYONLAR
+========================================================= */
+
 function findProduct(id) {
   return products.find((p) => p.id === id);
 }
@@ -168,7 +182,7 @@ function createToken() {
 }
 
 /* =========================================================
-   SESSION / ADMIN AYARLARI
+   ADMIN / SESSION AYARLARI
 ========================================================= */
 
 const SESSION_SECRET =
@@ -179,8 +193,8 @@ const DEMO_ADMIN_EMAIL = "demo@panelmarket.com";
 const DEMO_ADMIN_PASSWORD = "12345678";
 
 /*
- * Supabase users tablosundaki GERÇEK admin ID.
- */
+  SUPABASE users tablosundaki gerçek admin ID
+*/
 const DEMO_ADMIN_ID =
   "36002d6d-f4d4-4c4a-a03f-56076c6bf6eb";
 
@@ -222,10 +236,11 @@ function verifySecureToken(token) {
     const a = Buffer.from(signature);
     const b = Buffer.from(expected);
 
-    if (
-      a.length !== b.length ||
-      !crypto.timingSafeEqual(a, b)
-    ) {
+    if (a.length !== b.length) {
+      return null;
+    }
+
+    if (!crypto.timingSafeEqual(a, b)) {
       return null;
     }
 
@@ -233,7 +248,7 @@ function verifySecureToken(token) {
       Buffer.from(payload, "base64url").toString("utf8")
     );
 
-    if (!decoded || !decoded.userId) {
+    if (!decoded?.userId) {
       return null;
     }
 
@@ -246,7 +261,8 @@ function verifySecureToken(token) {
     }
 
     return decoded;
-  } catch {
+  } catch (error) {
+    console.error("TOKEN VERIFY ERROR:", error);
     return null;
   }
 }
@@ -294,7 +310,8 @@ function verifyPassword(password, user) {
     }
 
     return crypto.timingSafeEqual(result, stored);
-  } catch {
+  } catch (error) {
+    console.error("PASSWORD VERIFY ERROR:", error);
     return false;
   }
 }
@@ -381,20 +398,29 @@ function clearSessionCookie(res) {
 }
 
 /* =========================================================
-   SUPABASE USER HELPERS
+   SUPABASE USER SORGULARI
 ========================================================= */
 
 async function findUserByEmail(email) {
+  const normalizedEmail = String(email || "")
+    .trim()
+    .toLowerCase();
+
+  if (!normalizedEmail) {
+    return null;
+  }
+
   const { data, error } = await supabase
     .from("users")
     .select("*")
-    .eq(
-      "email",
-      String(email || "").trim().toLowerCase()
-    )
+    .eq("email", normalizedEmail)
     .maybeSingle();
 
   if (error) {
+    console.error(
+      "FIND USER BY EMAIL ERROR:",
+      error
+    );
     throw error;
   }
 
@@ -402,6 +428,10 @@ async function findUserByEmail(email) {
 }
 
 async function findUserById(id) {
+  if (!id) {
+    return null;
+  }
+
   const { data, error } = await supabase
     .from("users")
     .select("*")
@@ -409,10 +439,63 @@ async function findUserById(id) {
     .maybeSingle();
 
   if (error) {
+    console.error(
+      "FIND USER BY ID ERROR:",
+      error
+    );
     throw error;
   }
 
   return data;
+}
+
+/*
+  Demo admin için gerçek ID üzerinden de kontrol.
+  Böylece email sorgusunda bir problem olsa bile
+  gerçek Supabase kaydı bulunabilir.
+*/
+async function findDemoAdmin() {
+  let user = null;
+
+  try {
+    user = await findUserById(DEMO_ADMIN_ID);
+
+    if (user) {
+      console.log(
+        "DEMO ADMIN ID İLE BULUNDU:",
+        user.id,
+        user.email
+      );
+      return user;
+    }
+  } catch (error) {
+    console.error(
+      "DEMO ADMIN ID SORGUSU HATASI:",
+      error
+    );
+  }
+
+  try {
+    user = await findUserByEmail(
+      DEMO_ADMIN_EMAIL
+    );
+
+    if (user) {
+      console.log(
+        "DEMO ADMIN EMAIL İLE BULUNDU:",
+        user.id,
+        user.email
+      );
+      return user;
+    }
+  } catch (error) {
+    console.error(
+      "DEMO ADMIN EMAIL SORGUSU HATASI:",
+      error
+    );
+  }
+
+  return null;
 }
 
 /* =========================================================
@@ -433,7 +516,9 @@ async function getSessionFromRequest(req) {
       return null;
     }
 
-    const user = await findUserById(decoded.userId);
+    const user = await findUserById(
+      decoded.userId
+    );
 
     if (!user) {
       console.error(
@@ -446,7 +531,6 @@ async function getSessionFromRequest(req) {
 
     return {
       token: token,
-
       session: {
         token: token,
         user_id: user.id,
@@ -454,7 +538,6 @@ async function getSessionFromRequest(req) {
           decoded.createdAt || Date.now()
         ).toISOString()
       },
-
       user: user
     };
   } catch (error) {
@@ -532,6 +615,11 @@ async function requireAdmin(req, res, next) {
       .maybeSingle();
 
     if (error) {
+      console.error(
+        "ADMIN USER QUERY ERROR:",
+        error
+      );
+
       return res.status(500).json({
         ok: false,
         error: "Admin kontrolü yapılamadı.",
@@ -540,6 +628,11 @@ async function requireAdmin(req, res, next) {
     }
 
     if (!adminUser) {
+      console.error(
+        "ADMIN USER NOT FOUND:",
+        req.user.id
+      );
+
       return res.status(401).json({
         ok: false,
         authenticated: false,
@@ -591,7 +684,7 @@ function publicUser(user) {
 }
 
 /* =========================================================
-   PRODUCTS
+   PRODUCTS API
 ========================================================= */
 
 app.get("/api/products", (req, res) => {
@@ -609,9 +702,10 @@ app.get("/api/products/:id", (req, res) => {
 
   const prices = {};
 
-  for (const [id, license] of Object.entries(
-    licenses
-  )) {
+  for (const [
+    id,
+    license
+  ] of Object.entries(licenses)) {
     prices[id] = {
       name: license.name,
       price: calculatePrice(product, id)
@@ -636,7 +730,9 @@ app.post("/api/register", async (req, res) => {
 
     const email = String(
       req.body.email || ""
-    ).trim().toLowerCase();
+    )
+      .trim()
+      .toLowerCase();
 
     const password = String(
       req.body.password || ""
@@ -700,8 +796,10 @@ app.post("/api/register", async (req, res) => {
       .insert({
         name,
         email,
-        password_hash: passwordData.hash,
-        password_salt: passwordData.salt,
+        password_hash:
+          passwordData.hash,
+        password_salt:
+          passwordData.salt,
         balance: 0,
         is_admin: false
       })
@@ -719,9 +817,7 @@ app.post("/api/register", async (req, res) => {
       throw error;
     }
 
-    const token = createSecureToken(
-      user.id
-    );
+    const token = createSecureToken(user.id);
 
     setSessionCookie(res, token);
 
@@ -746,7 +842,7 @@ app.post("/api/register", async (req, res) => {
 });
 
 /* =========================================================
-   LOGIN HELPER
+   NORMAL LOGIN
 ========================================================= */
 
 async function loginUser(
@@ -765,9 +861,8 @@ async function loginUser(
       });
     }
 
-    const token = createSecureToken(
-      user.id
-    );
+    const token =
+      createSecureToken(user.id);
 
     setSessionCookie(res, token);
 
@@ -783,8 +878,10 @@ async function loginUser(
       success: true,
       authenticated: true,
       token,
-      is_admin: user.is_admin === true,
-      isAdmin: user.is_admin === true,
+      is_admin:
+        user.is_admin === true,
+      isAdmin:
+        user.is_admin === true,
       user: publicUser(user)
     });
   } catch (error) {
@@ -804,15 +901,13 @@ async function loginUser(
   }
 }
 
-/* =========================================================
-   NORMAL LOGIN
-========================================================= */
-
 app.post("/api/login", async (req, res) => {
   try {
     const email = String(
       req.body.email || ""
-    ).trim().toLowerCase();
+    )
+      .trim()
+      .toLowerCase();
 
     const password = String(
       req.body.password || ""
@@ -875,7 +970,9 @@ app.post(
     try {
       const email = String(
         req.body?.email || ""
-      ).trim().toLowerCase();
+      )
+        .trim()
+        .toLowerCase();
 
       const password = String(
         req.body?.password || ""
@@ -899,31 +996,59 @@ app.post(
       }
 
       /*
-       * DEMO ADMIN
-       *
-       * Supabase users tablosundaki gerçek
-       * kullanıcı kaydı kullanılır.
-       */
+        ÖZEL DEMO ADMIN
+
+        Burada yeni kullanıcı oluşturulmuyor.
+        Supabase'deki mevcut gerçek kullanıcı bulunuyor.
+      */
       if (
         email === DEMO_ADMIN_EMAIL &&
         password === DEMO_ADMIN_PASSWORD
       ) {
         const user =
-          await findUserByEmail(
-            DEMO_ADMIN_EMAIL
-          );
+          await findDemoAdmin();
 
         if (!user) {
+          console.error(
+            "================================="
+          );
+          console.error(
+            "DEMO ADMIN SUPABASE'DE BULUNAMADI"
+          );
+          console.error(
+            "Beklenen ID:",
+            DEMO_ADMIN_ID
+          );
+          console.error(
+            "Beklenen EMAIL:",
+            DEMO_ADMIN_EMAIL
+          );
+          console.error(
+            "SUPABASE URL:",
+            SUPABASE_URL
+          );
+          console.error(
+            "================================="
+          );
+
           return res.status(401).json({
             ok: false,
             success: false,
             authenticated: false,
             error:
-              "Admin kullanıcısı veritabanında bulunamadı."
+              "Admin kullanıcısı veritabanında bulunamadı.",
+            detail:
+              "demo@panelmarket.com kaydı Render'ın bağlı olduğu Supabase users tablosunda bulunamadı."
           });
         }
 
         if (user.is_admin !== true) {
+          console.error(
+            "DEMO ADMIN IS_ADMIN FALSE:",
+            user.id,
+            user.email
+          );
+
           return res.status(403).json({
             ok: false,
             success: false,
@@ -944,10 +1069,25 @@ app.post(
         );
 
         console.log(
-          "DEMO ADMIN GİRİŞ BAŞARILI:",
-          user.email,
+          "================================="
+        );
+        console.log(
+          "DEMO ADMIN GİRİŞ BAŞARILI"
+        );
+        console.log(
+          "EMAIL:",
+          user.email
+        );
+        console.log(
           "ID:",
           user.id
+        );
+        console.log(
+          "IS_ADMIN:",
+          user.is_admin
+        );
+        console.log(
+          "================================="
         );
 
         return res.status(200).json({
@@ -962,8 +1102,8 @@ app.post(
       }
 
       /*
-       * NORMAL ADMIN LOGIN
-       */
+        Diğer admin hesapları
+      */
 
       const user =
         await findUserByEmail(email);
@@ -978,12 +1118,7 @@ app.post(
         });
       }
 
-      if (
-        !verifyPassword(
-          password,
-          user
-        )
-      ) {
+      if (!verifyPassword(password, user)) {
         return res.status(401).json({
           ok: false,
           success: false,
@@ -1005,11 +1140,30 @@ app.post(
         });
       }
 
-      return await loginUser(
-        user,
-        password,
-        res
+      const token =
+        createSecureToken(user.id);
+
+      setSessionCookie(
+        res,
+        token
       );
+
+      console.log(
+        "ADMIN GİRİŞ BAŞARILI:",
+        user.email,
+        "ID:",
+        user.id
+      );
+
+      return res.status(200).json({
+        ok: true,
+        success: true,
+        authenticated: true,
+        token,
+        is_admin: true,
+        isAdmin: true,
+        user: publicUser(user)
+      });
     } catch (error) {
       console.error(
         "ADMIN LOGIN ERROR:",
@@ -1080,13 +1234,10 @@ app.get(
         error
       } = await supabase
         .from("orders")
-        .select(
-          "id",
-          {
-            count: "exact",
-            head: true
-          }
-        )
+        .select("id", {
+          count: "exact",
+          head: true
+        })
         .eq(
           "user_id",
           req.user.id
@@ -1146,8 +1297,9 @@ app.post(
         });
       }
 
-      const oldBalance =
-        Number(req.user.balance || 0);
+      const oldBalance = Number(
+        req.user.balance || 0
+      );
 
       const newBalance =
         Math.round(
@@ -1206,7 +1358,7 @@ app.post(
 );
 
 /* =========================================================
-   ORDERS - CREATE
+   ORDERS CREATE
 ========================================================= */
 
 app.post(
@@ -1357,8 +1509,7 @@ app.post(
           user_id: req.user.id,
           type: "debit",
           amount: total,
-          note:
-            `${product.name} satın alımı`
+          note: `${product.name} satın alımı`
         });
 
       if (transactionError) {
@@ -1386,7 +1537,8 @@ app.post(
           amount: Number(
             order.amount
           ),
-          status: order.status,
+          status:
+            order.status,
           deliveryStatus:
             order.delivery_status,
           licenseKey:
@@ -1413,7 +1565,7 @@ app.post(
 );
 
 /* =========================================================
-   ORDERS - LIST
+   USER ORDERS
 ========================================================= */
 
 app.get(
@@ -1484,7 +1636,7 @@ app.get(
 );
 
 /* =========================================================
-   ORDER DETAIL
+   SINGLE ORDER
 ========================================================= */
 
 app.get(
@@ -1608,8 +1760,7 @@ app.get(
               t.amount
             ),
             note: t.note,
-            date:
-              t.created_at
+            date: t.created_at
           })
         )
       );
@@ -1741,19 +1892,20 @@ app.post(
       const passwordData =
         hashPassword(newPassword);
 
-      const { error } =
-        await supabase
-          .from("users")
-          .update({
-            password_hash:
-              passwordData.hash,
-            password_salt:
-              passwordData.salt
-          })
-          .eq(
-            "id",
-            req.user.id
-          );
+      const {
+        error
+      } = await supabase
+        .from("users")
+        .update({
+          password_hash:
+            passwordData.hash,
+          password_salt:
+            passwordData.salt
+        })
+        .eq(
+          "id",
+          req.user.id
+        );
 
       if (error) {
         throw error;
@@ -1865,14 +2017,14 @@ app.get(
           )
       ]);
 
-      for (const result of [
+      for (const r of [
         users,
         orders,
         productsDb,
         transactions
       ]) {
-        if (result.error) {
-          throw result.error;
+        if (r.error) {
+          throw r.error;
         }
       }
 
@@ -1929,11 +2081,14 @@ app.get(
       return res.json({
         ok: true,
         totalUsers:
-          (users.data || []).length,
+          (users.data || [])
+            .length,
         totalOrders:
-          (orders.data || []).length,
+          (orders.data || [])
+            .length,
         totalProducts:
-          (productsDb.data || []).length,
+          (productsDb.data || [])
+            .length,
         activeProducts:
           (productsDb.data || [])
             .filter(
@@ -1954,7 +2109,9 @@ app.get(
       return res.status(500).json({
         ok: false,
         error:
-          "Dashboard bilgileri alınamadı."
+          "Dashboard bilgileri alınamadı.",
+        detail:
+          error?.message || null
       });
     }
   }
@@ -2158,9 +2315,11 @@ app.post(
         Math.round(
           (
             oldBalance +
-            (type === "credit"
-              ? amount
-              : -amount)
+            (
+              type === "credit"
+                ? amount
+                : -amount
+            )
           ) * 100
         ) / 100;
 
@@ -2177,8 +2336,7 @@ app.post(
       } = await supabase
         .from("users")
         .update({
-          balance:
-            newBalance
+          balance: newBalance
         })
         .eq(
           "id",
@@ -2210,8 +2368,9 @@ app.post(
 
       return res.json({
         success: true,
-        user:
-          publicUser(updated)
+        user: publicUser(
+          updated
+        )
       });
     } catch (error) {
       console.error(error);
@@ -2253,7 +2412,8 @@ app.patch(
       }
 
       if (
-        !Object.keys(update).length
+        !Object.keys(update)
+          .length
       ) {
         return res.status(400).json({
           error:
@@ -2333,23 +2493,18 @@ app.get(
         ok: true,
         authenticated: true,
         hasToken: true,
-
         session: {
           user_id:
             auth.session.user_id,
           created_at:
             auth.session.created_at
         },
-
-        user:
-          publicUser(
-            auth.user
-          ),
-
+        user: publicUser(
+          auth.user
+        ),
         is_admin:
           auth.user.is_admin ===
           true,
-
         isAdmin:
           auth.user.is_admin ===
           true
@@ -2374,11 +2529,12 @@ app.get(
   "/health",
   async (req, res) => {
     try {
-      const { error } =
-        await supabase
-          .from("users")
-          .select("id")
-          .limit(1);
+      const {
+        error
+      } = await supabase
+        .from("users")
+        .select("id")
+        .limit(1);
 
       if (error) {
         return res.status(500).json({
@@ -2397,6 +2553,11 @@ app.get(
           "Supabase bağlı"
       });
     } catch (error) {
+      console.error(
+        "HEALTH ERROR:",
+        error
+      );
+
       return res.status(500).json({
         ok: false,
         service: "PanelMarket",
@@ -2439,7 +2600,7 @@ for (const page of pages) {
   app.get(
     `/${page}.html`,
     (req, res) => {
-      return res.sendFile(
+      res.sendFile(
         path.join(
           __dirname,
           `${page}.html`
@@ -2452,7 +2613,7 @@ for (const page of pages) {
 app.get(
   "/",
   (req, res) => {
-    return res.sendFile(
+    res.sendFile(
       path.join(
         __dirname,
         "index.html"
@@ -2468,7 +2629,9 @@ app.get(
 app.use(
   (req, res) => {
     if (
-      req.path.startsWith("/api/")
+      req.path.startsWith(
+        "/api/"
+      )
     ) {
       return res.status(404).json({
         error:
@@ -2485,7 +2648,9 @@ app.use(
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>PanelMarket - 404</title>
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box
+}
 body{
   margin:0;
   min-height:100vh;
@@ -2504,8 +2669,12 @@ body{
   background:#0d131b;
   box-shadow:0 25px 80px rgba(0,0,0,.35)
 }
-h1{margin:0 0 12px}
-p{color:#8995a7}
+h1{
+  margin:0 0 12px
+}
+p{
+  color:#8995a7
+}
 a{
   display:inline-block;
   margin-top:20px;
@@ -2530,7 +2699,7 @@ a{
 );
 
 /* =========================================================
-   START
+   SERVER
 ========================================================= */
 
 app.listen(
@@ -2553,6 +2722,14 @@ app.listen(
     );
     console.log(
       "Session/Cookie/Bearer: AKTİF"
+    );
+    console.log(
+      "Demo Admin:",
+      DEMO_ADMIN_EMAIL
+    );
+    console.log(
+      "Demo Admin ID:",
+      DEMO_ADMIN_ID
     );
     console.log(
       "================================="
