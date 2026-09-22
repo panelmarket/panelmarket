@@ -312,18 +312,27 @@ async function loginUser(user, password, res) {
     });
 
   } catch (error) {
-    console.error("LOGIN USER ERROR:", error);
+  console.error("=================================");
+  console.error("ADMIN LOGIN ERROR");
+  console.error("MESSAGE:", error?.message);
+  console.error("CODE:", error?.code);
+  console.error("DETAILS:", error?.details);
+  console.error("HINT:", error?.hint);
+  console.error("ERROR:", error);
+  console.error("=================================");
 
-    return res.status(500).json({
-      ok: false,
-      success: false,
-      authenticated: false,
-      error: "Giriş sırasında bir hata oluştu.",
-      detail: error.message
-    });
-  }
+  return res.status(500).json({
+    ok: false,
+    success: false,
+    authenticated: false,
+    error: "Giriş sırasında bir hata oluştu.",
+    detail: error?.message || "Bilinmeyen sunucu hatası",
+    code: error?.code || null,
+    details: error?.details || null,
+    hint: error?.hint || null
+  });
 }
-
+  
 app.post("/api/login", async (req,res) => {
   try {
     const email=String(req.body.email||"").trim().toLowerCase();
@@ -350,7 +359,13 @@ app.post("/api/login", async (req,res) => {
 });
 
 /* ADMIN LOGIN - SADECE ADMIN HESABI */
-app.post("/api/admin/login",async(req,res)=>{
+app.post("/api/admin/login", async (req, res) => {
+  console.log("=================================");
+  console.log("ADMIN LOGIN İSTEĞİ GELDİ");
+  console.log("EMAIL:", String(req.body?.email || "").trim().toLowerCase());
+  console.log("PASSWORD GELDİ:", !!req.body?.password);
+  console.log("=================================");
+  
   try{
     const email=String(req.body.email||"").trim().toLowerCase();
     const password=String(req.body.password||"");
