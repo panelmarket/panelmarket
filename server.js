@@ -56,7 +56,7 @@ function createToken() { return crypto.randomBytes(32).toString("hex"); }
 const SESSION_SECRET = process.env.SESSION_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY;
 const DEMO_ADMIN_EMAIL = "demo@panelmarket.com";
 const DEMO_ADMIN_PASSWORD = "12345678";
-const DEMO_ADMIN_ID = "00000000-0000-0000-0000-000000000001";
+const DEMO_ADMIN_ID = "36002d6d-f4d4-4c4a-a03f-56076c6bf6eb";
 
 function createSecureToken(userId) {
   const payload = Buffer.from(JSON.stringify({ userId: String(userId), createdAt: Date.now() })).toString("base64url");
@@ -147,15 +147,37 @@ async function getSessionFromRequest(req) {
   try {
     const decoded = verifySecureToken(token);
     if (!decoded?.userId) return null;
-    if (decoded.userId === DEMO_ADMIN_ID) {
-      const demoUser = {
-        id: DEMO_ADMIN_ID,
-        name: "Demo Admin",
-        email: DEMO_ADMIN_EMAIL,
-        balance: 5000,
-        is_admin: true,
-        created_at: new Date(decoded.createdAt || Date.now()).toISOString()
-      };
+    async function getSessionFromRequest(req) {
+  const token = getTokenFromRequest(req);
+  if (!token) return null;
+
+  try {
+    const decoded = verifySecureToken(token);
+    if (!decoded?.userId) return null;
+
+    const user = await findUserById(decoded.userId);
+
+    if (!user) {
+      console.error("SESSION USER NOT FOUND:", decoded.userId);
+      return null;
+    }
+
+    return {
+      token,
+      session: {
+        token,
+        user_id: user.id,
+        created_at: new Date(
+          decoded.createdAt || Date.now()
+        ).toISOString()
+      },
+      user
+    };
+  } catch (error) {
+    console.error("SESSION CHECK ERROR:", error);
+    return null;
+  }
+}
       return {
         token,
         session: { token, user_id: DEMO_ADMIN_ID, created_at: new Date(decoded.createdAt || Date.now()).toISOString() },
@@ -285,23 +307,50 @@ app.post("/api/admin/login", async (req, res) => {
 
     // Demo admin Supabase users tablosuna INSERT/UPDATE yapmaz.
     // Böylece RLS 42501 hatası oluşmaz.
-    if (email === DEMO_ADMIN_EMAIL && password === DEMO_ADMIN_PASSWORD) {
-      const token = createSecureToken(DEMO_ADMIN_ID);
-      const user = {
-        id: DEMO_ADMIN_ID,
-        name: "Demo Admin",
-        email: DEMO_ADMIN_EMAIL,
-        balance: 5000,
-        is_admin: true,
-        isAdmin: true
-      };
-      setSessionCookie(res, token);
-      console.log("DEMO ADMIN GİRİŞ BAŞARILI");
-      return res.status(200).json({
-        ok:true, success:true, authenticated:true, token,
-        is_admin:true, isAdmin:true, user
-      });
-    }
+   if (email === DEMO_ADMIN_EMAIL && password === DEMO_ADMIN_PASSWORD) {
+  const user = await findUserByEmail(DEMO_ADMIN_EMAIL);
+
+  if (!user) {
+    return res.status(401).json({
+      ok:false,
+      success:false,
+      authenticated:false,
+      error:"Admin kullanıcısı veritabanında bulunamadı."
+    });
+  }
+
+  if (user.is_admin !== true) {
+    return res.status(403).json({
+      ok:false,
+      success:false,
+      authenticated:true,
+      is_admin:false,
+      isAdmin:false,
+      error:"Bu hesap admin yetkisine sahip değil."
+    });
+  }
+
+  const token = createSecureToken(user.id);
+
+  setSessionCookie(res, token);
+
+  console.log(
+    "DEMO ADMIN GİRİŞ BAŞARILI:",
+    user.email,
+    "ID:",
+    user.id
+  );
+
+  return res.status(200).json({
+    ok:true,
+    success:true,
+    authenticated:true,
+    token,
+    is_admin:true,
+    isAdmin:true,
+    user:publicUser(user)
+  });
+}
 
     const user = await findUserByEmail(email);
     if (!user) {
