@@ -998,115 +998,253 @@ function showAlert(message, type = "success") {
   }, 4000);
 }
 
-
 /* ---------------------------
    AUTH
 ---------------------------- */
 
 async function checkAdmin() {
 
+  const adminUser =
+    document.getElementById("adminUser");
+
+  adminUser.textContent =
+    "Kontrol ediliyor...";
+
+
+  /* TOKEN YOK */
+
   if (!token) {
-    location.href = "/login.html";
+
+    console.error(
+      "ADMIN: panelmarket_token bulunamadı."
+    );
+
+    adminUser.textContent =
+      "Oturum bulunamadı";
+
+    window.location.replace(
+      "/login.html"
+    );
+
     return false;
   }
 
-  try {
-
-    const data = await api("/api/admin/me");
-
-    const user = data.user || data;
-
-    document.getElementById("adminUser").textContent =
-      user.email || user.name || "Admin";
-
-    return true;
-
-  } catch (error) {
-
-    async function checkAdmin() {
-
-  if (!token) {
-    location.href = "/login.html";
-    return false;
-  }
 
   try {
 
-    const data = await api("/api/admin/me");
+    console.log(
+      "ADMIN: /api/admin/me kontrolü başlatılıyor..."
+    );
 
-    const user = data.user || data;
 
-    document.getElementById("adminUser").textContent =
-      user.email || user.name || "Admin";
+    const response =
+      await fetch(
+        "/api/admin/me",
+        {
+          method: "GET",
+
+          headers: {
+            "Authorization":
+              "Bearer " + token,
+
+            "Accept":
+              "application/json"
+          },
+
+          credentials: "include",
+
+          cache: "no-store"
+        }
+      );
+
+
+    let data = {};
+
+    try {
+
+      data =
+        await response.json();
+
+    } catch {
+
+      data = {};
+
+    }
+
+
+    console.log(
+      "ADMIN /api/admin/me:",
+      response.status,
+      data
+    );
+
+
+    /* --------------------------------
+       OTURUM GEÇERSİZ
+    -------------------------------- */
+
+    if (
+      response.status === 401 ||
+      response.status === 403
+    ) {
+
+      console.error(
+        "ADMIN OTURUM/YETKİ HATASI:",
+        data
+      );
+
+
+      localStorage.removeItem(
+        tokenKey
+      );
+
+      localStorage.removeItem(
+        "panelmarket_user"
+      );
+
+
+      adminUser.textContent =
+        "Oturum geçersiz";
+
+
+      window.location.replace(
+        "/login.html"
+      );
+
+
+      return false;
+    }
+
+
+    /* --------------------------------
+       SUNUCU HATASI
+    -------------------------------- */
+
+    if (!response.ok) {
+
+      console.error(
+        "ADMIN SUNUCU HATASI:",
+        response.status,
+        data
+      );
+
+
+      adminUser.textContent =
+        "Sunucu hatası";
+
+
+      showAlert(
+        data.error ||
+        data.message ||
+        "Admin kontrolü sırasında sunucu hatası oluştu.",
+        "error"
+      );
+
+
+      return false;
+    }
+
+
+    /* --------------------------------
+       KULLANICI
+    -------------------------------- */
+
+    const user =
+      data.user ||
+      data;
+
+
+    console.log(
+      "ADMIN KULLANICI:",
+      user
+    );
+
+
+    /* --------------------------------
+       NORMAL KULLANICI
+       → ANA SAYFA
+    -------------------------------- */
+
+    if (
+      user.is_admin !== true
+    ) {
+
+      console.warn(
+        "Bu hesap admin değil:",
+        user
+      );
+
+
+      localStorage.removeItem(
+        tokenKey
+      );
+
+      localStorage.removeItem(
+        "panelmarket_user"
+      );
+
+
+      adminUser.textContent =
+        "Admin yetkisi yok";
+
+
+      window.location.replace(
+        "/index.html"
+      );
+
+
+      return false;
+    }
+
+
+    /* --------------------------------
+       ADMIN DOĞRULANDI
+    -------------------------------- */
+
+    adminUser.textContent =
+      user.email ||
+      user.name ||
+      "Admin";
+
+
+    console.log(
+      "✓ PANELMARKET ADMIN DOĞRULANDI:",
+      user.email
+    );
+
 
     return true;
 
+
   } catch (error) {
 
-    localStorage.removeItem(tokenKey);
-    localStorage.removeItem("panelmarket_user");
+    console.error(
+      "ADMIN BAĞLANTI HATASI:",
+      error
+    );
 
-    location.href = "/login.html";
+
+    adminUser.textContent =
+      "Bağlantı hatası";
+
+
+    showAlert(
+      "Admin sunucusuna bağlanılamadı. Render sunucusunu kontrol et.",
+      "error"
+    );
+
+
+    /*
+      ÖNEMLİ:
+      Burada token silinmiyor.
+
+      Geçici bağlantı problemi olduğunda
+      kullanıcı tekrar login olmak zorunda kalmasın.
+    */
 
     return false;
   }
 }
-
-/* ---------------------------
-   LOAD PRODUCTS
----------------------------- */
-
-async function loadProducts() {
-
-  const tbody = document.getElementById("productsTable");
-
-  tbody.innerHTML = `
-    <tr>
-      <td colspan="8">
-        <div class="loading">Ürünler yükleniyor...</div>
-      </td>
-    </tr>
-  `;
-
-  try {
-
-    const data = await api("/api/admin/products");
-
-    products =
-      Array.isArray(data)
-        ? data
-        : (data.products || []);
-
-    products.sort((a,b) => {
-
-      const sa =
-        Number(a.sortOrder ?? a.sort_order ?? 0);
-
-      const sb =
-        Number(b.sortOrder ?? b.sort_order ?? 0);
-
-      return sa - sb;
-    });
-
-    renderStats();
-    renderProducts();
-
-  } catch (error) {
-
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="8">
-          <div class="empty">
-            ${escapeHtml(error.message)}
-          </div>
-        </td>
-      </tr>
-    `;
-
-    showAlert(error.message, "error");
-  }
-}
-
 
 /* ---------------------------
    STATS
