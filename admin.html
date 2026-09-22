@@ -1,1069 +1,3 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PanelMarket Admin</title>
-
-<style>
-*{
-  box-sizing:border-box;
-}
-
-html,body{
-  margin:0;
-  padding:0;
-  min-height:100%;
-  background:#070a0f;
-  color:#f5f7fb;
-  font-family:Inter,Arial,sans-serif;
-}
-
-body{
-  min-height:100vh;
-}
-
-button,
-input,
-select,
-textarea{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-}
-
-a{
-  color:inherit;
-  text-decoration:none;
-}
-
-.header{
-  height:76px;
-  position:sticky;
-  top:0;
-  z-index:100;
-  background:rgba(7,10,15,.92);
-  backdrop-filter:blur(18px);
-  border-bottom:1px solid #1c2531;
-}
-
-.header-inner{
-  width:min(1400px,94%);
-  height:100%;
-  margin:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
-}
-
-.logo-area{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.logo{
-  width:40px;
-  height:40px;
-  border-radius:12px;
-  background:linear-gradient(135deg,#1677ff,#7347ff);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:900;
-  box-shadow:0 10px 30px rgba(37,140,255,.25);
-}
-
-.logo-text{
-  font-size:19px;
-  font-weight:800;
-}
-
-.logo-text span{
-  color:#6e9fff;
-}
-
-.header-right{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.admin-user{
-  color:#9ba7b8;
-  font-size:14px;
-}
-
-.logout{
-  border:1px solid #263343;
-  background:#0d131b;
-  color:#fff;
-  padding:10px 15px;
-  border-radius:10px;
-}
-
-.logout:hover{
-  border-color:#398cff;
-}
-
-.layout{
-  width:min(1400px,94%);
-  margin:30px auto 60px;
-  display:grid;
-  grid-template-columns:230px 1fr;
-  gap:25px;
-}
-
-.sidebar{
-  background:#0b1017;
-  border:1px solid #1b2531;
-  border-radius:18px;
-  padding:14px;
-  height:max-content;
-  position:sticky;
-  top:100px;
-}
-
-.side-title{
-  padding:10px 12px 15px;
-  font-size:12px;
-  color:#6e7d91;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  font-weight:800;
-}
-
-.side-btn{
-  width:100%;
-  border:0;
-  background:transparent;
-  color:#8e9aac;
-  padding:13px 12px;
-  border-radius:10px;
-  text-align:left;
-  margin-bottom:4px;
-  transition:.2s;
-}
-
-.side-btn:hover,
-.side-btn.active{
-  background:#121d2b;
-  color:#fff;
-}
-
-.side-btn.active{
-  box-shadow:inset 3px 0 #2988ff;
-}
-
-.main{
-  min-width:0;
-}
-
-.page-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:20px;
-  margin-bottom:24px;
-}
-
-.page-title h1{
-  margin:0;
-  font-size:32px;
-  letter-spacing:-1px;
-}
-
-.page-title p{
-  margin:7px 0 0;
-  color:#778599;
-}
-
-.primary{
-  border:0;
-  background:#1677ff;
-  color:#fff;
-  padding:13px 19px;
-  border-radius:11px;
-  font-weight:800;
-  box-shadow:0 10px 25px rgba(22,119,255,.18);
-}
-
-.primary:hover{
-  background:#2585ff;
-}
-
-.primary:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-.secondary{
-  border:1px solid #273343;
-  background:#0d131b;
-  color:#fff;
-  padding:12px 17px;
-  border-radius:10px;
-}
-
-.danger{
-  border:1px solid #54262d;
-  background:#211015;
-  color:#ff8c98;
-  padding:10px 13px;
-  border-radius:9px;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:15px;
-  margin-bottom:22px;
-}
-
-.stat{
-  background:#0d131b;
-  border:1px solid #1c2633;
-  border-radius:15px;
-  padding:20px;
-}
-
-.stat-label{
-  color:#748298;
-  font-size:13px;
-}
-
-.stat-value{
-  font-size:27px;
-  font-weight:900;
-  margin-top:8px;
-}
-
-.panel{
-  background:#0d131b;
-  border:1px solid #1c2633;
-  border-radius:18px;
-  overflow:hidden;
-}
-
-.panel-header{
-  padding:19px 20px;
-  border-bottom:1px solid #1c2633;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-}
-
-.panel-header h2{
-  margin:0;
-  font-size:18px;
-}
-
-.search{
-  width:280px;
-  max-width:100%;
-  height:43px;
-  background:#080d13;
-  border:1px solid #202b39;
-  border-radius:9px;
-  padding:0 13px;
-  color:#fff;
-  outline:none;
-}
-
-.search:focus,
-.field input:focus,
-.field select:focus,
-.field textarea:focus{
-  border-color:#368cff;
-}
-
-.table-wrap{
-  overflow-x:auto;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:1000px;
-}
-
-th,
-td{
-  padding:15px 17px;
-  text-align:left;
-  border-bottom:1px solid #18212c;
-  white-space:nowrap;
-}
-
-th{
-  color:#718095;
-  font-size:12px;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-}
-
-td{
-  font-size:14px;
-}
-
-.product-name{
-  font-weight:800;
-}
-
-.product-id{
-  color:#65748a;
-  font-size:12px;
-  margin-top:4px;
-}
-
-.badge{
-  display:inline-flex;
-  align-items:center;
-  padding:5px 8px;
-  border-radius:7px;
-  font-size:11px;
-  font-weight:800;
-  background:rgba(36,137,255,.13);
-  color:#65adff;
-}
-
-.badge.green{
-  background:rgba(32,194,125,.12);
-  color:#4cdda1;
-}
-
-.badge.red{
-  background:rgba(255,67,88,.12);
-  color:#ff8490;
-}
-
-.actions{
-  display:flex;
-  gap:7px;
-}
-
-.action-btn{
-  border:1px solid #263343;
-  background:#101720;
-  color:#dce5f1;
-  padding:8px 10px;
-  border-radius:8px;
-  font-size:12px;
-}
-
-.action-btn:hover{
-  border-color:#398cff;
-}
-
-.action-btn.delete:hover{
-  border-color:#e84d5d;
-  color:#ff8490;
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.72);
-  backdrop-filter:blur(7px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:500;
-  padding:20px;
-}
-
-.modal.show{
-  display:flex;
-}
-
-.modal-box{
-  width:min(760px,100%);
-  max-height:92vh;
-  overflow:auto;
-  background:#0b1017;
-  border:1px solid #263242;
-  border-radius:20px;
-  box-shadow:0 30px 100px rgba(0,0,0,.55);
-}
-
-.modal-header{
-  padding:20px 22px;
-  border-bottom:1px solid #1d2734;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.modal-header h2{
-  margin:0;
-  font-size:20px;
-}
-
-.close{
-  border:0;
-  background:transparent;
-  color:#8491a3;
-  font-size:25px;
-  width:38px;
-  height:38px;
-  border-radius:9px;
-}
-
-.close:hover{
-  background:#151d27;
-  color:#fff;
-}
-
-.form{
-  padding:22px;
-}
-
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-}
-
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-
-.field.full{
-  grid-column:1/-1;
-}
-
-.field label{
-  font-size:12px;
-  color:#8c99aa;
-  font-weight:700;
-}
-
-.field input,
-.field select,
-.field textarea{
-  width:100%;
-  background:#070c12;
-  color:#fff;
-  border:1px solid #222e3d;
-  border-radius:9px;
-  outline:none;
-  padding:12px 13px;
-}
-
-.field input,
-.field select{
-  height:45px;
-}
-
-.field textarea{
-  min-height:100px;
-  resize:vertical;
-}
-
-.checkbox{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  min-height:45px;
-  color:#d8e0ea;
-}
-
-.checkbox input{
-  width:18px;
-  height:18px;
-}
-
-.form-actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-  margin-top:22px;
-  padding-top:18px;
-  border-top:1px solid #1c2633;
-}
-
-.alert{
-  display:none;
-  padding:13px 15px;
-  border-radius:10px;
-  margin-bottom:17px;
-  font-size:14px;
-  line-height:1.5;
-}
-
-.alert.show{
-  display:block;
-}
-
-.alert.error{
-  background:#251117;
-  border:1px solid #572832;
-  color:#ff9aa4;
-}
-
-.alert.success{
-  background:#0b2119;
-  border:1px solid #1d5a43;
-  color:#67d9a5;
-}
-
-.loading{
-  padding:45px;
-  text-align:center;
-  color:#728096;
-}
-
-.empty{
-  padding:55px 20px;
-  text-align:center;
-  color:#718096;
-}
-
-@media(max-width:1000px){
-
-  .layout{
-    grid-template-columns:1fr;
-  }
-
-  .sidebar{
-    position:static;
-    display:flex;
-    overflow:auto;
-    gap:5px;
-  }
-
-  .side-title{
-    display:none;
-  }
-
-  .side-btn{
-    min-width:max-content;
-    margin:0;
-  }
-
-  .stats{
-    grid-template-columns:repeat(2,1fr);
-  }
-}
-
-@media(max-width:650px){
-
-  .header{
-    height:auto;
-    min-height:70px;
-  }
-
-  .header-inner{
-    padding:12px 0;
-  }
-
-  .admin-user{
-    display:none;
-  }
-
-  .layout{
-    width:94%;
-    margin-top:20px;
-  }
-
-  .page-title{
-    flex-direction:column;
-  }
-
-  .page-title .primary{
-    width:100%;
-  }
-
-  .stats{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .stat{
-    padding:15px;
-  }
-
-  .stat-value{
-    font-size:22px;
-  }
-
-  .form-grid{
-    grid-template-columns:1fr;
-  }
-
-  .field.full{
-    grid-column:auto;
-  }
-
-  .panel-header{
-    flex-direction:column;
-    align-items:stretch;
-  }
-
-  .search{
-    width:100%;
-  }
-}
-</style>
-</head>
-
-<body>
-
-<header class="header">
-
-<div class="header-inner">
-
-<div class="logo-area">
-
-<div class="logo">P</div>
-
-<div class="logo-text">
-Panel<span>Market</span> Admin
-</div>
-
-</div>
-
-<div class="header-right">
-
-<div
-class="admin-user"
-id="adminUser">
-Kontrol ediliyor...
-</div>
-
-<button
-class="logout"
-id="logoutBtn">
-ÇIKIŞ YAP
-</button>
-
-</div>
-
-</div>
-
-</header>
-
-
-<div class="layout">
-
-<aside class="sidebar">
-
-<div class="side-title">
-Yönetim
-</div>
-
-<button
-class="side-btn"
-onclick="location.href='/index.html'">
-🏠 Ana Sayfa
-</button>
-
-<button
-class="side-btn active">
-📦 Ürünler
-</button>
-
-<button
-class="side-btn"
-onclick="location.href='/admin.html#users'">
-👥 Kullanıcılar
-</button>
-
-<button
-class="side-btn"
-onclick="location.href='/admin.html#orders'">
-🛒 Siparişler
-</button>
-
-<button
-class="side-btn"
-onclick="location.href='/admin.html#transactions'">
-💳 İşlemler
-</button>
-
-</aside>
-
-
-<main class="main">
-
-<div class="page-title">
-
-<div>
-
-<h1>Ürünler</h1>
-
-<p>
-PanelMarket ürün kataloğunu buradan tamamen yönet.
-</p>
-
-</div>
-
-<button
-class="primary"
-id="newProductBtn">
-+ YENİ ÜRÜN
-</button>
-
-</div>
-
-
-<div
-id="alert"
-class="alert">
-</div>
-
-
-<section class="stats">
-
-<div class="stat">
-
-<div class="stat-label">
-Toplam Ürün
-</div>
-
-<div
-class="stat-value"
-id="totalProducts">
-0
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-label">
-Aktif Ürün
-</div>
-
-<div
-class="stat-value"
-id="activeProducts">
-0
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-label">
-Pasif Ürün
-</div>
-
-<div
-class="stat-value"
-id="passiveProducts">
-0
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-label">
-Katalog Durumu
-</div>
-
-<div
-class="stat-value"
-id="catalogStatus">
-—
-</div>
-
-</div>
-
-</section>
-
-
-<section class="panel">
-
-<div class="panel-header">
-
-<h2>Ürün Kataloğu</h2>
-
-<input
-class="search"
-id="searchInput"
-type="search"
-placeholder="Ürün ara...">
-
-</div>
-
-
-<div class="table-wrap">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Ürün</th>
-<th>Kategori</th>
-<th>Fiyat</th>
-<th>Rozet</th>
-<th>Teslimat</th>
-<th>Durum</th>
-<th>Sıra</th>
-<th>İşlem</th>
-
-</tr>
-
-</thead>
-
-<tbody id="productsTable">
-
-<tr>
-
-<td colspan="8">
-
-<div class="loading">
-Ürünler yükleniyor...
-</div>
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</section>
-
-</main>
-
-</div>
-
-
-<div
-class="modal"
-id="productModal">
-
-<div class="modal-box">
-
-<div class="modal-header">
-
-<h2 id="modalTitle">
-Yeni Ürün
-</h2>
-
-<button
-class="close"
-id="closeModal"
-type="button">
-×
-</button>
-
-</div>
-
-
-<form
-class="form"
-id="productForm">
-
-<div class="form-grid">
-
-
-<div class="field">
-
-<label>Ürün ID / Slug</label>
-
-<input
-id="productId"
-type="text"
-placeholder="admin-panel"
-required>
-
-</div>
-
-
-<div class="field">
-
-<label>Ürün Adı</label>
-
-<input
-id="productName"
-type="text"
-placeholder="Profesyonel Admin Paneli"
-required>
-
-</div>
-
-
-<div class="field">
-
-<label>Kategori</label>
-
-<input
-id="productCategory"
-type="text"
-placeholder="Admin Paneli"
-required>
-
-</div>
-
-
-<div class="field">
-
-<label>Fiyat (₺)</label>
-
-<input
-id="productPrice"
-type="number"
-min="0.01"
-step="0.01"
-placeholder="1499"
-required>
-
-</div>
-
-
-<div class="field">
-
-<label>Eski Fiyat (₺)</label>
-
-<input
-id="productOldPrice"
-type="number"
-min="0"
-step="0.01"
-placeholder="1999">
-
-</div>
-
-
-<div class="field">
-
-<label>Rozet</label>
-
-<input
-id="productBadge"
-type="text"
-placeholder="ÇOK SATAN">
-
-</div>
-
-
-<div class="field">
-
-<label>Teslimat</label>
-
-<input
-id="productDelivery"
-type="text"
-placeholder="Hemen"
-value="Hemen">
-
-</div>
-
-
-<div class="field">
-
-<label>Güncelleme</label>
-
-<input
-id="productUpdate"
-type="text"
-placeholder="1 Yıl"
-value="1 Yıl">
-
-</div>
-
-
-<div class="field">
-
-<label>Destek</label>
-
-<input
-id="productSupport"
-type="text"
-placeholder="30 Gün"
-value="30 Gün">
-
-</div>
-
-
-<div class="field">
-
-<label>Sıralama</label>
-
-<input
-id="productSort"
-type="number"
-min="0"
-step="1"
-value="0">
-
-</div>
-
-
-<div class="field full">
-
-<label>Açıklama</label>
-
-<textarea
-id="productDescription"
-placeholder="Ürün hakkında kısa açıklama..."></textarea>
-
-</div>
-
-
-<div class="field full">
-
-<label>Ürün Durumu</label>
-
-<label class="checkbox">
-
-<input
-id="productActive"
-type="checkbox"
-checked>
-
-<span>Ürün satışta / aktif</span>
-
-</label>
-
-</div>
-
-
-</div>
-
-
-<div class="form-actions">
-
-<button
-type="button"
-class="secondary"
-id="cancelBtn">
-İPTAL
-</button>
-
-<button
-type="submit"
-class="primary"
-id="saveBtn">
-ÜRÜNÜ KAYDET
-</button>
-
-</div>
-
-</form>
-
-</div>
-
-</div>
-
-
 <script>
 
 "use strict";
@@ -1081,19 +15,65 @@ let editingId = null;
 
 
 /* =========================================================
-   TOKEN'I HER SEFERİNDE GÜNCELLE
+   TOKEN
 ========================================================= */
 
 function getToken(){
 
-  const value =
-    localStorage.getItem(tokenKey);
+  let value = "";
 
-  if(!value){
-    return null;
+  try{
+
+    value =
+      localStorage.getItem(tokenKey) ||
+      sessionStorage.getItem(tokenKey) ||
+      "";
+
+  }catch(error){
+
+    console.error(
+      "TOKEN OKUMA HATASI:",
+      error
+    );
+
   }
 
-  return String(value).trim() || null;
+  value =
+    String(value || "").trim();
+
+  return value || null;
+
+}
+
+
+/* =========================================================
+   ALERT
+========================================================= */
+
+function showAlert(message,type="success"){
+
+  const alert =
+    document.getElementById("alert");
+
+  if(!alert) return;
+
+  alert.textContent =
+    message;
+
+  alert.className =
+    "alert show " + type;
+
+  clearTimeout(
+    window.alertTimer
+  );
+
+  window.alertTimer =
+    setTimeout(()=>{
+
+      alert.className =
+        "alert";
+
+    },5000);
 
 }
 
@@ -1102,7 +82,7 @@ function getToken(){
    API
 ========================================================= */
 
-async function api(url, options = {}){
+async function api(url,options={}){
 
   const currentToken =
     getToken();
@@ -1183,36 +163,6 @@ async function api(url, options = {}){
 
 
 /* =========================================================
-   ALERT
-========================================================= */
-
-function showAlert(message,type="success"){
-
-  const alert =
-    document.getElementById("alert");
-
-  alert.textContent =
-    message;
-
-  alert.className =
-    "alert show " + type;
-
-  clearTimeout(
-    window.alertTimer
-  );
-
-  window.alertTimer =
-    setTimeout(()=>{
-
-      alert.className =
-        "alert";
-
-    },5000);
-
-}
-
-
-/* =========================================================
    ADMIN KONTROLÜ
 ========================================================= */
 
@@ -1224,141 +174,606 @@ async function checkAdmin(){
     );
 
 
-  adminUser.textContent =
-    "Kontrol ediliyor...";
+  if(adminUser){
+
+    adminUser.textContent =
+      "Kontrol ediliyor...";
+
+  }
 
 
-  /* HER SEFERİNDE GÜNCEL TOKEN */
+  /*
+   * HER SEFERİNDE GÜNCEL TOKEN
+   */
 
   token =
     getToken();
 
 
+  console.log(
+    "================================"
+  );
+
+  console.log(
+    "PANELMARKET ADMIN AUTH"
+  );
+
+  console.log(
+    "TOKEN VAR:",
+    !!token
+  );
+
+
+  /*
+   * =====================================================
+   * 1. TOKEN YOKSA
+   * =====================================================
+   */
+
   if(!token){
 
-    console.error(
-      "ADMIN: localStorage içinde panelmarket_token yok."
-    );
-
-    adminUser.textContent =
-      "Oturum bulunamadı";
-
-
-    showAlert(
-      "Admin paneli için önce giriş yapmalısınız.",
-      "error"
+    console.warn(
+      "ADMIN: Token bulunamadı."
     );
 
 
-    setTimeout(()=>{
-
-      window.location.replace(
-        "/login.html"
-      );
-
-    },800);
-
-
-    return false;
+    /*
+     * Token yok olsa bile cookie ile
+     * oturum açılmış olabilir.
+     *
+     * Bu nedenle HEMEN login.html'ye gitmiyoruz.
+     */
 
   }
 
 
+  /*
+   * =====================================================
+   * 2. BEARER TOKEN İLE KONTROL
+   * =====================================================
+   */
+
+  if(token){
+
+    try{
+
+      console.log(
+        "ADMIN: Bearer token kontrol ediliyor..."
+      );
+
+
+      const response =
+        await fetch(
+          "/api/admin/me?t=" +
+          Date.now(),
+          {
+
+            method:"GET",
+
+            headers:{
+              "Authorization":
+                "Bearer " + token,
+
+              "Accept":
+                "application/json",
+
+              "Cache-Control":
+                "no-cache",
+
+              "Pragma":
+                "no-cache"
+            },
+
+            credentials:"include",
+
+            cache:"no-store"
+
+          }
+        );
+
+
+      let data = {};
+
+
+      try{
+
+        data =
+          await response.json();
+
+      }catch{
+
+        data = {};
+
+      }
+
+
+      console.log(
+        "ADMIN ME STATUS:",
+        response.status
+      );
+
+
+      console.log(
+        "ADMIN ME DATA:",
+        data
+      );
+
+
+      /*
+       * =================================================
+       * 200 OK
+       * =================================================
+       */
+
+      if(response.ok){
+
+        const user =
+          data.user ||
+          data.admin ||
+          data.userData ||
+          data;
+
+
+        console.log(
+          "ADMIN USER:",
+          user
+        );
+
+
+        const isAdmin =
+          data.is_admin === true ||
+          data.isAdmin === true ||
+          data.admin === true ||
+          user.is_admin === true ||
+          user.isAdmin === true ||
+          user.admin === true;
+
+
+        console.log(
+          "ADMIN IS ADMIN:",
+          isAdmin
+        );
+
+
+        if(isAdmin){
+
+          if(adminUser){
+
+            adminUser.textContent =
+              user.email ||
+              user.name ||
+              "Admin";
+
+          }
+
+
+          /*
+           * Kullanıcı bilgilerini güncelle
+           */
+
+          try{
+
+            localStorage.setItem(
+              "panelmarket_token",
+              token
+            );
+
+
+            localStorage.setItem(
+              "panelmarket_user",
+              JSON.stringify(user)
+            );
+
+          }catch(error){
+
+            console.warn(
+              "LOCAL STORAGE YAZMA HATASI:",
+              error
+            );
+
+          }
+
+
+          /*
+           * Server yeni token gönderirse
+           */
+
+          if(data.token){
+
+            try{
+
+              localStorage.setItem(
+                tokenKey,
+                data.token
+              );
+
+            }catch{}
+
+            token =
+              data.token;
+
+          }
+
+
+          console.log(
+            "================================"
+          );
+
+          console.log(
+            "ADMIN OTURUMU BAŞARILI"
+          );
+
+          console.log(
+            "ADMIN:",
+            user.email || user.name || "Admin"
+          );
+
+          console.log(
+            "================================"
+          );
+
+
+          return true;
+
+        }
+
+
+        /*
+         * 200 ama admin değil
+         */
+
+        if(adminUser){
+
+          adminUser.textContent =
+            "Admin yetkisi yok";
+
+        }
+
+
+        showAlert(
+          "Bu hesap admin olarak tanımlanmamış. Supabase users tablosunda is_admin değerini true yap.",
+          "error"
+        );
+
+
+        console.warn(
+          "ADMIN: Kullanıcı giriş yapmış fakat admin değil."
+        );
+
+
+        return false;
+
+      }
+
+
+      /*
+       * =================================================
+       * 403
+       * =================================================
+       *
+       * Oturum var fakat admin değil.
+       */
+
+      if(response.status === 403){
+
+        if(adminUser){
+
+          adminUser.textContent =
+            "Admin yetkisi yok";
+
+        }
+
+
+        showAlert(
+          data.error ||
+          data.message ||
+          "Bu hesabın admin yetkisi yok.",
+          "error"
+        );
+
+
+        console.warn(
+          "ADMIN: 403 - Admin yetkisi yok."
+        );
+
+
+        /*
+         * TOKEN'I SİLME
+         */
+
+        return false;
+
+      }
+
+
+      /*
+       * =================================================
+       * 401
+       * =================================================
+       *
+       * TOKEN geçersiz olabilir.
+       *
+       * HEMEN LOGIN'E GİTMİYORUZ.
+       * COOKIE'Yİ DE DENİYORUZ.
+       */
+
+      if(response.status === 401){
+
+        console.warn(
+          "ADMIN: Bearer token 401 döndürdü."
+        );
+
+        console.warn(
+          "ADMIN: Cookie oturumu ayrıca kontrol edilecek."
+        );
+
+      }
+
+    }catch(error){
+
+      console.error(
+        "ADMIN BEARER CHECK ERROR:",
+        error
+      );
+
+    }
+
+  }
+
+
+  /*
+   * =====================================================
+   * 3. COOKIE İLE KONTROL
+   * =====================================================
+   *
+   * Burada Authorization header yok.
+   *
+   * Browser:
+   * panelmarket_token cookie
+   * gönderiyorsa server bunu kullanacak.
+   */
+
   try{
 
     console.log(
-      "ADMIN TOKEN:",
-      token.substring(0,12) + "..."
+      "ADMIN: Cookie oturumu kontrol ediliyor..."
     );
 
 
-    const response =
+    const cookieResponse =
       await fetch(
-        "/api/admin/me?t=" +
+        "/api/admin/me?cookie=" +
         Date.now(),
         {
 
           method:"GET",
 
           headers:{
-            "Authorization":
-              "Bearer " + token,
-
             "Accept":
               "application/json",
 
             "Cache-Control":
+              "no-cache",
+
+            "Pragma":
               "no-cache"
           },
 
           credentials:"include",
 
           cache:"no-store"
+
         }
       );
 
 
-    let data = {};
+    let cookieData = {};
+
 
     try{
 
-      data =
-        await response.json();
+      cookieData =
+        await cookieResponse.json();
 
     }catch{
 
-      data = {};
+      cookieData = {};
 
     }
 
 
     console.log(
-      "ADMIN ME STATUS:",
-      response.status
+      "ADMIN COOKIE STATUS:",
+      cookieResponse.status
     );
+
 
     console.log(
-      "ADMIN ME DATA:",
-      data
+      "ADMIN COOKIE DATA:",
+      cookieData
     );
 
 
-    /* =====================================================
-       401
-    ===================================================== */
+    /*
+     * =================================================
+     * COOKIE 200
+     * =================================================
+     */
 
-    if(response.status === 401){
+    if(cookieResponse.ok){
+
+      const user =
+        cookieData.user ||
+        cookieData.admin ||
+        cookieData.userData ||
+        cookieData;
+
+
+      const isAdmin =
+        cookieData.is_admin === true ||
+        cookieData.isAdmin === true ||
+        cookieData.admin === true ||
+        user.is_admin === true ||
+        user.isAdmin === true ||
+        user.admin === true;
+
+
+      console.log(
+        "COOKIE IS ADMIN:",
+        isAdmin
+      );
+
+
+      if(isAdmin){
+
+        if(adminUser){
+
+          adminUser.textContent =
+            user.email ||
+            user.name ||
+            "Admin";
+
+        }
+
+
+        try{
+
+          localStorage.setItem(
+            "panelmarket_user",
+            JSON.stringify(user)
+          );
+
+        }catch{}
+
+
+        /*
+         * Cookie oturumu çalışıyor.
+         */
+
+        console.log(
+          "================================"
+        );
+
+        console.log(
+          "ADMIN COOKIE OTURUMU BAŞARILI"
+        );
+
+        console.log(
+          "================================"
+        );
+
+
+        return true;
+
+      }
+
 
       /*
-        Burada artık hemen login'e atmıyoruz.
-        Önce ekranda gerçek hatayı gösteriyoruz.
-      */
+       * Cookie geçerli ama admin değil.
+       */
 
-      adminUser.textContent =
-        "Oturum doğrulanamadı";
+      if(adminUser){
+
+        adminUser.textContent =
+          "Admin yetkisi yok";
+
+      }
 
 
       showAlert(
-        data.error ||
-        data.message ||
-        "Sunucu bu oturumu doğrulayamadı.",
+        cookieData.error ||
+        cookieData.message ||
+        "Bu hesabın admin yetkisi yok.",
         "error"
       );
 
 
+      return false;
+
+    }
+
+
+    /*
+     * =================================================
+     * COOKIE 403
+     * =================================================
+     */
+
+    if(cookieResponse.status === 403){
+
+      if(adminUser){
+
+        adminUser.textContent =
+          "Admin yetkisi yok";
+
+      }
+
+
+      showAlert(
+        cookieData.error ||
+        cookieData.message ||
+        "Bu hesap admin olarak tanımlanmamış.",
+        "error"
+      );
+
+
+      return false;
+
+    }
+
+
+    /*
+     * =================================================
+     * COOKIE 401
+     * =================================================
+     *
+     * Buraya geldiysek:
+     *
+     * 1. Bearer token başarısız
+     * 2. Cookie başarısız
+     *
+     * Artık gerçekten oturum doğrulanamıyor.
+     */
+
+    if(cookieResponse.status === 401){
+
       console.error(
-        "ADMIN 401:",
-        data
+        "================================"
+      );
+
+      console.error(
+        "ADMIN AUTH BAŞARISIZ"
+      );
+
+      console.error(
+        "Bearer: 401"
+      );
+
+      console.error(
+        "Cookie: 401"
+      );
+
+      console.error(
+        "SERVER:",
+        cookieData
+      );
+
+      console.error(
+        "================================"
       );
 
 
       /*
-        3 saniye sonra login.
-      */
+       * Burada token'ı temizliyoruz.
+       */
 
-      setTimeout(()=>{
+      try{
 
         localStorage.removeItem(
+          tokenKey
+        );
+
+        sessionStorage.removeItem(
           tokenKey
         );
 
@@ -1366,13 +781,43 @@ async function checkAdmin(){
           "panelmarket_user"
         );
 
-        token = null;
+        sessionStorage.removeItem(
+          "panelmarket_user"
+        );
+
+      }catch{}
+
+
+      token = null;
+
+
+      if(adminUser){
+
+        adminUser.textContent =
+          "Oturum bulunamadı";
+
+      }
+
+
+      showAlert(
+        cookieData.error ||
+        cookieData.message ||
+        "Oturum doğrulanamadı. Lütfen tekrar giriş yapın.",
+        "error"
+      );
+
+
+      /*
+       * Login'e yönlendirme
+       */
+
+      setTimeout(()=>{
 
         window.location.replace(
           "/login.html"
         );
 
-      },3000);
+      },1200);
 
 
       return false;
@@ -1380,168 +825,52 @@ async function checkAdmin(){
     }
 
 
-    /* =====================================================
-       403
-    ===================================================== */
+    /*
+     * =================================================
+     * DİĞER HTTP HATALARI
+     * =================================================
+     */
 
-    if(response.status === 403){
-
-      adminUser.textContent =
-        "Admin yetkisi yok";
-
-
-      showAlert(
-        data.error ||
-        data.message ||
-        "Bu kullanıcı admin değil.",
-        "error"
-      );
-
-
-      console.error(
-        "ADMIN 403:",
-        data
-      );
-
-
-      /*
-        403'te TOKEN SİLİNMİYOR.
-      */
-
-      return false;
-
-    }
-
-
-    /* =====================================================
-       DİĞER SUNUCU HATASI
-    ===================================================== */
-
-    if(!response.ok){
+    if(adminUser){
 
       adminUser.textContent =
         "Sunucu hatası";
 
-
-      showAlert(
-        data.error ||
-        data.message ||
-        "Admin kontrolü başarısız.",
-        "error"
-      );
-
-
-      console.error(
-        "ADMIN HTTP ERROR:",
-        response.status,
-        data
-      );
-
-
-      return false;
-
     }
 
 
-    /* =====================================================
-       KULLANICI
-    ===================================================== */
-
-    const user =
-      data.user ||
-      data.admin ||
-      data.userData ||
-      data;
-
-
-    console.log(
-      "ADMIN USER:",
-      user
+    showAlert(
+      cookieData.error ||
+      cookieData.message ||
+      "Admin kontrolü sırasında sunucu hatası oluştu.",
+      "error"
     );
 
 
-    /* =====================================================
-       ADMIN KONTROLÜ
-    ===================================================== */
-
-    const isAdmin =
-      data.is_admin === true ||
-      data.isAdmin === true ||
-      data.admin === true ||
-      user.is_admin === true ||
-      user.isAdmin === true ||
-      user.admin === true;
-
-
-    console.log(
-      "ADMIN IS ADMIN:",
-      isAdmin
+    console.error(
+      "ADMIN HTTP ERROR:",
+      cookieResponse.status,
+      cookieData
     );
 
 
-    if(!isAdmin){
-
-      adminUser.textContent =
-        "Admin yetkisi yok";
-
-
-      showAlert(
-        "Sunucu kullanıcıyı doğruladı fakat bu hesap admin değil.",
-        "error"
-      );
-
-
-      return false;
-
-    }
-
-
-    /* =====================================================
-       ADMIN BAŞARILI
-    ===================================================== */
-
-    adminUser.textContent =
-      user.email ||
-      user.name ||
-      "Admin";
-
-
-    /*
-      Sunucu yeni token gönderirse
-      onu da sakla.
-    */
-
-    if(data.token){
-
-      localStorage.setItem(
-        tokenKey,
-        data.token
-      );
-
-      token =
-        data.token;
-
-    }
-
-
-    console.log(
-      "PANELMARKET ADMIN DOĞRULANDI"
-    );
-
-
-    return true;
+    return false;
 
 
   }catch(error){
 
     console.error(
-      "ADMIN FETCH ERROR:",
+      "ADMIN COOKIE CHECK ERROR:",
       error
     );
 
 
-    adminUser.textContent =
-      "Bağlantı hatası";
+    if(adminUser){
+
+      adminUser.textContent =
+        "Bağlantı hatası";
+
+    }
 
 
     showAlert(
@@ -1607,6 +936,7 @@ async function loadProducts(){
 
 
     renderStats();
+
     renderProducts();
 
 
@@ -1650,10 +980,12 @@ function renderStats(){
   const total =
     products.length;
 
+
   const active =
     products.filter(
       p => p.active !== false
     ).length;
+
 
   const passive =
     total - active;
@@ -1688,7 +1020,7 @@ function renderStats(){
 
 
 /* =========================================================
-   RENDER
+   RENDER PRODUCTS
 ========================================================= */
 
 function renderProducts(){
@@ -1702,13 +1034,14 @@ function renderProducts(){
   const search =
     document.getElementById(
       "searchInput"
-    ).value
+    )
+    .value
     .trim()
     .toLowerCase();
 
 
   const filtered =
-    products.filter(product => {
+    products.filter(product=>{
 
       const text = [
 
@@ -1750,38 +1083,46 @@ function renderProducts(){
 
 
   tbody.innerHTML =
-    filtered.map(product => {
+    filtered.map(product=>{
 
       const id =
         product.id || "";
+
 
       const name =
         product.name ||
         "İsimsiz ürün";
 
+
       const category =
         product.category ||
         "-";
+
 
       const price =
         Number(
           product.price || 0
         );
 
+
       const oldPrice =
         product.oldPrice ??
         product.old_price;
+
 
       const badge =
         product.badge ||
         "";
 
+
       const delivery =
         product.delivery ||
         "Hemen";
 
+
       const active =
         product.active !== false;
+
 
       const sortOrder =
         product.sortOrder ??
@@ -1913,49 +1254,59 @@ function newProduct(){
 
   editingId = null;
 
+
   document.getElementById(
     "modalTitle"
   ).textContent =
     "Yeni Ürün";
+
 
   document.getElementById(
     "saveBtn"
   ).textContent =
     "ÜRÜNÜ KAYDET";
 
+
   document.getElementById(
     "productForm"
   ).reset();
+
 
   document.getElementById(
     "productDelivery"
   ).value =
     "Hemen";
 
+
   document.getElementById(
     "productUpdate"
   ).value =
     "1 Yıl";
+
 
   document.getElementById(
     "productSupport"
   ).value =
     "30 Gün";
 
+
   document.getElementById(
     "productSort"
   ).value =
     products.length;
+
 
   document.getElementById(
     "productActive"
   ).checked =
     true;
 
+
   document.getElementById(
     "productId"
   ).disabled =
     false;
+
 
   openModal();
 
@@ -2096,7 +1447,7 @@ function editProduct(id){
 
 
 /* =========================================================
-   SAVE
+   SAVE PRODUCT
 ========================================================= */
 
 async function saveProduct(event){
@@ -2288,24 +1639,40 @@ async function saveProduct(event){
   const payload = {
 
     id,
+
     name,
+
     category,
+
     description,
+
     price,
+
     oldPrice,
-    old_price:oldPrice,
+
+    old_price:
+      oldPrice,
+
     badge,
+
     delivery:
       delivery || "Hemen",
+
     update:
       updatePeriod || "1 Yıl",
+
     update_period:
       updatePeriod || "1 Yıl",
+
     support:
       support || "30 Gün",
+
     active,
+
     sortOrder,
-    sort_order:sortOrder
+
+    sort_order:
+      sortOrder
 
   };
 
@@ -2317,6 +1684,7 @@ async function saveProduct(event){
   saveBtn.disabled =
     true;
 
+
   saveBtn.textContent =
     "KAYDEDİLİYOR...";
 
@@ -2327,11 +1695,18 @@ async function saveProduct(event){
 
       await api(
         "/api/admin/products/" +
-        encodeURIComponent(editingId),
+        encodeURIComponent(
+          editingId
+        ),
         {
+
           method:"PUT",
+
           body:
-            JSON.stringify(payload)
+            JSON.stringify(
+              payload
+            )
+
         }
       );
 
@@ -2345,9 +1720,14 @@ async function saveProduct(event){
       await api(
         "/api/admin/products",
         {
+
           method:"POST",
+
           body:
-            JSON.stringify(payload)
+            JSON.stringify(
+              payload
+            )
+
         }
       );
 
@@ -2383,6 +1763,7 @@ async function saveProduct(event){
     saveBtn.disabled =
       false;
 
+
     saveBtn.textContent =
       wasEditing
         ? "DEĞİŞİKLİKLERİ KAYDET"
@@ -2394,7 +1775,7 @@ async function saveProduct(event){
 
 
 /* =========================================================
-   TOGGLE
+   TOGGLE PRODUCT
 ========================================================= */
 
 async function toggleProduct(id){
@@ -2423,9 +1804,15 @@ async function toggleProduct(id){
 
   if(!confirm(
     `"${product.name}" ürününü ${
-      newStatus ? "aktif" : "pasif"
+      newStatus
+        ? "aktif"
+        : "pasif"
     } yapmak istiyor musun?`
-  )) return;
+  )){
+
+    return;
+
+  }
 
 
   try{
@@ -2434,11 +1821,15 @@ async function toggleProduct(id){
       "/api/admin/products/" +
       encodeURIComponent(id),
       {
+
         method:"PUT",
+
         body:
           JSON.stringify({
-            active:newStatus
+            active:
+              newStatus
           })
+
       }
     );
 
@@ -2473,7 +1864,7 @@ async function toggleProduct(id){
 
 
 /* =========================================================
-   DELETE
+   DELETE PRODUCT
 ========================================================= */
 
 async function deleteProduct(id){
@@ -2498,7 +1889,11 @@ async function deleteProduct(id){
 
   if(!confirm(
     `"${product.name}" ürününü kalıcı olarak silmek istediğine emin misin?\n\nBu işlem geri alınamaz.`
-  )) return;
+  )){
+
+    return;
+
+  }
 
 
   try{
@@ -2546,8 +1941,12 @@ async function deleteProduct(id){
 function openModal(){
 
   document
-    .getElementById("productModal")
-    .classList.add("show");
+    .getElementById(
+      "productModal"
+    )
+    .classList.add(
+      "show"
+    );
 
 }
 
@@ -2555,8 +1954,12 @@ function openModal(){
 function closeModal(){
 
   document
-    .getElementById("productModal")
-    .classList.remove("show");
+    .getElementById(
+      "productModal"
+    )
+    .classList.remove(
+      "show"
+    );
 
 
   document.getElementById(
@@ -2580,9 +1983,13 @@ function formatMoney(value){
   return new Intl.NumberFormat(
     "tr-TR",
     {
+
       style:"currency",
+
       currency:"TRY",
+
       minimumFractionDigits:2
+
     }
   ).format(
     Number(value) || 0
@@ -2592,28 +1999,63 @@ function formatMoney(value){
 
 
 /* =========================================================
-   ESCAPE
+   ESCAPE HTML
 ========================================================= */
 
 function escapeHtml(value){
 
-  return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+  return String(
+    value ?? ""
+  )
+  .replaceAll(
+    "&",
+    "&amp;"
+  )
+  .replaceAll(
+    "<",
+    "&lt;"
+  )
+  .replaceAll(
+    ">",
+    "&gt;"
+  )
+  .replaceAll(
+    '"',
+    "&quot;"
+  )
+  .replaceAll(
+    "'",
+    "&#039;"
+  );
 
 }
 
 
+/* =========================================================
+   ESCAPE JS
+========================================================= */
+
 function jsEscape(value){
 
-  return String(value ?? "")
-    .replaceAll("\\","\\\\")
-    .replaceAll("'","\\'")
-    .replaceAll("\n","\\n")
-    .replaceAll("\r","\\r");
+  return String(
+    value ?? ""
+  )
+  .replaceAll(
+    "\\",
+    "\\\\"
+  )
+  .replaceAll(
+    "'",
+    "\\'"
+  )
+  .replaceAll(
+    "\n",
+    "\\n"
+  )
+  .replaceAll(
+    "\r",
+    "\\r"
+  );
 
 }
 
@@ -2623,43 +2065,53 @@ function jsEscape(value){
 ========================================================= */
 
 document
-.getElementById("newProductBtn")
-.addEventListener(
-  "click",
-  newProduct
-);
+  .getElementById(
+    "newProductBtn"
+  )
+  .addEventListener(
+    "click",
+    newProduct
+  );
 
 
 document
-.getElementById("closeModal")
-.addEventListener(
-  "click",
-  closeModal
-);
+  .getElementById(
+    "closeModal"
+  )
+  .addEventListener(
+    "click",
+    closeModal
+  );
 
 
 document
-.getElementById("cancelBtn")
-.addEventListener(
-  "click",
-  closeModal
-);
+  .getElementById(
+    "cancelBtn"
+  )
+  .addEventListener(
+    "click",
+    closeModal
+  );
 
 
 document
-.getElementById("productForm")
-.addEventListener(
-  "submit",
-  saveProduct
-);
+  .getElementById(
+    "productForm"
+  )
+  .addEventListener(
+    "submit",
+    saveProduct
+  );
 
 
 document
-.getElementById("searchInput")
-.addEventListener(
-  "input",
-  renderProducts
-);
+  .getElementById(
+    "searchInput"
+  )
+  .addEventListener(
+    "input",
+    renderProducts
+  );
 
 
 /* =========================================================
@@ -2667,79 +2119,104 @@ document
 ========================================================= */
 
 document
-.getElementById("logoutBtn")
-.addEventListener(
-  "click",
-  async()=>{
+  .getElementById(
+    "logoutBtn"
+  )
+  .addEventListener(
+    "click",
+    async()=>{
 
-    try{
+      try{
 
-      await api(
-        "/api/logout",
-        {
-          method:"POST"
-        }
-      );
+        await api(
+          "/api/logout",
+          {
+            method:"POST"
+          }
+        );
 
-    }catch(error){
+      }catch(error){
 
-      console.warn(
-        "Logout API:",
-        error
+        console.warn(
+          "LOGOUT API:",
+          error
+        );
+
+      }
+
+
+      try{
+
+        localStorage.removeItem(
+          tokenKey
+        );
+
+        sessionStorage.removeItem(
+          tokenKey
+        );
+
+        localStorage.removeItem(
+          "panelmarket_user"
+        );
+
+        sessionStorage.removeItem(
+          "panelmarket_user"
+        );
+
+      }catch{}
+
+
+      token =
+        null;
+
+
+      window.location.replace(
+        "/login.html"
       );
 
     }
-
-
-    localStorage.removeItem(
-      tokenKey
-    );
-
-    localStorage.removeItem(
-      "panelmarket_user"
-    );
-
-
-    token = null;
-
-
-    window.location.href =
-      "/login.html";
-
-  }
-);
+  );
 
 
 /* =========================================================
-   MODAL DIŞI
+   MODAL DIŞINA TIKLAMA
 ========================================================= */
 
 document
-.getElementById("productModal")
-.addEventListener(
-  "click",
-  event => {
+  .getElementById(
+    "productModal"
+  )
+  .addEventListener(
+    "click",
+    event=>{
 
-    if(
-      event.target ===
-      document.getElementById(
-        "productModal"
-      )
-    ){
+      if(
+        event.target ===
+        document.getElementById(
+          "productModal"
+        )
+      ){
 
-      closeModal();
+        closeModal();
+
+      }
 
     }
+  );
 
-  }
-);
 
+/* =========================================================
+   ESC
+========================================================= */
 
 document.addEventListener(
   "keydown",
-  event => {
+  event=>{
 
-    if(event.key === "Escape"){
+    if(
+      event.key ===
+      "Escape"
+    ){
 
       closeModal();
 
@@ -2779,11 +2256,12 @@ document.addEventListener(
   }
 
 
+  console.log(
+    "Admin doğrulandı."
+  );
+
+
   await loadProducts();
 
 })();
-
 </script>
-
-</body>
-</html>
