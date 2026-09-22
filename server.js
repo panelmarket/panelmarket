@@ -404,6 +404,148 @@ app.get("/api/account",requireAuth,async(req,res)=>{
 });
 app.post("/api/logout",async(req,res)=>{try{const token=getTokenFromRequest(req);if(token)await supabase.from("sessions").delete().eq("token",token);clearSessionCookie(res);res.json({ok:true,success:true});}catch(e){console.error(e);clearSessionCookie(res);res.status(500).json({ok:false,error:"Çıkış yapılamadı."});}});
 
+/* =========================================================
+   ŞİFRE DEĞİŞTİRME
+   ========================================================= */
+
+app.post("/api/change-password", requireAuth, async (req, res) => {
+  try {
+
+    const oldPassword = String(
+      req.body.oldPassword || ""
+    );
+
+    const newPassword = String(
+      req.body.newPassword || ""
+    );
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({
+        ok: false,
+        success: false,
+        error: "Mevcut şifre ve yeni şifre zorunludur."
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        ok: false,
+        success: false,
+        error: "Yeni şifre en az 6 karakter olmalıdır."
+      });
+    }
+
+    if (oldPassword === newPassword) {
+      return res.status(400).json({
+        ok: false,
+        success: false,
+        error: "Yeni şifre mevcut şifreyle aynı olamaz."
+      });
+    }
+
+
+    /* Mevcut şifreyi kontrol et */
+
+    if (!verifyPassword(oldPassword, req.user)) {
+      return res.status(401).json({
+        ok: false,
+        success: false,
+        error: "Mevcut şifreniz hatalı."
+      });
+    }
+
+
+    /* Yeni şifre için hash oluştur */
+
+    const newSalt = crypto.randomBytes(16).toString("hex");
+
+    const newHash = crypto
+      .pbkdf2Sync(
+        newPassword,
+        newSalt,
+        100000,
+        64,
+        "sha512"
+      )
+      .toString("hex");
+
+
+    /* Veritabanındaki şifreyi güncelle */
+
+    const { data, error } = await supabase
+      .from("users")
+      .update({
+        password_hash: newHash,
+        password_salt: newSalt
+      })
+      .eq("id", req.user.id)
+      .select("id,email")
+      .single();
+
+
+    if (error) {
+      console.error(
+        "CHANGE PASSWORD DB ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+        ok: false,
+        success: false,
+        error: "Şifre veritabanında güncellenemedi.",
+        databaseError: error.message
+      });
+    }
+
+
+    if (!data) {
+      return res.status(404).json({
+        ok: false,
+        success: false,
+        error: "Kullanıcı bulunamadı."
+      });
+    }
+
+
+    /*
+      Güvenlik için mevcut oturumları kapat.
+      Kullanıcı yeni şifreyle tekrar giriş yapar.
+    */
+
+    await supabase
+      .from("sessions")
+      .delete()
+      .eq("user_id", req.user.id);
+
+
+    clearSessionCookie(res);
+
+
+    return res.status(200).json({
+      ok: true,
+      success: true,
+      passwordChanged: true,
+      message: "Şifreniz başarıyla değiştirildi."
+    });
+
+
+  } catch (e) {
+
+    console.error(
+      "CHANGE PASSWORD ERROR:",
+      e
+    );
+
+    return res.status(500).json({
+      ok: false,
+      success: false,
+      error: "Şifre değiştirme sırasında bir hata oluştu.",
+      databaseError: e?.message || null
+    });
+
+  }
+});
+
 /* WALLET */
 app.post("/api/wallet/topup",requireAuth,async(req,res)=>{
   try{const amount=Number(req.body.amount);if(!Number.isFinite(amount)||amount<=0||amount>1000000)return res.status(400).json({error:"Geçerli bir bakiye miktarı girin."});const old=money(req.user.balance), next=money(old+amount);const {data:user,error}=await supabase.from("users").update({balance:next}).eq("id",req.user.id).select("*").single();if(error)throw error;const {error:te}=await supabase.from("transactions").insert({user_id:req.user.id,type:"credit",amount,note:"Bakiye yükleme"});if(te)console.error("Transaction error:",te.message);res.json({success:true,balance:money(user.balance)});}catch(e){console.error(e);res.status(500).json({error:"Bakiye yüklenemedi."});}
