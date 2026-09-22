@@ -310,44 +310,93 @@ function getCookies(req) {
   return cookies;
 }
 
+/* =========================================================
+   GELİŞMİŞ TOKEN OKUMA
+========================================================= */
+
 function getTokenFromRequest(req) {
+  /*
+    1. Authorization Bearer
+  */
+
   const authorization =
-    req.headers.authorization || "";
+    String(
+      req.headers.authorization || ""
+    ).trim();
 
-  if (
-    authorization.startsWith("Bearer ")
-  ) {
-    const bearerToken =
-      authorization
-        .slice(7)
-        .trim();
+  if (authorization) {
+    const match =
+      authorization.match(
+        /^Bearer\s+(.+)$/i
+      );
 
-    if (bearerToken) {
-      return bearerToken;
+    if (
+      match &&
+      match[1]
+    ) {
+      const bearerToken =
+        String(
+          match[1]
+        ).trim();
+
+      if (bearerToken) {
+        return bearerToken;
+      }
     }
   }
 
-  const cookies = getCookies(req);
+  /*
+    2. HttpOnly Cookie
+  */
 
-  return (
-    cookies.panelmarket_token ||
-    ""
-  );
+  const cookies =
+    getCookies(req);
+
+  const cookieToken =
+    String(
+      cookies.panelmarket_token ||
+      ""
+    ).trim();
+
+  if (cookieToken) {
+    return cookieToken;
+  }
+
+  return "";
 }
 
+/* =========================================================
+   SESSION COOKIE
+========================================================= */
+
 function setSessionCookie(res, token) {
+  const encoded =
+    encodeURIComponent(
+      String(token)
+    );
+
   res.setHeader(
     "Set-Cookie",
-    `panelmarket_token=${encodeURIComponent(
-      token
-    )}; Path=/; HttpOnly; SameSite=Lax`
+    [
+      `panelmarket_token=${encoded}`,
+      "Path=/",
+      "HttpOnly",
+      "SameSite=Lax",
+      "Max-Age=2592000"
+    ].join("; ")
   );
 }
 
 function clearSessionCookie(res) {
   res.setHeader(
     "Set-Cookie",
-    "panelmarket_token=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax"
+    [
+      "panelmarket_token=",
+      "Path=/",
+      "HttpOnly",
+      "SameSite=Lax",
+      "Max-Age=0"
+    ].join("; ")
   );
 }
 
@@ -361,7 +410,9 @@ function formatProduct(product) {
     name: product.name,
     category: product.category || "",
     description: product.description || "",
-    price: money(product.price),
+
+    price:
+      money(product.price),
 
     oldPrice:
       product.old_price === null ||
@@ -369,7 +420,9 @@ function formatProduct(product) {
         ? null
         : money(product.old_price),
 
-    badge: product.badge || "",
+    badge:
+      product.badge || "",
+
     delivery:
       product.delivery || "Hemen",
 
@@ -383,7 +436,9 @@ function formatProduct(product) {
       product.active !== false,
 
     sortOrder:
-      Number(product.sort_order || 0),
+      Number(
+        product.sort_order || 0
+      ),
 
     createdAt:
       product.created_at || null,
@@ -400,17 +455,39 @@ function formatProduct(product) {
 function formatOrder(order) {
   return {
     id: order.id,
-    userId: order.user_id,
-    orderNumber: order.order_number,
-    productId: order.product_id,
-    productName: order.product_name,
-    licenseId: order.license_id,
-    licenseName: order.license_name,
-    amount: money(order.amount),
-    status: order.status,
-    deliveryStatus: order.delivery_status,
-    licenseKey: order.license_key,
-    createdAt: order.created_at
+
+    userId:
+      order.user_id,
+
+    orderNumber:
+      order.order_number,
+
+    productId:
+      order.product_id,
+
+    productName:
+      order.product_name,
+
+    licenseId:
+      order.license_id,
+
+    licenseName:
+      order.license_name,
+
+    amount:
+      money(order.amount),
+
+    status:
+      order.status,
+
+    deliveryStatus:
+      order.delivery_status,
+
+    licenseKey:
+      order.license_key,
+
+    createdAt:
+      order.created_at
   };
 }
 
@@ -420,11 +497,22 @@ function formatOrder(order) {
 
 function publicUser(user) {
   return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    balance: money(user.balance),
+    id:
+      user.id,
+
+    name:
+      user.name,
+
+    email:
+      user.email,
+
+    balance:
+      money(user.balance),
+
     isAdmin:
+      user.is_admin === true,
+
+    is_admin:
       user.is_admin === true
   };
 }
@@ -536,6 +624,11 @@ async function seedProducts() {
 ========================================================= */
 
 async function findUserByEmail(email) {
+  const normalizedEmail =
+    String(email || "")
+      .trim()
+      .toLowerCase();
+
   const {
     data,
     error
@@ -544,9 +637,7 @@ async function findUserByEmail(email) {
     .select("*")
     .eq(
       "email",
-      String(email || "")
-        .trim()
-        .toLowerCase()
+      normalizedEmail
     )
     .maybeSingle();
 
@@ -575,7 +666,7 @@ async function findUserById(id) {
 }
 
 /* =========================================================
-   OTURUMU BUL
+   SESSION BUL
 ========================================================= */
 
 async function getSessionFromRequest(req) {
@@ -583,44 +674,90 @@ async function getSessionFromRequest(req) {
     getTokenFromRequest(req);
 
   if (!token) {
-    return null;
-  }
-
-  const {
-    data: session,
-    error
-  } = await supabase
-    .from("sessions")
-    .select(
-      "token,user_id,created_at"
-    )
-    .eq(
-      "token",
-      token
-    )
-    .maybeSingle();
-
-  if (error) {
     console.error(
-      "SESSION QUERY ERROR:",
-      error.message
+      "SESSION: Token bulunamadı."
     );
 
     return null;
   }
 
-  if (!session) {
+  try {
+    const {
+      data: session,
+      error
+    } = await supabase
+      .from("sessions")
+      .select(
+        "token,user_id,created_at"
+      )
+      .eq(
+        "token",
+        token
+      )
+      .maybeSingle();
+
+    if (error) {
+      console.error(
+        "SESSION QUERY ERROR:",
+        error.message
+      );
+
+      return null;
+    }
+
+    if (!session) {
+      console.error(
+        "SESSION: Token sessions tablosunda bulunamadı."
+      );
+
+      console.error(
+        "SESSION TOKEN LENGTH:",
+        token.length
+      );
+
+      return null;
+    }
+
+    const user =
+      await findUserById(
+        session.user_id
+      );
+
+    if (!user) {
+      console.error(
+        "SESSION: Session var fakat kullanıcı bulunamadı:",
+        session.user_id
+      );
+
+      await supabase
+        .from("sessions")
+        .delete()
+        .eq(
+          "token",
+          token
+        );
+
+      return null;
+    }
+
+    return {
+      token,
+      session,
+      user
+    };
+
+  } catch (error) {
+    console.error(
+      "SESSION CHECK ERROR:",
+      error
+    );
+
     return null;
   }
-
-  return {
-    token,
-    session
-  };
 }
 
 /* =========================================================
-   MEVCUT KULLANICI
+   CURRENT USER
 ========================================================= */
 
 async function getCurrentUser(req) {
@@ -633,18 +770,12 @@ async function getCurrentUser(req) {
     return null;
   }
 
-  const user =
-    await findUserById(
-      auth.session.user_id
-    );
-
-  if (!user) {
-    return null;
-  }
-
   return {
-    user,
-    token: auth.token
+    user:
+      auth.user,
+
+    token:
+      auth.token
   };
 }
 
@@ -664,6 +795,7 @@ async function requireAuth(
     if (!auth) {
       return res.status(401).json({
         ok: false,
+        authenticated: false,
         error:
           "Oturum gerekli.",
         loginRequired: true
@@ -677,6 +809,7 @@ async function requireAuth(
       auth.token;
 
     next();
+
   } catch (error) {
     console.error(
       "AUTH ERROR:",
@@ -704,15 +837,16 @@ async function requireAdmin(
     if (!req.user?.id) {
       return res.status(401).json({
         ok: false,
+        authenticated: false,
         error:
-          "Admin girişi gerekli."
+          "Admin girişi gerekli.",
+        loginRequired: true
       });
     }
 
     /*
-      Kullanıcıyı tekrar Supabase'den çekiyoruz.
-      Böylece admin yetkisi eski session verisine
-      değil, güncel users.is_admin değerine bağlı olur.
+      Admin bilgisi her istekte
+      doğrudan users tablosundan okunur.
     */
 
     const {
@@ -745,8 +879,14 @@ async function requireAdmin(
     }
 
     if (!adminUser) {
+      console.error(
+        "ADMIN CHECK: Kullanıcı bulunamadı:",
+        req.user.id
+      );
+
       return res.status(401).json({
         ok: false,
+        authenticated: false,
         error:
           "Kullanıcı bulunamadı.",
         loginRequired: true
@@ -756,11 +896,18 @@ async function requireAdmin(
     if (
       adminUser.is_admin !== true
     ) {
+      console.error(
+        "ADMIN CHECK: Kullanıcı admin değil:",
+        adminUser.email
+      );
+
       return res.status(403).json({
         ok: false,
+        authenticated: true,
+        is_admin: false,
+        isAdmin: false,
         error:
-          "Bu hesap admin yetkisine sahip değil.",
-        isAdmin: false
+          "Bu hesap admin yetkisine sahip değil."
       });
     }
 
@@ -768,6 +915,7 @@ async function requireAdmin(
       adminUser;
 
     next();
+
   } catch (error) {
     console.error(
       "ADMIN AUTH ERROR:",
@@ -822,6 +970,7 @@ app.get(
           formatProduct
         )
       );
+
     } catch (error) {
       console.error(
         "PRODUCTS ERROR:",
@@ -837,7 +986,7 @@ app.get(
 );
 
 /* =========================================================
-   TEK ÜRÜN
+   SINGLE PRODUCT
 ========================================================= */
 
 app.get(
@@ -885,8 +1034,11 @@ app.get(
         ...formatProduct(
           product
         ),
-        licenses: prices
+
+        licenses:
+          prices
       });
+
     } catch (error) {
       console.error(
         "SINGLE PRODUCT ERROR:",
@@ -902,59 +1054,79 @@ app.get(
 );
 
 /* =========================================================
-   ADMIN - ME
+   ADMIN ME
 ========================================================= */
 
-app.get("/api/admin/me", requireAuth, requireAdmin, async (req, res) => {
-  try {
-    const adminUser = req.adminUser;
+app.get(
+  "/api/admin/me",
+  requireAuth,
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const adminUser =
+        req.adminUser;
 
-    if (!adminUser) {
-      return res.status(403).json({
-        ok: false,
+      if (!adminUser) {
+        return res.status(403).json({
+          ok: false,
+          authenticated: true,
+          is_admin: false,
+          isAdmin: false,
+          error:
+            "Admin yetkisi bulunamadı."
+        });
+      }
+
+      const user = {
+        id:
+          adminUser.id,
+
+        name:
+          adminUser.name || "",
+
+        email:
+          adminUser.email || "",
+
+        balance:
+          Number(
+            adminUser.balance || 0
+          ),
+
+        is_admin: true,
+        isAdmin: true
+      };
+
+      return res.status(200).json({
+        ok: true,
+
         authenticated: true,
-        is_admin: false,
-        message: "Admin yetkisi bulunamadı."
+
+        is_admin: true,
+
+        isAdmin: true,
+
+        user,
+
+        admin: user
+      });
+
+    } catch (error) {
+      console.error(
+        "ADMIN ME ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+        ok: false,
+        error:
+          "Admin bilgisi alınamadı."
       });
     }
-
-    return res.json({
-      ok: true,
-      authenticated: true,
-
-      is_admin: true,
-      isAdmin: true,
-
-      user: {
-        id: adminUser.id,
-        name: adminUser.name,
-        email: adminUser.email,
-        balance: Number(adminUser.balance || 0),
-        is_admin: true,
-        isAdmin: true
-      },
-
-      admin: {
-        id: adminUser.id,
-        name: adminUser.name,
-        email: adminUser.email,
-        balance: Number(adminUser.balance || 0),
-        is_admin: true,
-        isAdmin: true
-      }
-    });
-  } catch (error) {
-    console.error("ADMIN ME ERROR:", error);
-
-    return res.status(500).json({
-      ok: false,
-      message: "Admin bilgisi alınamadı."
-    });
   }
-});
+);
 
 /* =========================================================
-   ADMIN - PRODUCTS
+   ADMIN PRODUCTS
 ========================================================= */
 
 app.get(
@@ -988,11 +1160,13 @@ app.get(
 
       res.json({
         ok: true,
+
         products:
           (data || []).map(
             formatProduct
           )
       });
+
     } catch (error) {
       console.error(
         "ADMIN PRODUCTS ERROR:",
@@ -1008,7 +1182,7 @@ app.get(
 );
 
 /* =========================================================
-   ADMIN - PRODUCT CREATE
+   ADMIN PRODUCT CREATE
 ========================================================= */
 
 app.post(
@@ -1076,14 +1250,11 @@ app.post(
         req.body.active !== false &&
         req.body.active !== "false";
 
-      const sortOrderRaw =
-        req.body.sortOrder ??
-        req.body.sort_order ??
-        0;
-
       const sortOrder =
         Number(
-          sortOrderRaw
+          req.body.sortOrder ??
+          req.body.sort_order ??
+          0
         );
 
       let id =
@@ -1096,7 +1267,9 @@ app.post(
           slugify(name);
       }
 
-      if (!isValidProductId(id)) {
+      if (
+        !isValidProductId(id)
+      ) {
         return res.status(400).json({
           error:
             "Ürün ID yalnızca küçük harf, rakam ve tire içerebilir."
@@ -1118,7 +1291,9 @@ app.post(
       }
 
       if (
-        !Number.isFinite(price) ||
+        !Number.isFinite(
+          price
+        ) ||
         price <= 0
       ) {
         return res.status(400).json({
@@ -1211,11 +1386,14 @@ app.post(
 
       res.status(201).json({
         ok: true,
+
         message:
           "Ürün başarıyla eklendi.",
+
         product:
           formatProduct(data)
       });
+
     } catch (error) {
       console.error(
         "ADMIN PRODUCT CREATE ERROR:",
@@ -1231,7 +1409,7 @@ app.post(
 );
 
 /* =========================================================
-   ADMIN - PRODUCT UPDATE
+   ADMIN PRODUCT UPDATE
 ========================================================= */
 
 app.put(
@@ -1465,7 +1643,9 @@ app.put(
         error
       } = await supabase
         .from("products")
-        .update(updates)
+        .update(
+          updates
+        )
         .eq(
           "id",
           productId
@@ -1479,11 +1659,14 @@ app.put(
 
       res.json({
         ok: true,
+
         message:
           "Ürün güncellendi.",
+
         product:
           formatProduct(data)
       });
+
     } catch (error) {
       console.error(
         "ADMIN PRODUCT UPDATE ERROR:",
@@ -1499,7 +1682,7 @@ app.put(
 );
 
 /* =========================================================
-   ADMIN - PRODUCT STATUS
+   ADMIN PRODUCT STATUS
 ========================================================= */
 
 app.patch(
@@ -1521,6 +1704,7 @@ app.patch(
         .from("products")
         .update({
           active,
+
           updated_at:
             new Date().toISOString()
         })
@@ -1546,6 +1730,7 @@ app.patch(
         product:
           formatProduct(data)
       });
+
     } catch (error) {
       console.error(
         "ADMIN PRODUCT STATUS ERROR:",
@@ -1561,7 +1746,7 @@ app.patch(
 );
 
 /* =========================================================
-   ADMIN - PRODUCT DELETE
+   ADMIN PRODUCT DELETE
 ========================================================= */
 
 app.delete(
@@ -1616,11 +1801,6 @@ app.delete(
         throw orderCountError;
       }
 
-      /*
-        Satılmış ürün tamamen silinmez.
-        Sipariş geçmişi bozulmasın diye pasif yapılır.
-      */
-
       if ((count || 0) > 0) {
         const {
           data,
@@ -1629,6 +1809,7 @@ app.delete(
           .from("products")
           .update({
             active: false,
+
             updated_at:
               new Date().toISOString()
           })
@@ -1645,7 +1826,9 @@ app.delete(
 
         return res.json({
           ok: true,
+
           deleted: false,
+
           disabled: true,
 
           message:
@@ -1672,10 +1855,13 @@ app.delete(
 
       res.json({
         ok: true,
+
         deleted: true,
+
         message:
           "Ürün silindi."
       });
+
     } catch (error) {
       console.error(
         "ADMIN PRODUCT DELETE ERROR:",
@@ -1795,12 +1981,17 @@ app.post(
         .from("users")
         .insert({
           name,
+
           email,
+
           password_hash:
             passwordData.hash,
+
           password_salt:
             passwordData.salt,
+
           balance: 0,
+
           is_admin: false
         })
         .select("*")
@@ -1820,6 +2011,7 @@ app.post(
         .from("sessions")
         .insert({
           token,
+
           user_id:
             user.id
         });
@@ -1834,11 +2026,22 @@ app.post(
       );
 
       return res.status(201).json({
+        ok: true,
+
         success: true,
+
+        authenticated: true,
+
         token,
+
+        is_admin: false,
+
+        isAdmin: false,
+
         user:
           publicUser(user)
       });
+
     } catch (error) {
       console.error(
         "REGISTER ERROR:",
@@ -1854,7 +2057,7 @@ app.post(
 );
 
 /* =========================================================
-   LOGIN
+   LOGIN USER
 ========================================================= */
 
 async function loginUser(
@@ -1869,40 +2072,95 @@ async function loginUser(
     )
   ) {
     return res.status(401).json({
+      ok: false,
+
+      success: false,
+
       error:
         "E-posta veya şifre hatalı."
     });
   }
 
+  /*
+    Yeni token oluştur.
+  */
+
   const token =
     createToken();
 
+  /*
+    Session oluştur.
+  */
+
   const {
-    error
+    data: session,
+    error:
+      sessionError
   } = await supabase
     .from("sessions")
     .insert({
       token,
+
       user_id:
         user.id
-    });
+    })
+    .select(
+      "token,user_id,created_at"
+    )
+    .single();
 
-  if (error) {
-    throw error;
+  if (sessionError) {
+    console.error(
+      "LOGIN SESSION INSERT ERROR:",
+      sessionError
+    );
+
+    throw sessionError;
   }
+
+  if (!session) {
+    throw new Error(
+      "Session oluşturulamadı."
+    );
+  }
+
+  /*
+    HttpOnly cookie.
+  */
 
   setSessionCookie(
     res,
     token
   );
 
-  return res.json({
+  /*
+    Hem eski frontend yapısına
+    hem yeni yapıya uygun response.
+  */
+
+  return res.status(200).json({
+    ok: true,
+
     success: true,
+
+    authenticated: true,
+
     token,
+
+    is_admin:
+      user.is_admin === true,
+
+    isAdmin:
+      user.is_admin === true,
+
     user:
       publicUser(user)
   });
 }
+
+/* =========================================================
+   LOGIN
+========================================================= */
 
 app.post(
   "/api/login",
@@ -1922,6 +2180,8 @@ app.post(
 
       if (!email || !password) {
         return res.status(400).json({
+          ok: false,
+
           error:
             "E-posta ve şifre zorunludur."
         });
@@ -1934,13 +2194,6 @@ app.post(
 
       /*
         DEMO HESABI
-
-        Eğer demo hesap daha önce yoksa
-        oluşturulur.
-
-        Burada admin yetkisi VERİLMEZ.
-        Gerçek admin hesabı Supabase'deki
-        is_admin=true üzerinden belirlenir.
       */
 
       if (
@@ -1984,11 +2237,16 @@ app.post(
           throw error;
         }
 
-        user = demo;
+        user =
+          demo;
       }
 
       if (!user) {
         return res.status(401).json({
+          ok: false,
+
+          success: false,
+
           error:
             "E-posta veya şifre hatalı."
         });
@@ -1999,6 +2257,7 @@ app.post(
         password,
         res
       );
+
     } catch (error) {
       console.error(
         "LOGIN ERROR:",
@@ -2006,6 +2265,8 @@ app.post(
       );
 
       res.status(500).json({
+        ok: false,
+
         error:
           "Giriş sırasında bir hata oluştu."
       });
@@ -2048,8 +2309,10 @@ app.post(
       );
 
       res.json({
+        ok: true,
         success: true
       });
+
     } catch (error) {
       console.error(
         "LOGOUT ERROR:",
@@ -2061,6 +2324,8 @@ app.post(
       );
 
       res.status(500).json({
+        ok: false,
+
         error:
           "Çıkış yapılamadı."
       });
@@ -2077,7 +2342,10 @@ app.get(
   requireAuth,
   async (req, res) => {
     res.json({
+      ok: true,
+
       authenticated: true,
+
       user:
         publicUser(
           req.user
@@ -2133,8 +2401,13 @@ app.get(
 
         isAdmin:
           req.user.is_admin ===
+          true,
+
+        is_admin:
+          req.user.is_admin ===
           true
       });
+
     } catch (error) {
       console.error(
         "ACCOUNT ERROR:",
@@ -2261,12 +2534,16 @@ app.post(
       }
 
       res.json({
+        ok: true,
+
         success: true,
+
         balance:
           money(
             updatedUser.balance
           )
       });
+
     } catch (error) {
       console.error(
         "TOPUP ERROR:",
@@ -2368,12 +2645,6 @@ app.post(
           balance -
             total
         );
-
-      /*
-        Optimistic balance update.
-        Aynı anda başka işlem yapılırsa
-        bakiye eşleşmez ve işlem iptal edilir.
-      */
 
       const {
         data: updatedUser,
@@ -2496,6 +2767,8 @@ app.post(
       }
 
       res.json({
+        ok: true,
+
         success: true,
 
         order:
@@ -2506,6 +2779,7 @@ app.post(
             updatedUser.balance
           )
       });
+
     } catch (error) {
       console.error(
         "ORDER ERROR:",
@@ -2542,7 +2816,8 @@ app.get(
         .order(
           "created_at",
           {
-            ascending: false
+            ascending:
+              false
           }
         );
 
@@ -2555,6 +2830,7 @@ app.get(
           formatOrder
         )
       );
+
     } catch (error) {
       console.error(
         "ORDERS ERROR:",
@@ -2628,6 +2904,7 @@ app.get(
       res.json(
         formatOrder(order)
       );
+
     } catch (error) {
       console.error(
         "SINGLE ORDER ERROR:",
@@ -2664,7 +2941,8 @@ app.get(
         .order(
           "created_at",
           {
-            ascending: false
+            ascending:
+              false
           }
         );
 
@@ -2694,6 +2972,7 @@ app.get(
           })
         )
       );
+
     } catch (error) {
       console.error(
         "TRANSACTIONS ERROR:",
@@ -2749,10 +3028,14 @@ app.put(
       }
 
       res.json({
+        ok: true,
+
         success: true,
+
         user:
           publicUser(user)
       });
+
     } catch (error) {
       console.error(
         "ACCOUNT UPDATE ERROR:",
@@ -2867,10 +3150,14 @@ app.post(
       }
 
       res.json({
+        ok: true,
+
         success: true,
+
         message:
           "Şifre değiştirildi."
       });
+
     } catch (error) {
       console.error(
         "PASSWORD UPDATE ERROR:",
@@ -3088,6 +3375,7 @@ app.get(
             totalDebits
           )
       });
+
     } catch (error) {
       console.error(
         "ADMIN DASHBOARD ERROR:",
@@ -3150,9 +3438,11 @@ app.get(
 
       res.json({
         ok: true,
+
         users:
           data || []
       });
+
     } catch (error) {
       console.error(
         "ADMIN USERS ERROR:",
@@ -3214,9 +3504,11 @@ app.get(
 
       res.json({
         ok: true,
+
         orders:
           data || []
       });
+
     } catch (error) {
       console.error(
         "ADMIN ORDERS ERROR:",
@@ -3390,9 +3682,11 @@ app.post(
 
       res.json({
         ok: true,
+
         user:
           updatedUser
       });
+
     } catch (error) {
       console.error(
         "ADMIN BALANCE ERROR:",
@@ -3471,9 +3765,11 @@ app.patch(
 
       res.json({
         ok: true,
+
         order:
           data
       });
+
     } catch (error) {
       console.error(
         "ADMIN ORDER UPDATE ERROR:",
@@ -3530,9 +3826,11 @@ app.get(
 
       res.json({
         ok: true,
+
         transactions:
           data || []
       });
+
     } catch (error) {
       console.error(
         "ADMIN TRANSACTIONS ERROR:",
@@ -3542,6 +3840,145 @@ app.get(
       res.status(500).json({
         error:
           "İşlemler alınamadı."
+      });
+    }
+  }
+);
+
+/* =========================================================
+   SESSION TEST / DEBUG
+========================================================= */
+
+app.get(
+  "/api/session/status",
+  async (req, res) => {
+    try {
+      const token =
+        getTokenFromRequest(req);
+
+      if (!token) {
+        return res.status(401).json({
+          ok: false,
+
+          authenticated: false,
+
+          tokenReceived: false,
+
+          message:
+            "Token bulunamadı."
+        });
+      }
+
+      const {
+        data: session,
+        error
+      } = await supabase
+        .from("sessions")
+        .select(
+          "token,user_id,created_at"
+        )
+        .eq(
+          "token",
+          token
+        )
+        .maybeSingle();
+
+      if (error) {
+        return res.status(500).json({
+          ok: false,
+
+          authenticated: false,
+
+          tokenReceived: true,
+
+          error:
+            error.message
+        });
+      }
+
+      if (!session) {
+        return res.status(401).json({
+          ok: false,
+
+          authenticated: false,
+
+          tokenReceived: true,
+
+          sessionFound: false,
+
+          tokenLength:
+            token.length,
+
+          message:
+            "Token var ancak sessions tablosunda yok."
+        });
+      }
+
+      const user =
+        await findUserById(
+          session.user_id
+        );
+
+      if (!user) {
+        return res.status(401).json({
+          ok: false,
+
+          authenticated: false,
+
+          tokenReceived: true,
+
+          sessionFound: true,
+
+          userFound: false
+        });
+      }
+
+      return res.json({
+        ok: true,
+
+        authenticated: true,
+
+        tokenReceived: true,
+
+        sessionFound: true,
+
+        userFound: true,
+
+        is_admin:
+          user.is_admin === true,
+
+        isAdmin:
+          user.is_admin === true,
+
+        user: {
+          id:
+            user.id,
+
+          name:
+            user.name,
+
+          email:
+            user.email,
+
+          is_admin:
+            user.is_admin === true,
+
+          isAdmin:
+            user.is_admin === true
+        }
+      });
+
+    } catch (error) {
+      console.error(
+        "SESSION STATUS ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        ok: false,
+
+        error:
+          "Session kontrolü başarısız."
       });
     }
   }
@@ -3586,6 +4023,7 @@ app.get(
         database:
           "Supabase bağlı"
       });
+
     } catch (error) {
       res.status(500).json({
         ok: false,
@@ -3680,6 +4118,7 @@ app.use(
     ) {
       return res.status(404).json({
         ok: false,
+
         error:
           "API adresi bulunamadı."
       });
@@ -3697,8 +4136,11 @@ app.use(
   (req, res) => {
     res.status(404).send(`
 <!doctype html>
+
 <html lang="tr">
+
 <head>
+
 <meta charset="UTF-8">
 
 <meta
@@ -3719,17 +4161,26 @@ body{
   min-height:100vh;
   display:grid;
   place-items:center;
+
   background:#070a0f;
   color:#fff;
-  font-family:Inter,Arial,sans-serif;
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
 }
 
 .box{
   width:min(500px,92%);
+
   text-align:center;
+
   padding:45px;
 
-  border:1px solid #1d2835;
+  border:
+    1px solid #1d2835;
+
   border-radius:22px;
 
   background:#0d131b;
@@ -3740,7 +4191,8 @@ body{
 }
 
 h1{
-  margin:0 0 12px;
+  margin:
+    0 0 12px;
 }
 
 p{
@@ -3749,15 +4201,20 @@ p{
 
 a{
   display:inline-block;
+
   margin-top:20px;
-  padding:13px 22px;
+
+  padding:
+    13px 22px;
 
   border-radius:10px;
 
   background:#1677ff;
+
   color:#fff;
 
   text-decoration:none;
+
   font-weight:800;
 }
 
@@ -3791,7 +4248,7 @@ Ana Sayfaya Dön
 );
 
 /* =========================================================
-   SUNUCUYU BAŞLAT
+   SERVER START
 ========================================================= */
 
 async function startServer() {
@@ -3802,39 +4259,59 @@ async function startServer() {
       PORT,
       () => {
         console.log("");
+
         console.log(
           "================================="
         );
+
         console.log(
           " PanelMarket çalışıyor"
         );
+
         console.log(
           ` Port: ${PORT}`
         );
+
         console.log(
           " Supabase: BAĞLI"
         );
+
         console.log(
           " Session sistemi: AKTİF"
         );
+
         console.log(
           " Admin doğrulama: AKTİF"
         );
+
+        console.log(
+          " Cookie auth: AKTİF"
+        );
+
+        console.log(
+          " Bearer auth: AKTİF"
+        );
+
         console.log(
           " Ürün sistemi: AKTİF"
         );
+
         console.log(
           " Sipariş sistemi: AKTİF"
         );
+
         console.log(
           " Bakiye sistemi: AKTİF"
         );
+
         console.log(
           "================================="
         );
+
         console.log("");
       }
     );
+
   } catch (error) {
     console.error(
       "SERVER START ERROR:",
