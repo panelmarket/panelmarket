@@ -211,23 +211,83 @@ async function loginUser(user,password,res){
   console.log("LOGIN: Session oluşturuldu:",session.user_id,"ADMIN:",user.is_admin===true);
   return res.status(200).json({ok:true,success:true,authenticated:true,token,is_admin:user.is_admin===true,isAdmin:user.is_admin===true,user:publicUser(user)});
 }
-app.post("/api/login",async(req,res)=>{
-  try{
-    const email=String(req.body.email||"").trim().toLowerCase(), password=String(req.body.password||"");
-    if(!email||!password)return res.status(400).json({ok:false,success:false,error:"E-posta ve şifre zorunludur."});
-    let user=await findUserByEmail(email);
-    if(!user&&email==="demo@panelmarket.com"){
-      const pw=hashPassword("12345678");
-      const {data:demo,error}=await supabase.from("users").insert({name:"Demo Kullanıcı",email,password_hash:pw.hash,password_salt:pw.salt,balance:5000,is_admin:true}).select("*").single();
-      if(error) throw error; user=demo;
+
+app.post("/api/login", async (req, res) => {
+  try {
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
+
+    const password = String(req.body.password || "");
+
+    if (!email || !password) {
+      return res.status(400).json({
+        ok: false,
+        success: false,
+        authenticated: false,
+        error: "E-posta ve şifre zorunludur."
+      });
     }
-    if(user&&email==="demo@panelmarket.com"&&user.is_admin!==true){
-      const {data:updated,error}=await supabase.from("users").update({is_admin:true}).eq("id",user.id).select("*").single();
-      if(error) throw error; user=updated;
+
+    const user = await findUserByEmail(email);
+
+    console.log("LOGIN DEBUG:", {
+      email,
+      userFound: !!user,
+      userId: user?.id || null,
+      hasPasswordHash: !!user?.password_hash,
+      hasPasswordSalt: !!user?.password_salt,
+      hashLength: user?.password_hash?.length || 0,
+      saltLength: user?.password_salt?.length || 0
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        ok: false,
+        success: false,
+        authenticated: false,
+        error: "E-posta veya şifre hatalı."
+      });
     }
-    if(!user||!verifyPassword(password,user))return res.status(401).json({ok:false,success:false,authenticated:false,error:"E-posta veya şifre hatalı."});
-    return await loginUser(user,password,res);
-  }catch(e){console.error("LOGIN ERROR:",e);res.status(500).json({ok:false,success:false,error:"Giriş sırasında bir hata oluştu."});}
+
+    const passwordCorrect =
+      verifyPassword(password, user);
+
+    console.log(
+      "LOGIN PASSWORD CHECK:",
+      passwordCorrect
+    );
+
+    if (!passwordCorrect) {
+      return res.status(401).json({
+        ok: false,
+        success: false,
+        authenticated: false,
+        error: "E-posta veya şifre hatalı."
+      });
+    }
+
+    return await loginUser(
+      user,
+      password,
+      res
+    );
+
+  } catch (e) {
+
+    console.error(
+      "LOGIN ERROR:",
+      e
+    );
+
+    return res.status(500).json({
+      ok: false,
+      success: false,
+      authenticated: false,
+      error: "Giriş sırasında bir hata oluştu.",
+      databaseError: e?.message || null
+    });
+  }
 });
 
 /* ADMIN LOGIN */
