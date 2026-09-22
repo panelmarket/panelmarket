@@ -173,17 +173,38 @@ async function findUserById(id) {
 
 async function getSessionFromRequest(req) {
   const token = getTokenFromRequest(req);
-  if (!token) return null;
+
+  if (!token) {
+    return null;
+  }
+
   try {
-    const { data: session, error } = await supabase.from("sessions").select("token,user_id,created_at").eq("token", token).maybeSingle();
-    if (error) { console.error("SESSION QUERY ERROR:", error.message); return null; }
-    if (!session) return null;
-    const user = await findUserById(session.user_id);
-    if (!user) {
-      await supabase.from("sessions").delete().eq("token", token);
+    const decoded = verifySecureToken(token);
+
+    if (!decoded || !decoded.userId) {
+      console.error("SESSION TOKEN GEÇERSİZ");
       return null;
     }
-    return { token, session, user };
+
+    const user = await findUserById(decoded.userId);
+
+    if (!user) {
+      console.error("SESSION USER BULUNAMADI:", decoded.userId);
+      return null;
+    }
+
+    return {
+      token,
+      session: {
+        token,
+        user_id: user.id,
+        created_at: new Date(
+          decoded.createdAt || Date.now()
+        ).toISOString()
+      },
+      user
+    };
+
   } catch (error) {
     console.error("SESSION CHECK ERROR:", error);
     return null;
@@ -259,14 +280,48 @@ app.post("/api/register", async (req,res) => {
 });
 
 async function loginUser(user, password, res) {
-  if (!verifyPassword(password,user)) return res.status(401).json({ ok:false, success:false, authenticated:false, error:"E-posta veya şifre hatalı." });
-  const token = createToken();
-  const { data:session, error } = await supabase.from("sessions").insert({ token,user_id:user.id }).select("token,user_id,created_at").single();
-  if (error) { console.error("LOGIN SESSION INSERT ERROR:", error); throw error; }
-  if (!session) throw new Error("Session oluşturulamadı.");
-  console.log("LOGIN: Session başarıyla oluşturuldu. user_id:", session.user_id);
-  setSessionCookie(res, token);
-  return res.status(200).json({ ok:true, success:true, authenticated:true, token, is_admin:user.is_admin === true, isAdmin:user.is_admin === true, user:publicUser(user) });
+  try {
+    if (!verifyPassword(password, user)) {
+      return res.status(401).json({
+        ok: false,
+        success: false,
+        authenticated: false,
+        error: "E-posta veya şifre hatalı."
+      });
+    }
+
+    const token = createSecureToken(user.id);
+
+    setSessionCookie(res, token);
+
+    console.log(
+      "LOGIN BAŞARILI:",
+      user.email,
+      "ADMIN:",
+      user.is_admin === true
+    );
+
+    return res.status(200).json({
+      ok: true,
+      success: true,
+      authenticated: true,
+      token,
+      is_admin: user.is_admin === true,
+      isAdmin: user.is_admin === true,
+      user: publicUser(user)
+    });
+
+  } catch (error) {
+    console.error("LOGIN USER ERROR:", error);
+
+    return res.status(500).json({
+      ok: false,
+      success: false,
+      authenticated: false,
+      error: "Giriş sırasında bir hata oluştu.",
+      detail: error.message
+    });
+  }
 }
 
 app.post("/api/login", async (req,res) => {
@@ -317,19 +372,29 @@ app.post("/api/admin/login",async(req,res)=>{
   }catch(error){console.error("ADMIN LOGIN ERROR:",error);return res.status(500).json({ok:false,success:false,error:"Admin girişi sırasında sunucu hatası oluştu."});}
 });
 
-app.post("/api/logout", async (req,res) => {
+app.post("/api/logout", async (req, res) => {
   try {
-    const token = getTokenFromRequest(req);
-    if (token) {
-      const { error } = await supabase.from("sessions").delete().eq("token",token);
-      if (error) console.error("LOGOUT SESSION ERROR:",error.message);
-    }
+    // Artık sessions tablosuna ihtiyaç yok.
+    // Güvenli token sadece cookie'den temizleniyor.
+
     clearSessionCookie(res);
-    res.json({ ok:true, success:true });
+
+    return res.status(200).json({
+      ok: true,
+      success: true,
+      authenticated: false
+    });
+
   } catch (error) {
-    console.error("LOGOUT ERROR:",error);
+    console.error("LOGOUT ERROR:", error);
+
     clearSessionCookie(res);
-    res.status(500).json({ ok:false, error:"Çıkış yapılamadı." });
+
+    return res.status(500).json({
+      ok: false,
+      success: false,
+      error: "Çıkış yapılamadı."
+    });
   }
 });
 
