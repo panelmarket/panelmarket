@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
@@ -366,6 +367,7 @@ footer{
     }
 }
 </style>
+
 </head>
 
 <body>
@@ -388,21 +390,18 @@ footer{
 <div class="header-buttons">
 
 <a href="/login.html"
-   class="header-btn login-link">
-   GİRİŞ YAP
-</a>
+class="header-btn login-link">
+GİRİŞ YAP </a>
 
 <a href="/register.html"
-   class="header-btn register">
-   KAYIT OL
-</a>
+class="header-btn register">
+KAYIT OL </a>
 
 </div>
 
 </div>
 
 </header>
-
 
 <main class="main">
 
@@ -425,11 +424,9 @@ PanelMarket hesabınıza giriş yaparak
 
 </div>
 
-
 <form class="form" id="loginForm">
 
 <div id="message" class="message"></div>
-
 
 <div class="form-group">
 
@@ -438,16 +435,16 @@ E-POSTA
 </label>
 
 <input
-    id="email"
-    class="input"
-    type="email"
-    autocomplete="email"
-    placeholder="ornek@email.com"
-    required
+id="email"
+class="input"
+type="email"
+autocomplete="email"
+placeholder="[ornek@email.com](mailto:ornek@email.com)"
+required
+
 >
 
 </div>
-
 
 <div class="form-group">
 
@@ -458,33 +455,33 @@ E-POSTA
 <div class="password-box">
 
 <input
-    id="password"
-    class="input"
-    type="password"
-    autocomplete="current-password"
-    placeholder="Şifrenizi girin"
-    required
+id="password"
+class="input"
+type="password"
+autocomplete="current-password"
+placeholder="Şifrenizi girin"
+required
+
 >
 
 <button
-    type="button"
-    class="show-password"
-    id="showPassword">
-    GÖSTER
-</button>
+ type="button"
+ class="show-password"
+ id="showPassword">
+GÖSTER </button>
 
 </div>
 
 </div>
-
 
 <div class="options">
 
 <label class="remember">
 
 <input
-    type="checkbox"
-    id="remember"
+type="checkbox"
+id="remember"
+
 >
 
 <span>Beni hatırla</span>
@@ -497,18 +494,16 @@ E-POSTA
 
 </div>
 
-
 <button
-    type="submit"
-    class="login-button"
-    id="loginButton">
+ type="submit"
+ class="login-button"
+ id="loginButton">
 
 GİRİŞ YAP
 
 </button>
 
 </form>
-
 
 <div class="register-area">
 
@@ -520,7 +515,6 @@ Hemen kayıt olun
 
 </div>
 
-
 <div class="security">
 🔒 Hesabınız güvenli bağlantı üzerinden korunmaktadır.
 </div>
@@ -531,17 +525,11 @@ Hemen kayıt olun
 
 </main>
 
-
 <footer>
 © 2026 PanelMarket — Güvenli yazılım alışverişi
 </footer>
 
-
 <script>
-
-/* =========================================================
-   PANELMARKET LOGIN
-========================================================= */
 
 const form =
     document.getElementById("loginForm");
@@ -655,9 +643,9 @@ async function(e){
 
     try{
 
-        /* ================================================
-           1. NORMAL LOGIN
-        ================================================ */
+        /* =================================================
+           NORMAL KULLANICI LOGIN
+        ================================================= */
 
         const response =
             await fetch("/api/login",{
@@ -666,10 +654,14 @@ async function(e){
 
                 headers:{
                     "Content-Type":
+                        "application/json",
+                    "Accept":
                         "application/json"
                 },
 
                 credentials:"include",
+
+                cache:"no-store",
 
                 body:JSON.stringify({
 
@@ -707,9 +699,9 @@ async function(e){
         }
 
 
-        /* ================================================
-           2. TOKEN KAYDET
-        ================================================ */
+        /* =================================================
+           TOKEN KAYDET
+        ================================================= */
 
         if(data.token){
 
@@ -721,9 +713,9 @@ async function(e){
         }
 
 
-        /* ================================================
-           3. KULLANICI BİLGİSİNİ KAYDET
-        ================================================ */
+        /* =================================================
+           KULLANICI BİLGİSİNİ KAYDET
+        ================================================= */
 
         if(data.user){
 
@@ -735,9 +727,9 @@ async function(e){
         }
 
 
-        /* ================================================
-           4. BENİ HATIRLA
-        ================================================ */
+        /* =================================================
+           BENİ HATIRLA
+        ================================================= */
 
         if(remember.checked){
 
@@ -755,113 +747,26 @@ async function(e){
         }
 
 
-        /* ================================================
-           5. ADMIN KONTROLÜ
+        /* =================================================
+           ADMIN KONTROLÜ
            
-           Login cevabına güvenmek yerine
-           server'daki /api/admin/me endpointini
-           kontrol ediyoruz.
-        ================================================ */
+           Burada /api/admin/me çağrılmıyor.
+           Normal kullanıcı admin değilse hata vermeyecek.
+           
+           Login API'sinden gelen is_admin bilgisi varsa
+           sadece yönlendirme amacıyla kullanılır.
+        ================================================= */
 
-        let isAdmin = false;
-
-
-        if(data.token){
-
-            try{
-
-                const adminResponse =
-                    await fetch(
-                        "/api/admin/me",
-                        {
-                            method:"GET",
-
-                            headers:{
-                                "Authorization":
-                                    "Bearer " +
-                                    data.token
-                            },
-
-                            credentials:"include"
-                        }
-                    );
+        const isAdmin =
+            data.is_admin === true ||
+            data.isAdmin === true ||
+            data.user?.is_admin === true ||
+            data.user?.isAdmin === true;
 
 
-               if(adminResponse.ok){
-
-    const adminData =
-        await adminResponse.json();
-
-    console.log("ADMIN ME CEVABI:", adminData);
-
-    const adminUser =
-        adminData.user ||
-        adminData.admin ||
-        adminData;
-
-    isAdmin =
-        adminData.is_admin === true ||
-        adminData.isAdmin === true ||
-        adminUser.is_admin === true ||
-        adminUser.isAdmin === true;
-
-}else{
-
-    let adminError = {};
-
-    try{
-        adminError =
-            await adminResponse.json();
-    }catch(e){}
-
-    console.error(
-        "ADMIN ME HATASI:",
-        adminResponse.status,
-        adminError
-    );
-
-    if(adminResponse.status === 403){
-
-        showMessage(
-            "Bu hesap admin olarak tanımlanmamış.",
-            "error"
-        );
-
-        button.disabled = false;
-        button.textContent = "GİRİŞ YAP";
-
-        return;
-
-    }
-
-    if(adminResponse.status === 401){
-
-        console.error(
-            "Token geçersiz veya oturum bulunamadı."
-        );
-
-    }
-
-    isAdmin = false;
-}
-
-            }catch(adminError){
-
-                console.log(
-                    "Admin kontrolü:",
-                    adminError
-                );
-
-                isAdmin = false;
-
-            }
-
-        }
-
-
-        /* ================================================
-           6. YÖNLENDİRME
-        ================================================ */
+        /* =================================================
+           YÖNLENDİRME
+        ================================================= */
 
         if(isAdmin){
 
@@ -872,8 +777,9 @@ async function(e){
 
             setTimeout(function(){
 
-                window.location.href =
-                    "/admin.html";
+                window.location.replace(
+                    "/admin.html"
+                );
 
             },500);
 
@@ -886,8 +792,9 @@ async function(e){
 
             setTimeout(function(){
 
-                window.location.href =
-                    "/index.html";
+                window.location.replace(
+                    "/index.html"
+                );
 
             },500);
 
