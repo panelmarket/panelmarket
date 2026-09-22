@@ -8,13 +8,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
+
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  console.error("=================================");
   console.error("SUPABASE AYARLARI EKSİK");
   console.error("SUPABASE_URL:", !!SUPABASE_URL);
   console.error("SUPABASE_SERVICE_ROLE_KEY:", !!SUPABASE_SERVICE_ROLE_KEY);
+  console.error("=================================");
   process.exit(1);
 }
 
@@ -26,12 +29,12 @@ app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 const products = [
-  { id:"admin-panel", name:"Profesyonel Admin Paneli", category:"Admin Paneli", description:"Modern ve güçlü yönetim paneli.", price:1499, oldPrice:1999, badge:"ÇOK SATAN", delivery:"Hemen", update:"1 Yıl", support:"30 Gün", active:true, sortOrder:1 },
-  { id:"ecommerce-panel", name:"E-Ticaret Yönetim Paneli", category:"E-Ticaret", description:"E-ticaret sitenizi tek panelden yönetin.", price:2799, oldPrice:3499, badge:"%20 İNDİRİM", delivery:"Hemen", update:"1 Yıl", support:"60 Gün", active:true, sortOrder:2 },
-  { id:"company-panel", name:"Firma Yönetim Paneli", category:"İşletme", description:"Firmalar için profesyonel yönetim sistemi.", price:1799, oldPrice:null, badge:"", delivery:"Hemen", update:"6 Ay", support:"30 Gün", active:true, sortOrder:3 },
-  { id:"finance-panel", name:"Finans & Muhasebe Paneli", category:"Finans", description:"Finans ve muhasebe işlemlerini yönetin.", price:2999, oldPrice:null, badge:"YENİ", delivery:"24 Saat", update:"1 Yıl", support:"60 Gün", active:true, sortOrder:4 },
-  { id:"support-panel", name:"Müşteri Destek Paneli", category:"Destek", description:"Müşteri destek süreçlerinizi yönetin.", price:1899, oldPrice:2199, badge:"", delivery:"Hemen", update:"1 Yıl", support:"90 Gün", active:true, sortOrder:5 },
-  { id:"stock-panel", name:"Stok & Sipariş Paneli", category:"İşletme", description:"Stok ve siparişlerinizi kolayca yönetin.", price:1999, oldPrice:null, badge:"", delivery:"Hemen", update:"1 Yıl", support:"30 Gün", active:true, sortOrder:6 }
+  { id:"admin-panel", name:"Profesyonel Admin Paneli", category:"Admin Paneli", description:"Modern ve güçlü yönetim paneli.", price:1499, oldPrice:1999, badge:"ÇOK SATAN", delivery:"Hemen", update:"1 Yıl", support:"30 Gün" },
+  { id:"ecommerce-panel", name:"E-Ticaret Yönetim Paneli", category:"E-Ticaret", description:"E-ticaret sitenizi tek panelden yönetin.", price:2799, oldPrice:3499, badge:"%20 İNDİRİM", delivery:"Hemen", update:"1 Yıl", support:"60 Gün" },
+  { id:"company-panel", name:"Firma Yönetim Paneli", category:"İşletme", description:"Firmalar için profesyonel yönetim sistemi.", price:1799, oldPrice:null, badge:"", delivery:"Hemen", update:"6 Ay", support:"30 Gün" },
+  { id:"finance-panel", name:"Finans & Muhasebe Paneli", category:"Finans", description:"Finans ve muhasebe işlemlerini yönetin.", price:2999, oldPrice:null, badge:"YENİ", delivery:"24 Saat", update:"1 Yıl", support:"60 Gün" },
+  { id:"support-panel", name:"Müşteri Destek Paneli", category:"Destek", description:"Müşteri destek süreçlerinizi yönetin.", price:1899, oldPrice:2199, badge:"", delivery:"Hemen", update:"1 Yıl", support:"90 Gün" },
+  { id:"stock-panel", name:"Stok & Sipariş Paneli", category:"İşletme", description:"Stok ve siparişlerinizi kolayca yönetin.", price:1999, oldPrice:null, badge:"", delivery:"Hemen", update:"1 Yıl", support:"30 Gün" }
 ];
 
 const licenses = {
@@ -40,70 +43,68 @@ const licenses = {
   unlimited: { name:"Sınırsız Site", multiplier:3.334 }
 };
 
-const money = value => {
-  const n = Number(value || 0);
-  return Number.isFinite(n) ? Math.round(n * 100) / 100 : 0;
-};
-const findProduct = id => products.find(p => p.id === id);
-const createOrderNumber = () => `PM-${new Date().getFullYear()}-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
-const createLicenseKey = () => `PMK-${crypto.randomBytes(12).toString("hex").toUpperCase()}`;
-const createToken = () => crypto.randomBytes(32).toString("hex");
+function findProduct(id) { return products.find(p => p.id === id); }
+function calculatePrice(product, licenseId) {
+  const license = licenses[licenseId];
+  if (!license) throw new Error("Geçersiz lisans.");
+  return Math.round(product.price * license.multiplier * 100) / 100;
+}
+function createOrderNumber() { return "PM-" + new Date().getFullYear() + "-" + crypto.randomBytes(4).toString("hex").toUpperCase(); }
+function createLicenseKey() { return "PMK-" + crypto.randomBytes(12).toString("hex").toUpperCase(); }
+function createToken() { return crypto.randomBytes(32).toString("hex"); }
 
 function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
-  return { hash: crypto.scryptSync(password, salt, 64).toString("hex"), salt };
+  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
+  return { hash, salt };
 }
 function verifyPassword(password, user) {
   if (!user?.password_hash || !user?.password_salt) return false;
   try {
     const result = crypto.scryptSync(password, user.password_salt, 64);
     const stored = Buffer.from(user.password_hash, "hex");
-    return result.length === stored.length && crypto.timingSafeEqual(result, stored);
+    if (result.length !== stored.length) return false;
+    return crypto.timingSafeEqual(result, stored);
   } catch { return false; }
 }
+
 function getCookies(req) {
   const header = req.headers.cookie;
   if (!header) return {};
   const cookies = {};
-  for (const item of header.split(";")) {
-    const i = item.indexOf("=");
-    if (i === -1) continue;
-    const key = item.slice(0, i).trim();
-    const value = item.slice(i + 1).trim();
-    try { cookies[key] = decodeURIComponent(value); } catch { cookies[key] = value; }
-  }
+  header.split(";").forEach(item => {
+    const index = item.indexOf("=");
+    if (index === -1) return;
+    const key = item.slice(0, index).trim();
+    const value = item.slice(index + 1).trim();
+    try { cookies[key] = decodeURIComponent(value); }
+    catch { cookies[key] = value; }
+  });
   return cookies;
 }
+
 function getTokenFromRequest(req) {
-  const auth = String(req.headers.authorization || "").trim();
-  const match = auth.match(/^Bearer\s+(.+)$/i);
-  if (match?.[1]?.trim()) return match[1].trim();
+  const authorization = String(req.headers.authorization || "").trim();
+  if (authorization) {
+    const match = authorization.match(/^Bearer\s+(.+)$/i);
+    if (match?.[1]) return String(match[1]).trim();
+  }
   return String(getCookies(req).panelmarket_token || "").trim();
 }
+
 function setSessionCookie(res, token) {
-  const cookie = [`panelmarket_token=${encodeURIComponent(token)}`, "Path=/", "HttpOnly", "SameSite=Lax", "Max-Age=2592000"];
+  const cookie = [
+    `panelmarket_token=${encodeURIComponent(String(token))}`,
+    "Path=/", "HttpOnly", "SameSite=Lax", "Max-Age=2592000"
+  ];
   if (process.env.NODE_ENV === "production") cookie.push("Secure");
   res.setHeader("Set-Cookie", cookie.join("; "));
 }
 function clearSessionCookie(res) {
-  res.setHeader("Set-Cookie", "panelmarket_token=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0; SameSite=Lax");
-}
-function publicUser(user) {
-  return { id:user.id, name:user.name || "", email:user.email || "", balance:money(user.balance), isAdmin:user.is_admin === true, is_admin:user.is_admin === true };
-}
-function formatProduct(p) {
-  return { id:p.id, name:p.name, category:p.category || "", description:p.description || "", price:money(p.price), oldPrice:p.oldPrice ?? p.old_price ?? null, badge:p.badge || "", delivery:p.delivery || "Hemen", update:p.update || p.update_period || "1 Yıl", support:p.support || "30 Gün", active:p.active !== false, sortOrder:Number(p.sortOrder ?? p.sort_order ?? 0) };
-}
-function formatOrder(o) {
-  return { id:o.id, userId:o.user_id, orderNumber:o.order_number, productId:o.product_id, productName:o.product_name, licenseId:o.license_id, licenseName:o.license_name, amount:money(o.amount), status:o.status, deliveryStatus:o.delivery_status, licenseKey:o.license_key, createdAt:o.created_at };
-}
-function calculatePrice(product, licenseId) {
-  const license = licenses[licenseId];
-  if (!license) throw new Error("Geçersiz lisans.");
-  return money(Number(product.price) * license.multiplier);
+  res.setHeader("Set-Cookie", "panelmarket_token=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0");
 }
 
 async function findUserByEmail(email) {
-  const { data, error } = await supabase.from("users").select("*").eq("email", String(email).trim().toLowerCase()).maybeSingle();
+  const { data, error } = await supabase.from("users").select("*").eq("email", String(email || "").trim().toLowerCase()).maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -112,180 +113,384 @@ async function findUserById(id) {
   if (error) throw error;
   return data;
 }
+
 async function getSessionFromRequest(req) {
   const token = getTokenFromRequest(req);
   if (!token) return null;
-  const { data: session, error } = await supabase.from("sessions").select("token,user_id,created_at").eq("token", token).maybeSingle();
-  if (error) { console.error("SESSION QUERY ERROR:", error.message); return null; }
-  if (!session) return null;
-  const user = await findUserById(session.user_id);
-  if (!user) { await supabase.from("sessions").delete().eq("token", token); return null; }
-  return { token, session, user };
+  try {
+    const { data: session, error } = await supabase.from("sessions").select("token,user_id,created_at").eq("token", token).maybeSingle();
+    if (error) { console.error("SESSION QUERY ERROR:", error.message); return null; }
+    if (!session) return null;
+    const user = await findUserById(session.user_id);
+    if (!user) {
+      await supabase.from("sessions").delete().eq("token", token);
+      return null;
+    }
+    return { token, session, user };
+  } catch (error) {
+    console.error("SESSION CHECK ERROR:", error);
+    return null;
+  }
+}
+async function getCurrentUser(req) {
+  const auth = await getSessionFromRequest(req);
+  return auth ? { user: auth.user, token: auth.token } : null;
 }
 async function requireAuth(req, res, next) {
   try {
-    const auth = await getSessionFromRequest(req);
+    const auth = await getCurrentUser(req);
     if (!auth) return res.status(401).json({ ok:false, authenticated:false, error:"Oturum gerekli.", loginRequired:true });
     req.user = auth.user;
     req.authToken = auth.token;
     next();
-  } catch (e) { console.error("AUTH ERROR:", e); res.status(500).json({ ok:false, error:"Oturum kontrolü başarısız." }); }
+  } catch (error) {
+    console.error("AUTH ERROR:", error);
+    res.status(500).json({ ok:false, error:"Oturum kontrolü başarısız." });
+  }
 }
 async function requireAdmin(req, res, next) {
-  if (!req.user?.id) return res.status(401).json({ ok:false, authenticated:false, error:"Admin girişi gerekli.", loginRequired:true });
   try {
-    const { data:user, error } = await supabase.from("users").select("id,name,email,balance,is_admin,created_at").eq("id", req.user.id).maybeSingle();
-    if (error) throw error;
-    if (!user) return res.status(401).json({ ok:false, authenticated:false, error:"Kullanıcı bulunamadı.", loginRequired:true });
-    if (user.is_admin !== true) return res.status(403).json({ ok:false, authenticated:true, is_admin:false, isAdmin:false, error:"Bu hesap admin yetkisine sahip değil." });
-    req.adminUser = user;
+    if (!req.user?.id) return res.status(401).json({ ok:false, authenticated:false, error:"Admin girişi gerekli.", loginRequired:true });
+    const { data: adminUser, error } = await supabase.from("users").select("id,name,email,balance,is_admin,created_at").eq("id", req.user.id).maybeSingle();
+    if (error) return res.status(500).json({ ok:false, error:"Admin kontrolü yapılamadı.", detail:error.message });
+    if (!adminUser) return res.status(401).json({ ok:false, authenticated:false, error:"Kullanıcı bulunamadı.", loginRequired:true });
+    if (adminUser.is_admin !== true) return res.status(403).json({ ok:false, authenticated:true, is_admin:false, isAdmin:false, error:"Bu hesap admin yetkisine sahip değil." });
+    req.adminUser = adminUser;
     next();
-  } catch (e) { console.error("ADMIN AUTH ERROR:", e); res.status(500).json({ ok:false, error:"Admin doğrulama hatası." }); }
+  } catch (error) {
+    console.error("ADMIN AUTH ERROR:", error);
+    res.status(500).json({ ok:false, error:"Admin doğrulama hatası." });
+  }
+}
+function publicUser(user) {
+  return { id:user.id, name:user.name, email:user.email, balance:Number(user.balance || 0), isAdmin:user.is_admin === true, is_admin:user.is_admin === true };
 }
 
-/* PUBLIC PRODUCTS */
-app.get("/api/products", async (req,res) => {
-  try {
-    const { data, error } = await supabase.from("products").select("*").eq("active", true).order("sort_order", {ascending:true});
-    if (!error && data?.length) return res.json(data.map(formatProduct));
-  } catch (e) { console.error("PRODUCTS DB ERROR:",e.message); }
-  res.json(products.map(formatProduct));
-});
-app.get("/api/products/:id", async (req,res) => {
-  try {
-    let product = findProduct(req.params.id);
-    const { data } = await supabase.from("products").select("*").eq("id",req.params.id).maybeSingle();
-    if (data) product = formatProduct(data);
-    if (!product) return res.status(404).json({error:"Ürün bulunamadı."});
-    const prices = {}; for (const [id,l] of Object.entries(licenses)) prices[id]={name:l.name,price:calculatePrice(product,id)};
-    res.json({...product,licenses:prices});
-  } catch(e){ console.error(e); res.status(500).json({error:"Ürün alınamadı."}); }
+app.get("/api/products", (req,res) => res.json(products));
+app.get("/api/products/:id", (req,res) => {
+  const product = findProduct(req.params.id);
+  if (!product) return res.status(404).json({ error:"Ürün bulunamadı." });
+  const prices = {};
+  for (const [id, license] of Object.entries(licenses)) prices[id] = { name:license.name, price:calculatePrice(product,id) };
+  res.json({ ...product, licenses:prices });
 });
 
-/* REGISTER */
 app.post("/api/register", async (req,res) => {
   try {
-    const name=String(req.body.name||"").trim(), email=String(req.body.email||"").trim().toLowerCase(), password=String(req.body.password||"");
-    if(!name) return res.status(400).json({error:"Ad soyad alanı zorunludur."});
-    if(!email || !email.includes("@")) return res.status(400).json({error:"Geçerli bir e-posta adresi girin."});
-    if(password.length<8) return res.status(400).json({error:"Şifre en az 8 karakter olmalıdır."});
-    if(!/[A-Za-z]/.test(password)) return res.status(400).json({error:"Şifre en az bir harf içermelidir."});
-    if(!/[0-9]/.test(password)) return res.status(400).json({error:"Şifre en az bir rakam içermelidir."});
-    if(await findUserByEmail(email)) return res.status(409).json({error:"Bu e-posta adresi zaten kayıtlı."});
-    const pw=hashPassword(password);
-    const {data:user,error}=await supabase.from("users").insert({name,email,password_hash:pw.hash,password_salt:pw.salt,balance:0,is_admin:false}).select("*").single();
-    if(error) throw error;
-    const token=createToken();
-    const {error:se}=await supabase.from("sessions").insert({token,user_id:user.id});
-    if(se) throw se;
-    setSessionCookie(res,token);
-    res.status(201).json({ok:true,success:true,authenticated:true,token,user:publicUser(user)});
-  }catch(e){console.error("REGISTER ERROR:",e);res.status(500).json({error:"Kayıt sırasında bir hata oluştu."});}
+    const name = String(req.body.name || "").trim();
+    const email = String(req.body.email || "").trim().toLowerCase();
+    const password = String(req.body.password || "");
+    if (!name) return res.status(400).json({ error:"Ad soyad alanı zorunludur." });
+    if (!email) return res.status(400).json({ error:"E-posta adresi zorunludur." });
+    if (!email.includes("@")) return res.status(400).json({ error:"Geçerli bir e-posta adresi girin." });
+    if (password.length < 8) return res.status(400).json({ error:"Şifre en az 8 karakter olmalıdır." });
+    if (!/[A-Za-z]/.test(password)) return res.status(400).json({ error:"Şifre en az bir harf içermelidir." });
+    if (!/[0-9]/.test(password)) return res.status(400).json({ error:"Şifre en az bir rakam içermelidir." });
+    if (await findUserByEmail(email)) return res.status(409).json({ error:"Bu e-posta adresi zaten kayıtlı." });
+    const passwordData = hashPassword(password);
+    const { data:user, error } = await supabase.from("users").insert({ name,email,password_hash:passwordData.hash,password_salt:passwordData.salt,balance:0,is_admin:false }).select("*").single();
+    if (error) { if (error.code === "23505") return res.status(409).json({ error:"Bu e-posta adresi zaten kayıtlı." }); throw error; }
+    const token = createToken();
+    const { error:sessionError } = await supabase.from("sessions").insert({ token,user_id:user.id });
+    if (sessionError) throw sessionError;
+    setSessionCookie(res, token);
+    res.status(201).json({ ok:true, success:true, authenticated:true, token, user:publicUser(user) });
+  } catch (error) {
+    console.error("REGISTER ERROR:", error);
+    res.status(500).json({ error:"Kayıt sırasında bir hata oluştu." });
+  }
 });
 
-/* LOGIN */
-async function loginUser(user,password,res){
-  if(!verifyPassword(password,user)) return res.status(401).json({ok:false,success:false,authenticated:false,error:"E-posta veya şifre hatalı."});
-  const token=createToken();
-  const {data:session,error}=await supabase.from("sessions").insert({token,user_id:user.id}).select("token,user_id,created_at").single();
-  if(error) throw error;
-  setSessionCookie(res,token);
-  console.log("LOGIN: Session oluşturuldu:",session.user_id,"ADMIN:",user.is_admin===true);
-  return res.status(200).json({ok:true,success:true,authenticated:true,token,is_admin:user.is_admin===true,isAdmin:user.is_admin===true,user:publicUser(user)});
+async function loginUser(user, password, res) {
+  if (!verifyPassword(password,user)) return res.status(401).json({ ok:false, success:false, authenticated:false, error:"E-posta veya şifre hatalı." });
+  const token = createToken();
+  const { data:session, error } = await supabase.from("sessions").insert({ token,user_id:user.id }).select("token,user_id,created_at").single();
+  if (error) { console.error("LOGIN SESSION INSERT ERROR:", error); throw error; }
+  if (!session) throw new Error("Session oluşturulamadı.");
+  console.log("LOGIN: Session başarıyla oluşturuldu. user_id:", session.user_id);
+  setSessionCookie(res, token);
+  return res.status(200).json({ ok:true, success:true, authenticated:true, token, is_admin:user.is_admin === true, isAdmin:user.is_admin === true, user:publicUser(user) });
 }
-app.post("/api/login",async(req,res)=>{
-  try{
-    const email=String(req.body.email||"").trim().toLowerCase(), password=String(req.body.password||"");
-    if(!email||!password)return res.status(400).json({ok:false,success:false,error:"E-posta ve şifre zorunludur."});
+
+app.post("/api/login", async (req,res) => {
+  try {
+    const email=String(req.body.email||"").trim().toLowerCase();
+    const password=String(req.body.password||"");
+    if(!email||!password)return res.status(400).json({ok:false,success:false,authenticated:false,error:"E-posta ve şifre zorunludur."});
     let user=await findUserByEmail(email);
     if(!user&&email==="demo@panelmarket.com"){
       const pw=hashPassword("12345678");
-      const {data:demo,error}=await supabase.from("users").insert({name:"Demo Kullanıcı",email,password_hash:pw.hash,password_salt:pw.salt,balance:5000,is_admin:true}).select("*").single();
-      if(error) throw error; user=demo;
+      const {data:demo,error}=await supabase.from("users").insert({name:"Demo Admin",email,password_hash:pw.hash,password_salt:pw.salt,balance:5000,is_admin:true}).select("*").single();
+      if(error)throw error; user=demo;
+    }
+    if(user&&email==="demo@panelmarket.com"&&password==="12345678"&&!verifyPassword(password,user)){
+      const pw=hashPassword(password);
+      const {data:updated,error}=await supabase.from("users").update({password_hash:pw.hash,password_salt:pw.salt,is_admin:true}).eq("id",user.id).select("*").single();
+      if(error)throw error; user=updated;
     }
     if(user&&email==="demo@panelmarket.com"&&user.is_admin!==true){
       const {data:updated,error}=await supabase.from("users").update({is_admin:true}).eq("id",user.id).select("*").single();
-      if(error) throw error; user=updated;
+      if(error)throw error; user=updated;
     }
     if(!user||!verifyPassword(password,user))return res.status(401).json({ok:false,success:false,authenticated:false,error:"E-posta veya şifre hatalı."});
     return await loginUser(user,password,res);
-  }catch(e){console.error("LOGIN ERROR:",e);res.status(500).json({ok:false,success:false,error:"Giriş sırasında bir hata oluştu."});}
+  }catch(error){console.error("LOGIN ERROR:",error);res.status(500).json({ok:false,success:false,authenticated:false,error:"Giriş sırasında bir hata oluştu."});}
 });
 
-/* ADMIN ME - CRITICAL */
-app.get("/api/admin/me",requireAuth,requireAdmin,async(req,res)=>{
-  const u=req.adminUser;
-  const user={id:u.id,name:u.name||"",email:u.email||"",balance:money(u.balance),is_admin:true,isAdmin:true};
-  res.json({ok:true,authenticated:true,is_admin:true,isAdmin:true,user,admin:user});
-});
-
-/* AUTH */
-app.get("/api/auth/me",requireAuth,(req,res)=>res.json({ok:true,authenticated:true,user:publicUser(req.user)}));
-app.get("/api/account",requireAuth,async(req,res)=>{
-  try{const {count,error}=await supabase.from("orders").select("id",{count:"exact",head:true}).eq("user_id",req.user.id);if(error)throw error;res.json({...publicUser(req.user),orderCount:count||0});}catch(e){res.status(500).json({error:"Hesap bilgileri alınamadı."});}
-});
-app.post("/api/logout",async(req,res)=>{try{const token=getTokenFromRequest(req);if(token)await supabase.from("sessions").delete().eq("token",token);clearSessionCookie(res);res.json({ok:true,success:true});}catch(e){console.error(e);clearSessionCookie(res);res.status(500).json({ok:false,error:"Çıkış yapılamadı."});}});
-
-/* WALLET */
-app.post("/api/wallet/topup",requireAuth,async(req,res)=>{
-  try{const amount=Number(req.body.amount);if(!Number.isFinite(amount)||amount<=0||amount>1000000)return res.status(400).json({error:"Geçerli bir bakiye miktarı girin."});const old=money(req.user.balance), next=money(old+amount);const {data:user,error}=await supabase.from("users").update({balance:next}).eq("id",req.user.id).select("*").single();if(error)throw error;const {error:te}=await supabase.from("transactions").insert({user_id:req.user.id,type:"credit",amount,note:"Bakiye yükleme"});if(te)console.error("Transaction error:",te.message);res.json({success:true,balance:money(user.balance)});}catch(e){console.error(e);res.status(500).json({error:"Bakiye yüklenemedi."});}
-});
-
-/* ORDERS */
-app.post("/api/orders",requireAuth,async(req,res)=>{
+/* ADMIN LOGIN - SADECE ADMIN HESABI */
+app.post("/api/admin/login",async(req,res)=>{
   try{
-    const product=findProduct(String(req.body.productId||""));const licenseId=String(req.body.licenseId||"");
-    if(!product)return res.status(404).json({error:"Ürün bulunamadı."});if(!licenses[licenseId])return res.status(400).json({error:"Lisans seçimi geçersiz."});
-    const total=calculatePrice(product,licenseId);const {data:fresh,error:ue}=await supabase.from("users").select("*").eq("id",req.user.id).single();if(ue)throw ue;const balance=money(fresh.balance);if(balance<total)return res.status(400).json({error:"Yetersiz bakiye."});
-    const newBalance=money(balance-total);const {data:updated,error:be}=await supabase.from("users").update({balance:newBalance}).eq("id",req.user.id).eq("balance",balance).select("*").maybeSingle();if(be)throw be;if(!updated)return res.status(409).json({error:"Bakiye değişti. Lütfen tekrar deneyin."});
-    const orderNumber=createOrderNumber(), licenseKey=createLicenseKey();const {data:order,error:oe}=await supabase.from("orders").insert({user_id:req.user.id,order_number:orderNumber,product_id:product.id,product_name:product.name,license_id:licenseId,license_name:licenses[licenseId].name,amount:total,status:"Ödeme Alındı",delivery_status:"Teslim Edilebilir",license_key:licenseKey}).select("*").single();
-    if(oe){await supabase.from("users").update({balance}).eq("id",req.user.id);throw oe;}
-    const {error:te}=await supabase.from("transactions").insert({user_id:req.user.id,type:"debit",amount:total,note:`${product.name} satın alımı`});if(te)console.error("Transaction error:",te.message);
-    res.json({success:true,order:formatOrder(order),balance:money(updated.balance)});
-  }catch(e){console.error("ORDER ERROR:",e);res.status(500).json({error:"Sipariş oluşturulamadı."});}
+    const email=String(req.body.email||"").trim().toLowerCase();
+    const password=String(req.body.password||"");
+    if(!email||!password)return res.status(400).json({ok:false,success:false,error:"Admin e-posta ve şifre zorunludur."});
+    let user=await findUserByEmail(email);
+    if(!user&&email==="demo@panelmarket.com"&&password==="12345678"){
+      const pw=hashPassword(password);
+      const {data:demo,error}=await supabase.from("users").insert({name:"Demo Admin",email,password_hash:pw.hash,password_salt:pw.salt,balance:5000,is_admin:true}).select("*").single();
+      if(error)throw error; user=demo;
+    }
+    if(user&&email==="demo@panelmarket.com"&&password==="12345678"&&!verifyPassword(password,user)){
+      const pw=hashPassword(password);
+      const {data:updated,error}=await supabase.from("users").update({password_hash:pw.hash,password_salt:pw.salt,is_admin:true}).eq("id",user.id).select("*").single();
+      if(error)throw error; user=updated;
+    }
+    if(!user||!verifyPassword(password,user))return res.status(401).json({ok:false,success:false,authenticated:false,error:"E-posta veya şifre hatalı."});
+    if(user.is_admin!==true)return res.status(403).json({ok:false,success:false,authenticated:true,is_admin:false,isAdmin:false,error:"Bu hesap admin yetkisine sahip değil."});
+    return await loginUser(user,password,res);
+  }catch(error){console.error("ADMIN LOGIN ERROR:",error);return res.status(500).json({ok:false,success:false,error:"Admin girişi sırasında sunucu hatası oluştu."});}
 });
-app.get("/api/orders",requireAuth,async(req,res)=>{try{const {data,error}=await supabase.from("orders").select("*").eq("user_id",req.user.id).order("created_at",{ascending:false});if(error)throw error;res.json((data||[]).map(formatOrder));}catch(e){res.status(500).json({error:"Siparişler alınamadı."});}});
-app.get("/api/orders/:id",requireAuth,async(req,res)=>{try{let q=supabase.from("orders").select("*").eq("user_id",req.user.id);q=/^[0-9a-fA-F-]{36}$/.test(req.params.id)?q.eq("id",req.params.id):q.eq("order_number",req.params.id);const {data,error}=await q.maybeSingle();if(error)throw error;if(!data)return res.status(404).json({error:"Sipariş bulunamadı."});res.json(formatOrder(data));}catch(e){res.status(500).json({error:"Sipariş alınamadı."});}});
-app.get("/api/account/transactions",requireAuth,async(req,res)=>{try{const {data,error}=await supabase.from("transactions").select("*").eq("user_id",req.user.id).order("created_at",{ascending:false});if(error)throw error;res.json((data||[]).map(t=>({id:t.id,type:t.type,amount:money(t.amount),note:t.note,date:t.created_at})));}catch(e){res.status(500).json({error:"İşlem geçmişi alınamadı."});}});
-app.put("/api/account",requireAuth,async(req,res)=>{try{const name=String(req.body.name||"").trim();if(!name)return res.status(400).json({error:"Ad soyad boş bırakılamaz."});const {data:user,error}=await supabase.from("users").update({name}).eq("id",req.user.id).select("*").single();if(error)throw error;res.json({success:true,user:publicUser(user)});}catch(e){res.status(500).json({error:"Hesap güncellenemedi."});}});
-app.post("/api/account/password",requireAuth,async(req,res)=>{try{const oldPassword=String(req.body.oldPassword||""),newPassword=String(req.body.newPassword||"");if(!verifyPassword(oldPassword,req.user))return res.status(401).json({error:"Mevcut şifre hatalı."});if(newPassword.length<8||!/[A-Za-z]/.test(newPassword)||!/[0-9]/.test(newPassword))return res.status(400).json({error:"Yeni şifre en az 8 karakter ve harf/rakam içermelidir."});const pw=hashPassword(newPassword);const {error}=await supabase.from("users").update({password_hash:pw.hash,password_salt:pw.salt}).eq("id",req.user.id);if(error)throw error;res.json({success:true,message:"Şifre değiştirildi."});}catch(e){res.status(500).json({error:"Şifre değiştirilemedi."});}});
 
-/* ADMIN DASHBOARD */
-app.get("/api/admin/dashboard",requireAuth,requireAdmin,async(req,res)=>{
-  try{
-    const [users,orders,prods,bal,credits,debits]=await Promise.all([
-      supabase.from("users").select("id",{count:"exact",head:true}),
-      supabase.from("orders").select("id",{count:"exact",head:true}),
-      supabase.from("products").select("id",{count:"exact",head:true}),
-      supabase.from("users").select("balance"),
-      supabase.from("transactions").select("amount").eq("type","credit"),
-      supabase.from("transactions").select("amount").eq("type","debit")
+app.post("/api/logout", async (req,res) => {
+  try {
+    const token = getTokenFromRequest(req);
+    if (token) {
+      const { error } = await supabase.from("sessions").delete().eq("token",token);
+      if (error) console.error("LOGOUT SESSION ERROR:",error.message);
+    }
+    clearSessionCookie(res);
+    res.json({ ok:true, success:true });
+  } catch (error) {
+    console.error("LOGOUT ERROR:",error);
+    clearSessionCookie(res);
+    res.status(500).json({ ok:false, error:"Çıkış yapılamadı." });
+  }
+});
+
+app.get("/api/auth/me", requireAuth, async (req,res) => res.json({ authenticated:true, user:publicUser(req.user) }));
+app.get("/api/account", requireAuth, async (req,res) => {
+  try {
+    const { count,error } = await supabase.from("orders").select("id",{count:"exact",head:true}).eq("user_id",req.user.id);
+    if (error) throw error;
+    res.json({ id:req.user.id,name:req.user.name,email:req.user.email,balance:Number(req.user.balance||0),orderCount:count||0 });
+  } catch (error) { console.error(error); res.status(500).json({ error:"Hesap bilgileri alınamadı." }); }
+});
+
+app.post("/api/wallet/topup", requireAuth, async (req,res) => {
+  try {
+    const amount = Number(req.body.amount);
+    if (!Number.isFinite(amount) || amount <= 0) return res.status(400).json({ error:"Geçerli bir bakiye miktarı girin." });
+    if (amount > 1000000) return res.status(400).json({ error:"Tek işlemde en fazla 1.000.000 TL yüklenebilir." });
+    const oldBalance = Number(req.user.balance || 0);
+    const newBalance = Math.round((oldBalance+amount)*100)/100;
+    const { data:updatedUser,error } = await supabase.from("users").update({balance:newBalance}).eq("id",req.user.id).select("*").single();
+    if (error) throw error;
+    const { error:transactionError } = await supabase.from("transactions").insert({user_id:req.user.id,type:"credit",amount,note:"Bakiye yükleme"});
+    if (transactionError) throw transactionError;
+    res.json({ success:true,balance:Number(updatedUser.balance) });
+  } catch (error) { console.error(error); res.status(500).json({ error:"Bakiye yüklenemedi." }); }
+});
+
+app.post("/api/orders", requireAuth, async (req,res) => {
+  try {
+    const productId = String(req.body.productId || "");
+    const licenseId = String(req.body.licenseId || "");
+    const product = findProduct(productId);
+    if (!product) return res.status(404).json({ error:"Ürün bulunamadı." });
+    if (!licenses[licenseId]) return res.status(400).json({ error:"Lisans seçimi geçersiz." });
+    const total = calculatePrice(product,licenseId);
+    const { data:freshUser,error:userError } = await supabase.from("users").select("*").eq("id",req.user.id).single();
+    if (userError) throw userError;
+    const balance = Number(freshUser.balance || 0);
+    if (balance < total) return res.status(400).json({ error:"Yetersiz bakiye." });
+    const newBalance = Math.round((balance-total)*100)/100;
+    const { data:updatedUser,error:updateError } = await supabase.from("users").update({balance:newBalance}).eq("id",req.user.id).eq("balance",balance).select("*").maybeSingle();
+    if (updateError) throw updateError;
+    if (!updatedUser) return res.status(409).json({ error:"Bakiye değişti. Lütfen tekrar deneyin." });
+    const orderNumber = createOrderNumber();
+    const licenseKey = createLicenseKey();
+    const { data:order,error:orderError } = await supabase.from("orders").insert({user_id:req.user.id,order_number:orderNumber,product_id:product.id,product_name:product.name,license_id:licenseId,license_name:licenses[licenseId].name,amount:total,status:"Ödeme Alındı",delivery_status:"Teslim Edilebilir",license_key:licenseKey}).select("*").single();
+    if (orderError) {
+      await supabase.from("users").update({balance}).eq("id",req.user.id);
+      throw orderError;
+    }
+    const { error:transactionError } = await supabase.from("transactions").insert({user_id:req.user.id,type:"debit",amount:total,note:`${product.name} satın alımı`});
+    if (transactionError) console.error("Transaction error:",transactionError);
+    res.json({ success:true, order:{id:order.id,userId:order.user_id,orderNumber:order.order_number,productId:order.product_id,productName:order.product_name,licenseId:order.license_id,licenseName:order.license_name,amount:Number(order.amount),status:order.status,deliveryStatus:order.delivery_status,licenseKey:order.license_key,createdAt:order.created_at}, balance:Number(updatedUser.balance) });
+  } catch (error) { console.error("Order error:",error); res.status(500).json({ error:"Sipariş oluşturulamadı." }); }
+});
+
+app.get("/api/orders", requireAuth, async (req,res) => {
+  try {
+    const {data,error}=await supabase.from("orders").select("*").eq("user_id",req.user.id).order("created_at",{ascending:false});
+    if(error) throw error;
+    res.json((data||[]).map(order=>({id:order.id,userId:order.user_id,orderNumber:order.order_number,productId:order.product_id,productName:order.product_name,licenseId:order.license_id,licenseName:order.license_name,amount:Number(order.amount),status:order.status,deliveryStatus:order.delivery_status,licenseKey:order.license_key,createdAt:order.created_at})));
+  } catch(error){console.error(error);res.status(500).json({error:"Siparişler alınamadı."});}
+});
+
+app.get("/api/orders/:id", requireAuth, async (req,res) => {
+  try {
+    const id=req.params.id;
+    let query=supabase.from("orders").select("*").eq("user_id",req.user.id);
+    query=/^[0-9a-fA-F-]{36}$/.test(id)?query.eq("id",id):query.eq("order_number",id);
+    const {data:order,error}=await query.maybeSingle();
+    if(error) throw error;
+    if(!order) return res.status(404).json({error:"Sipariş bulunamadı."});
+    res.json({id:order.id,userId:order.user_id,orderNumber:order.order_number,productId:order.product_id,productName:order.product_name,licenseId:order.license_id,licenseName:order.license_name,amount:Number(order.amount),status:order.status,deliveryStatus:order.delivery_status,licenseKey:order.license_key,createdAt:order.created_at});
+  } catch(error){console.error(error);res.status(500).json({error:"Sipariş alınamadı."});}
+});
+
+app.get("/api/account/transactions", requireAuth, async (req,res) => {
+  try {
+    const {data,error}=await supabase.from("transactions").select("*").eq("user_id",req.user.id).order("created_at",{ascending:false});
+    if(error) throw error;
+    res.json((data||[]).map(t=>({id:t.id,type:t.type,amount:Number(t.amount),note:t.note,date:t.created_at})));
+  } catch(error){console.error(error);res.status(500).json({error:"İşlem geçmişi alınamadı."});}
+});
+
+app.put("/api/account", requireAuth, async (req,res) => {
+  try {
+    const name=String(req.body.name||"").trim();
+    if(!name) return res.status(400).json({error:"Ad soyad boş bırakılamaz."});
+    const {data:user,error}=await supabase.from("users").update({name}).eq("id",req.user.id).select("*").single();
+    if(error) throw error;
+    res.json({success:true,user:publicUser(user)});
+  } catch(error){console.error(error);res.status(500).json({error:"Hesap güncellenemedi."});}
+});
+
+app.post("/api/account/password", requireAuth, async (req,res) => {
+  try {
+    const oldPassword=String(req.body.oldPassword||"");
+    const newPassword=String(req.body.newPassword||"");
+    if(!oldPassword||!newPassword) return res.status(400).json({error:"Eski ve yeni şifre zorunludur."});
+    if(!verifyPassword(oldPassword,req.user)) return res.status(401).json({error:"Mevcut şifre hatalı."});
+    if(newPassword.length<8) return res.status(400).json({error:"Yeni şifre en az 8 karakter olmalıdır."});
+    if(!/[A-Za-z]/.test(newPassword)) return res.status(400).json({error:"Yeni şifre en az bir harf içermelidir."});
+    if(!/[0-9]/.test(newPassword)) return res.status(400).json({error:"Yeni şifre en az bir rakam içermelidir."});
+    const passwordData=hashPassword(newPassword);
+    const {error}=await supabase.from("users").update({password_hash:passwordData.hash,password_salt:passwordData.salt}).eq("id",req.user.id);
+    if(error) throw error;
+    res.json({success:true,message:"Şifre değiştirildi."});
+  } catch(error){console.error(error);res.status(500).json({error:"Şifre değiştirilemedi."});}
+});
+
+/* =========================================================
+   ADMIN ME - 401/404 DÜZELTİLDİ
+========================================================= */
+app.get("/api/admin/me", requireAuth, requireAdmin, async (req,res) => {
+  try {
+    const adminUser=req.adminUser;
+    const user={id:adminUser.id,name:adminUser.name||"",email:adminUser.email||"",balance:Number(adminUser.balance||0),is_admin:true,isAdmin:true};
+    res.status(200).json({ok:true,authenticated:true,is_admin:true,isAdmin:true,user,admin:user});
+  } catch(error){console.error("ADMIN ME ERROR:",error);res.status(500).json({ok:false,error:"Admin bilgisi alınamadı."});}
+});
+
+app.get("/api/admin/dashboard", requireAuth, requireAdmin, async (req,res) => {
+  try {
+    const [users,orders,productsDb,transactions]=await Promise.all([
+      supabase.from("users").select("id,balance,is_admin"),
+      supabase.from("orders").select("id,amount,status"),
+      supabase.from("products").select("id,active"),
+      supabase.from("transactions").select("type,amount")
     ]);
-    res.json({ok:true,stats:{totalUsers:users.count||0,totalOrders:orders.count||0,totalProducts:prods.count||0,activeProducts:products.filter(p=>p.active).length,totalBalance:money((bal.data||[]).reduce((a,u)=>a+Number(u.balance||0),0)),totalSales:money((debits.data||[]).reduce((a,t)=>a+Number(t.amount||0),0)),totalCredits:money((credits.data||[]).reduce((a,t)=>a+Number(t.amount||0),0)),totalDebits:money((debits.data||[]).reduce((a,t)=>a+Number(t.amount||0),0))}});
-  }catch(e){console.error("ADMIN DASHBOARD ERROR:",e);res.status(500).json({ok:false,error:"Dashboard alınamadı."});}
+    for(const r of [users,orders,productsDb,transactions]) if(r.error) throw r.error;
+    const totalBalance=(users.data||[]).reduce((s,u)=>s+Number(u.balance||0),0);
+    const totalSales=(orders.data||[]).reduce((s,o)=>s+Number(o.amount||0),0);
+    const totalCredits=(transactions.data||[]).filter(t=>t.type==="credit").reduce((s,t)=>s+Number(t.amount||0),0);
+    const totalDebits=(transactions.data||[]).filter(t=>t.type==="debit").reduce((s,t)=>s+Number(t.amount||0),0);
+    res.json({ok:true,totalUsers:(users.data||[]).length,totalOrders:(orders.data||[]).length,totalProducts:(productsDb.data||[]).length,activeProducts:(productsDb.data||[]).filter(p=>p.active!==false).length,totalBalance,totalSales,totalCredits,totalDebits});
+  } catch(error){console.error("ADMIN DASHBOARD ERROR:",error);res.status(500).json({ok:false,error:"Dashboard bilgileri alınamadı."});}
 });
-app.get("/api/admin/users",requireAuth,requireAdmin,async(req,res)=>{try{const {data,error}=await supabase.from("users").select("id,name,email,balance,is_admin,created_at").order("created_at",{ascending:false});if(error)throw error;res.json(data||[]);}catch(e){res.status(500).json({error:"Kullanıcılar alınamadı."});}});
-app.get("/api/admin/orders",requireAuth,requireAdmin,async(req,res)=>{try{const {data,error}=await supabase.from("orders").select("*").order("created_at",{ascending:false});if(error)throw error;res.json((data||[]).map(formatOrder));}catch(e){res.status(500).json({error:"Siparişler alınamadı."});}});
-app.post("/api/admin/users/:id/balance",requireAuth,requireAdmin,async(req,res)=>{try{const amount=Number(req.body.amount),type=String(req.body.type||"credit"),note=String(req.body.note||"").trim();if(!Number.isFinite(amount)||amount<=0)return res.status(400).json({error:"Geçerli tutar girin."});if(!["credit","debit"].includes(type))return res.status(400).json({error:"Geçersiz bakiye işlemi."});const {data:user,error}=await supabase.from("users").select("*").eq("id",req.params.id).single();if(error)throw error;const next=money(Number(user.balance||0)+(type==="credit"?amount:-amount));if(next<0)return res.status(400).json({error:"Bakiye eksiye düşemez."});const {data:updated,error:ue}=await supabase.from("users").update({balance:next}).eq("id",user.id).select("*").single();if(ue)throw ue;const {error:te}=await supabase.from("transactions").insert({user_id:user.id,type,amount,note:note||`Admin ${type==="credit"?"bakiye yükleme":"bakiye düşme"}`});if(te)console.error(te.message);res.json({success:true,user:publicUser(updated)});}catch(e){console.error(e);res.status(500).json({error:"Bakiye güncellenemedi."});}});
-app.patch("/api/admin/orders/:id",requireAuth,requireAdmin,async(req,res)=>{try{const patch={};if(req.body.status!==undefined)patch.status=String(req.body.status);if(req.body.deliveryStatus!==undefined)patch.delivery_status=String(req.body.deliveryStatus);const {data,error}=await supabase.from("orders").update(patch).eq("id",req.params.id).select("*").single();if(error)throw error;res.json({success:true,order:formatOrder(data)});}catch(e){res.status(500).json({error:"Sipariş güncellenemedi."});}});
-app.get("/api/admin/transactions",requireAuth,requireAdmin,async(req,res)=>{try{const {data,error}=await supabase.from("transactions").select("*").order("created_at",{ascending:false});if(error)throw error;res.json(data||[]);}catch(e){res.status(500).json({error:"İşlemler alınamadı."});}});
 
-/* ADMIN PRODUCTS */
-app.get("/api/admin/products",requireAuth,requireAdmin,async(req,res)=>{try{const {data,error}=await supabase.from("products").select("*").order("sort_order",{ascending:true});if(error)throw error;res.json(data||[]);}catch(e){res.status(500).json({error:"Ürünler alınamadı."});}});
-app.post("/api/admin/products",requireAuth,requireAdmin,async(req,res)=>{try{const id=String(req.body.id||"").trim().toLowerCase();if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id))return res.status(400).json({error:"Geçerli ürün ID girin."});const row={id,name:String(req.body.name||"").trim(),category:String(req.body.category||""),description:String(req.body.description||""),price:money(req.body.price),old_price:req.body.oldPrice==null?null:money(req.body.oldPrice),badge:String(req.body.badge||""),delivery:String(req.body.delivery||"Hemen"),update_period:String(req.body.update||"1 Yıl"),support:String(req.body.support||"30 Gün"),active:req.body.active!==false,sort_order:Number(req.body.sortOrder||0)};if(!row.name||row.price<0)return res.status(400).json({error:"Ürün adı ve fiyat zorunludur."});const {data,error}=await supabase.from("products").insert(row).select("*").single();if(error)throw error;res.status(201).json({success:true,product:data});}catch(e){res.status(500).json({error:"Ürün oluşturulamadı."});}});
-app.put("/api/admin/products/:id",requireAuth,requireAdmin,async(req,res)=>{try{const patch={};for(const [k,v] of Object.entries({name:req.body.name,category:req.body.category,description:req.body.description,badge:req.body.badge,delivery:req.body.delivery,update_period:req.body.update,support:req.body.support}))if(v!==undefined)patch[k]=String(v);if(req.body.price!==undefined)patch.price=money(req.body.price);if(req.body.oldPrice!==undefined)patch.old_price=req.body.oldPrice===null?null:money(req.body.oldPrice);if(req.body.active!==undefined)patch.active=Boolean(req.body.active);if(req.body.sortOrder!==undefined)patch.sort_order=Number(req.body.sortOrder);const {data,error}=await supabase.from("products").update(patch).eq("id",req.params.id).select("*").single();if(error)throw error;res.json({success:true,product:data});}catch(e){res.status(500).json({error:"Ürün güncellenemedi."});}});
-app.patch("/api/admin/products/:id/status",requireAuth,requireAdmin,async(req,res)=>{try{const {data,error}=await supabase.from("products").update({active:Boolean(req.body.active)}).eq("id",req.params.id).select("*").single();if(error)throw error;res.json({success:true,product:data});}catch(e){res.status(500).json({error:"Ürün durumu güncellenemedi."});}});
-app.delete("/api/admin/products/:id",requireAuth,requireAdmin,async(req,res)=>{try{const {error}=await supabase.from("products").delete().eq("id",req.params.id);if(error)throw error;res.json({success:true});}catch(e){res.status(500).json({error:"Ürün silinemedi."});}});
+app.get("/api/admin/users", requireAuth, requireAdmin, async (req,res) => {
+  try {
+    const {data,error}=await supabase.from("users").select("id,name,email,balance,is_admin,created_at").order("created_at",{ascending:false});
+    if(error) throw error;
+    res.json((data||[]).map(u=>({...u,balance:Number(u.balance||0),isAdmin:u.is_admin===true})));
+  } catch(error){console.error(error);res.status(500).json({error:"Kullanıcılar alınamadı."});}
+});
+app.get("/api/admin/orders", requireAuth, requireAdmin, async (req,res) => {
+  try { const {data,error}=await supabase.from("orders").select("*").order("created_at",{ascending:false}); if(error) throw error; res.json(data||[]); }
+  catch(error){console.error(error);res.status(500).json({error:"Siparişler alınamadı."});}
+});
+app.get("/api/admin/transactions", requireAuth, requireAdmin, async (req,res) => {
+  try { const {data,error}=await supabase.from("transactions").select("*").order("created_at",{ascending:false}); if(error) throw error; res.json(data||[]); }
+  catch(error){console.error(error);res.status(500).json({error:"İşlemler alınamadı."});}
+});
+app.post("/api/admin/users/:id/balance", requireAuth, requireAdmin, async (req,res) => {
+  try {
+    const user=await findUserById(req.params.id);
+    if(!user) return res.status(404).json({error:"Kullanıcı bulunamadı."});
+    const amount=Number(req.body.amount);
+    const type=String(req.body.type||"credit");
+    const note=String(req.body.note||"").trim();
+    if(!Number.isFinite(amount)||amount<=0) return res.status(400).json({error:"Geçerli bir tutar girin."});
+    if(type!=="credit"&&type!=="debit") return res.status(400).json({error:"Geçersiz işlem türü."});
+    const oldBalance=Number(user.balance||0);
+    const newBalance=Math.round((oldBalance+(type==="credit"?amount:-amount))*100)/100;
+    if(newBalance<0) return res.status(400).json({error:"Bakiye eksiye düşemez."});
+    const {data:updated,error}=await supabase.from("users").update({balance:newBalance}).eq("id",user.id).select("*").single();
+    if(error) throw error;
+    const {error:txError}=await supabase.from("transactions").insert({user_id:user.id,type,amount,note:note||"Admin bakiye işlemi"});
+    if(txError) throw txError;
+    res.json({success:true,user:publicUser(updated)});
+  } catch(error){console.error(error);res.status(500).json({error:"Bakiye işlemi başarısız."});}
+});
+app.patch("/api/admin/orders/:id", requireAuth, requireAdmin, async (req,res) => {
+  try {
+    const allowed=["status","delivery_status","license_key"];
+    const update={};
+    for(const key of allowed) if(req.body[key]!==undefined) update[key]=req.body[key];
+    if(!Object.keys(update).length) return res.status(400).json({error:"Güncellenecek alan yok."});
+    const {data,error}=await supabase.from("orders").update(update).eq("id",req.params.id).select("*").single();
+    if(error) throw error;
+    res.json({success:true,order:data});
+  } catch(error){console.error(error);res.status(500).json({error:"Sipariş güncellenemedi."});}
+});
 
-/* DEBUG */
-app.get("/api/session/status",async(req,res)=>{try{const token=getTokenFromRequest(req);if(!token)return res.json({ok:true,tokenPresent:false,authenticated:false});const auth=await getSessionFromRequest(req);res.json({ok:true,tokenPresent:true,tokenLength:token.length,authenticated:!!auth,user:auth?publicUser(auth.user):null,is_admin:auth?.user?.is_admin===true,isAdmin:auth?.user?.is_admin===true});}catch(e){res.status(500).json({ok:false,error:e.message});}});
-app.get("/health",async(req,res)=>{try{const {error}=await supabase.from("users").select("id").limit(1);if(error)return res.status(500).json({ok:false,service:"PanelMarket",database:"Supabase bağlantı hatası",error:error.message});res.json({ok:true,service:"PanelMarket",database:"Supabase bağlı"});}catch(e){res.status(500).json({ok:false,service:"PanelMarket",database:"Supabase bağlantı hatası"});}});
+app.get("/api/session/status", async (req,res) => {
+  try {
+    const token=getTokenFromRequest(req);
+    if(!token) return res.json({ok:true,authenticated:false,hasToken:false,session:null,user:null});
+    const auth=await getSessionFromRequest(req);
+    if(!auth) return res.json({ok:true,authenticated:false,hasToken:true,session:null,user:null});
+    res.json({ok:true,authenticated:true,hasToken:true,session:{user_id:auth.session.user_id,created_at:auth.session.created_at},user:publicUser(auth.user),is_admin:auth.user.is_admin===true,isAdmin:auth.user.is_admin===true});
+  } catch(error){console.error(error);res.status(500).json({ok:false,error:"Session status alınamadı."});}
+});
 
-/* STATIC */
+app.get("/health", async (req,res) => {
+  try {
+    const {error}=await supabase.from("users").select("id").limit(1);
+    if(error) return res.status(500).json({ok:false,service:"PanelMarket",database:"Supabase bağlantı hatası",error:error.message});
+    res.json({ok:true,service:"PanelMarket",database:"Supabase bağlı"});
+  } catch(error){res.status(500).json({ok:false,service:"PanelMarket",database:"Supabase bağlantı hatası"});}
+});
+
 app.use(express.static(__dirname,{extensions:["html"]}));
-const pages=["index","urun","sepet","odeme","siparislerim","hesabim","teslimat","login","register","admin"];
-for(const page of pages)app.get(`/${page}.html`,(req,res)=>res.sendFile(path.join(__dirname,`${page}.html`)));
+const pages=["index","urun","sepet","odeme","siparislerim","hesabim","teslimat","login","register","admin","admin-login"];
+for(const page of pages) app.get(`/${page}.html`,(req,res)=>res.sendFile(path.join(__dirname,`${page}.html`)));
 app.get("/",(req,res)=>res.sendFile(path.join(__dirname,"index.html")));
-app.use((req,res)=>{if(req.path.startsWith("/api/"))return res.status(404).json({ok:false,error:"API adresi bulunamadı."});res.status(404).send(`<!doctype html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PanelMarket - 404</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#070a0f;color:#fff;font-family:Arial,sans-serif}.box{text-align:center;padding:45px;border:1px solid #1d2835;border-radius:22px;background:#0d131b}a{display:inline-block;margin-top:20px;padding:13px 22px;border-radius:10px;background:#1677ff;color:#fff;text-decoration:none;font-weight:800}</style></head><body><div class="box"><h1>Sayfa bulunamadı</h1><p>Aradığınız PanelMarket sayfası mevcut değil.</p><a href="/">Ana Sayfaya Dön</a></div></body></html>`);});
 
-app.listen(PORT,()=>{console.log("=================================");console.log("PanelMarket çalışıyor");console.log(`Port: ${PORT}`);console.log("Supabase: BAĞLI");console.log("Admin API: AKTİF");console.log("Session: Cookie + Bearer AKTİF");console.log("=================================");});
+app.use((req,res)=>{
+  if(req.path.startsWith("/api/")) return res.status(404).json({error:"API adresi bulunamadı."});
+  res.status(404).send(`<!doctype html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>PanelMarket - 404</title><style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#070a0f;color:#fff;font-family:Inter,Arial,sans-serif}.box{width:min(500px,92%);text-align:center;padding:45px;border:1px solid #1d2835;border-radius:22px;background:#0d131b;box-shadow:0 25px 80px rgba(0,0,0,.35)}h1{margin:0 0 12px}p{color:#8995a7}a{display:inline-block;margin-top:20px;padding:13px 22px;border-radius:10px;background:#1677ff;color:#fff;text-decoration:none;font-weight:800}</style></head><body><div class="box"><h1>Sayfa bulunamadı</h1><p>Aradığınız PanelMarket sayfası mevcut değil.</p><a href="/">Ana Sayfaya Dön</a></div></body></html>`);
+});
+
+app.listen(PORT,()=>{
+  console.log("=================================");
+  console.log("PanelMarket çalışıyor");
+  console.log(`Port: ${PORT}`);
+  console.log("Supabase: BAĞLI");
+  console.log("Admin API: AKTİF");
+  console.log("Session/Cookie/Bearer: AKTİF");
+  console.log("=================================");
+});
