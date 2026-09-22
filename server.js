@@ -212,6 +212,185 @@ app.post("/api/login",async(req,res)=>{
   }catch(e){console.error("LOGIN ERROR:",e);res.status(500).json({ok:false,success:false,error:"Giriş sırasında bir hata oluştu."});}
 });
 
+/* ADMIN LOGIN */
+app.post("/api/admin/login", async (req, res) => {
+  try {
+    const email = String(req.body.email || "").trim().toLowerCase();
+    const password = String(req.body.password || "");
+
+    if (!email || !password) {
+      return res.status(400).json({
+        ok: false,
+        success: false,
+        authenticated: false,
+        error: "E-posta ve şifre zorunludur."
+      });
+    }
+
+    let user = null;
+
+    /*
+     * Demo admin hesabı:
+     * demo@panelmarket.com
+     * 12345678
+     */
+    if (email === "demo@panelmarket.com") {
+
+      /*
+       * Önce mevcut kullanıcıyı ID üzerinden bul.
+       * Böylece duplicate email oluşturulmaz.
+       */
+      user = await findUserById(
+        "36002d6d-f4d4-4c4a-a03f-56076c6bf6eb"
+      );
+
+      /*
+       * ID ile bulunamazsa email üzerinden ara.
+       */
+      if (!user) {
+        user = await findUserByEmail(email);
+      }
+
+      /*
+       * Hiç yoksa oluştur.
+       */
+      if (!user) {
+        const pw = hashPassword("12345678");
+
+        const { data: created, error } =
+          await supabase
+            .from("users")
+            .insert({
+              id: "36002d6d-f4d4-4c4a-a03f-56076c6bf6eb",
+              name: "PanelMarket Admin",
+              email: "demo@panelmarket.com",
+              password_hash: pw.hash,
+              password_salt: pw.salt,
+              balance: 5000,
+              is_admin: true
+            })
+            .select("*")
+            .single();
+
+        if (error) throw error;
+
+        user = created;
+      }
+
+      /*
+       * Demo hesabının admin olduğundan emin ol.
+       */
+      if (user.is_admin !== true) {
+        const { data: updated, error } =
+          await supabase
+            .from("users")
+            .update({
+              is_admin: true
+            })
+            .eq("id", user.id)
+            .select("*")
+            .single();
+
+        if (error) throw error;
+
+        user = updated;
+      }
+    } else {
+      /*
+       * Normal admin hesabı
+       */
+      user = await findUserByEmail(email);
+    }
+
+    /*
+     * Kullanıcı bulunamadı.
+     */
+    if (!user) {
+      return res.status(401).json({
+        ok: false,
+        success: false,
+        authenticated: false,
+        error: "E-posta veya şifre hatalı."
+      });
+    }
+
+    /*
+     * Admin kontrolü.
+     */
+    if (user.is_admin !== true) {
+      return res.status(403).json({
+        ok: false,
+        success: false,
+        authenticated: false,
+        is_admin: false,
+        isAdmin: false,
+        error: "Bu hesap admin yetkisine sahip değil."
+      });
+    }
+
+    /*
+     * Şifre kontrolü.
+     */
+    if (!verifyPassword(password, user)) {
+      return res.status(401).json({
+        ok: false,
+        success: false,
+        authenticated: false,
+        error: "E-posta veya şifre hatalı."
+      });
+    }
+
+    /*
+     * Session oluştur.
+     */
+    const token = createToken();
+
+    const {
+      data: session,
+      error: sessionError
+    } = await supabase
+      .from("sessions")
+      .insert({
+        token,
+        user_id: user.id
+      })
+      .select("token,user_id,created_at")
+      .single();
+
+    if (sessionError) throw sessionError;
+
+    /*
+     * Cookie oluştur.
+     */
+    setSessionCookie(res, token);
+
+    console.log(
+      "ADMIN LOGIN: Session oluşturuldu:",
+      session.user_id
+    );
+
+    return res.status(200).json({
+      ok: true,
+      success: true,
+      authenticated: true,
+      token,
+      is_admin: true,
+      isAdmin: true,
+      user: publicUser(user)
+    });
+
+  } catch (e) {
+    console.error("ADMIN LOGIN ERROR:", e);
+
+    return res.status(500).json({
+      ok: false,
+      success: false,
+      authenticated: false,
+      error: "Admin girişi sırasında bir hata oluştu."
+    });
+  }
+});
+
 /* ADMIN ME - CRITICAL */
 app.get("/api/admin/me",requireAuth,requireAdmin,async(req,res)=>{
   const u=req.adminUser;
