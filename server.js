@@ -461,79 +461,88 @@ app.get("/health",async(req,res)=>{try{const {error}=await supabase.from("users"
 
 app.get("/api/debug/supabase-info", async (req, res) => {
   try {
-    const adminId =
-      "36002d6d-f4d4-4c4a-a03f-56076c6bf6eb";
+    const key = String(SUPABASE_SERVICE_ROLE_KEY || "");
 
-    const allUsers = await supabase
+    let keyInfo = {
+      exists: !!key,
+      length: key.length,
+      type: "unknown",
+      role: null,
+      ref: null,
+      issuer: null
+    };
+
+    // Eski JWT tipi service_role / anon anahtarları için
+    const parts = key.split(".");
+
+    if (parts.length === 3) {
+      try {
+        const payload = JSON.parse(
+          Buffer.from(parts[1], "base64url").toString("utf8")
+        );
+
+        keyInfo.type = "jwt";
+        keyInfo.role = payload.role || null;
+        keyInfo.ref = payload.ref || null;
+        keyInfo.issuer = payload.iss || null;
+      } catch {
+        keyInfo.type = "jwt-format-but-payload-read-failed";
+      }
+    } else if (key.startsWith("sb_secret_")) {
+      keyInfo.type = "supabase-secret-key";
+    } else if (key.startsWith("sb_publishable_")) {
+      keyInfo.type = "supabase-publishable-key";
+    } else if (key.startsWith("eyJ")) {
+      keyInfo.type = "jwt";
+    }
+
+    // API üzerinden public.users testi
+    const {
+      data: users,
+      error: usersError
+    } = await supabase
       .from("users")
       .select("id,email,is_admin")
       .limit(10);
 
-    const adminUser = await supabase
+    // Demo admin ID testi
+    const ADMIN_ID =
+      "36002d6d-f4d4-4c4a-a03f-56076c6bf6eb";
+
+    const {
+      data: adminById,
+      error: adminByIdError
+    } = await supabase
       .from("users")
       .select("id,email,is_admin")
-      .eq("id", adminId)
+      .eq("id", ADMIN_ID)
       .maybeSingle();
 
-    const adminEmail = await supabase
-      .from("users")
-      .select("id,email,is_admin")
-      .eq("email", "demo@panelmarket.com")
-      .maybeSingle();
-
-    return res.json({
+    res.json({
       ok: true,
 
-      supabaseHost: new URL(SUPABASE_URL).hostname,
+      supabaseHost: new URL(SUPABASE_URL).host,
+
+      keyInfo,
 
       allUsers: {
-        count: allUsers.data?.length || 0,
-        error: allUsers.error
-          ? {
-              code: allUsers.error.code,
-              message: allUsers.error.message,
-              details: allUsers.error.details,
-              hint: allUsers.error.hint
-            }
-          : null
+        count: Array.isArray(users) ? users.length : 0,
+        error: usersError?.message || null
       },
 
       adminIdQuery: {
-        found: !!adminUser.data,
-        data: adminUser.data || null,
-        error: adminUser.error
-          ? {
-              code: adminUser.error.code,
-              message: adminUser.error.message,
-              details: adminUser.error.details,
-              hint: adminUser.error.hint
-            }
-          : null
-      },
-
-      adminEmailQuery: {
-        found: !!adminEmail.data,
-        data: adminEmail.data || null,
-        error: adminEmail.error
-          ? {
-              code: adminEmail.error.code,
-              message: adminEmail.error.message,
-              details: adminEmail.error.details,
-              hint: adminEmail.error.hint
-            }
-          : null
+        found: !!adminById,
+        data: adminById || null,
+        error: adminByIdError?.message || null
       }
     });
 
   } catch (e) {
     console.error("SUPABASE DEBUG ERROR:", e);
 
-    return res.status(500).json({
+    res.status(500).json({
       ok: false,
-      error: e.message,
-      code: e.code || null,
-      details: e.details || null,
-      hint: e.hint || null
+      error: e?.message || "Supabase debug hatası"
     });
   }
 });
