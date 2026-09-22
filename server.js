@@ -461,34 +461,79 @@ app.get("/health",async(req,res)=>{try{const {error}=await supabase.from("users"
 
 app.get("/api/debug/supabase-info", async (req, res) => {
   try {
-    const { data, error } = await supabase
+    const adminId =
+      "36002d6d-f4d4-4c4a-a03f-56076c6bf6eb";
+
+    const allUsers = await supabase
       .from("users")
       .select("id,email,is_admin")
       .limit(10);
 
-    if (error) {
-      return res.status(500).json({
-        ok: false,
-        error: error.message,
-        code: error.code
-      });
-    }
+    const adminUser = await supabase
+      .from("users")
+      .select("id,email,is_admin")
+      .eq("id", adminId)
+      .maybeSingle();
+
+    const adminEmail = await supabase
+      .from("users")
+      .select("id,email,is_admin")
+      .eq("email", "demo@panelmarket.com")
+      .maybeSingle();
 
     return res.json({
       ok: true,
+
       supabaseHost: new URL(SUPABASE_URL).hostname,
-      userCountReturned: data?.length || 0,
-      users: (data || []).map(u => ({
-        id: u.id,
-        email: u.email,
-        is_admin: u.is_admin
-      }))
+
+      allUsers: {
+        count: allUsers.data?.length || 0,
+        error: allUsers.error
+          ? {
+              code: allUsers.error.code,
+              message: allUsers.error.message,
+              details: allUsers.error.details,
+              hint: allUsers.error.hint
+            }
+          : null
+      },
+
+      adminIdQuery: {
+        found: !!adminUser.data,
+        data: adminUser.data || null,
+        error: adminUser.error
+          ? {
+              code: adminUser.error.code,
+              message: adminUser.error.message,
+              details: adminUser.error.details,
+              hint: adminUser.error.hint
+            }
+          : null
+      },
+
+      adminEmailQuery: {
+        found: !!adminEmail.data,
+        data: adminEmail.data || null,
+        error: adminEmail.error
+          ? {
+              code: adminEmail.error.code,
+              message: adminEmail.error.message,
+              details: adminEmail.error.details,
+              hint: adminEmail.error.hint
+            }
+          : null
+      }
     });
 
   } catch (e) {
+    console.error("SUPABASE DEBUG ERROR:", e);
+
     return res.status(500).json({
       ok: false,
-      error: e.message
+      error: e.message,
+      code: e.code || null,
+      details: e.details || null,
+      hint: e.hint || null
     });
   }
 });
