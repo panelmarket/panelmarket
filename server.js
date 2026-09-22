@@ -54,6 +54,9 @@ function createLicenseKey() { return "PMK-" + crypto.randomBytes(12).toString("h
 function createToken() { return crypto.randomBytes(32).toString("hex"); }
 
 const SESSION_SECRET = process.env.SESSION_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY;
+const DEMO_ADMIN_EMAIL = "demo@panelmarket.com";
+const DEMO_ADMIN_PASSWORD = "12345678";
+const DEMO_ADMIN_ID = "00000000-0000-0000-0000-000000000001";
 
 function createSecureToken(userId) {
   const payload = Buffer.from(JSON.stringify({ userId: String(userId), createdAt: Date.now() })).toString("base64url");
@@ -144,6 +147,21 @@ async function getSessionFromRequest(req) {
   try {
     const decoded = verifySecureToken(token);
     if (!decoded?.userId) return null;
+    if (decoded.userId === DEMO_ADMIN_ID) {
+      const demoUser = {
+        id: DEMO_ADMIN_ID,
+        name: "Demo Admin",
+        email: DEMO_ADMIN_EMAIL,
+        balance: 5000,
+        is_admin: true,
+        created_at: new Date(decoded.createdAt || Date.now()).toISOString()
+      };
+      return {
+        token,
+        session: { token, user_id: DEMO_ADMIN_ID, created_at: new Date(decoded.createdAt || Date.now()).toISOString() },
+        user: demoUser
+      };
+    }
     const user = await findUserById(decoded.userId);
     if (!user) return null;
     return {
@@ -248,21 +266,7 @@ app.post("/api/login", async (req,res) => {
     const email=String(req.body.email||"").trim().toLowerCase();
     const password=String(req.body.password||"");
     if(!email||!password)return res.status(400).json({ok:false,success:false,authenticated:false,error:"E-posta ve şifre zorunludur."});
-    let user=await findUserByEmail(email);
-    if(!user&&email==="demo@panelmarket.com"){
-      const pw=hashPassword("12345678");
-      const {data:demo,error}=await supabase.from("users").insert({name:"Demo Admin",email,password_hash:pw.hash,password_salt:pw.salt,balance:5000,is_admin:true}).select("*").single();
-      if(error)throw error; user=demo;
-    }
-    if(user&&email==="demo@panelmarket.com"&&password==="12345678"&&!verifyPassword(password,user)){
-      const pw=hashPassword(password);
-      const {data:updated,error}=await supabase.from("users").update({password_hash:pw.hash,password_salt:pw.salt,is_admin:true}).eq("id",user.id).select("*").single();
-      if(error)throw error; user=updated;
-    }
-    if(user&&email==="demo@panelmarket.com"&&user.is_admin!==true){
-      const {data:updated,error}=await supabase.from("users").update({is_admin:true}).eq("id",user.id).select("*").single();
-      if(error)throw error; user=updated;
-    }
+    const user=await findUserByEmail(email);
     if(!user||!verifyPassword(password,user))return res.status(401).json({ok:false,success:false,authenticated:false,error:"E-posta veya şifre hatalı."});
     return await loginUser(user,password,res);
   }catch(error){console.error("LOGIN ERROR:",error);res.status(500).json({ok:false,success:false,authenticated:false,error:"Giriş sırasında bir hata oluştu."});}
@@ -276,36 +280,50 @@ app.post("/api/admin/login", async (req, res) => {
     console.log("ADMIN LOGIN İSTEĞİ:", email, "PASSWORD:", !!password);
 
     if (!email || !password) {
-      return res.status(400).json({ ok:false, success:false, error:"Admin e-posta ve şifre zorunludur." });
+      return res.status(400).json({ ok:false, success:false, authenticated:false, error:"Admin e-posta ve şifre zorunludur." });
     }
 
-    let user = await findUserByEmail(email);
-
-    if (email === "demo@panelmarket.com" && password === "12345678") {
-      const passwordData = hashPassword(password);
-      if (!user) {
-        const { data, error } = await supabase.from("users").insert({
-          name:"Demo Admin", email, password_hash:passwordData.hash, password_salt:passwordData.salt, balance:5000, is_admin:true
-        }).select("*").single();
-        if (error) throw error;
-        user = data;
-      } else {
-        const { data, error } = await supabase.from("users").update({
-          password_hash:passwordData.hash, password_salt:passwordData.salt, is_admin:true
-        }).eq("id", user.id).select("*").single();
-        if (error) throw error;
-        user = data;
-      }
+    // Demo admin Supabase users tablosuna INSERT/UPDATE yapmaz.
+    // Böylece RLS 42501 hatası oluşmaz.
+    if (email === DEMO_ADMIN_EMAIL && password === DEMO_ADMIN_PASSWORD) {
+      const token = createSecureToken(DEMO_ADMIN_ID);
+      const user = {
+        id: DEMO_ADMIN_ID,
+        name: "Demo Admin",
+        email: DEMO_ADMIN_EMAIL,
+        balance: 5000,
+        is_admin: true,
+        isAdmin: true
+      };
+      setSessionCookie(res, token);
+      console.log("DEMO ADMIN GİRİŞ BAŞARILI");
+      return res.status(200).json({
+        ok:true, success:true, authenticated:true, token,
+        is_admin:true, isAdmin:true, user
+      });
     }
 
-    if (!user) return res.status(401).json({ ok:false, success:false, authenticated:false, error:"E-posta veya şifre hatalı." });
-    if (!verifyPassword(password, user)) return res.status(401).json({ ok:false, success:false, authenticated:false, error:"E-posta veya şifre hatalı." });
-    if (user.is_admin !== true) return res.status(403).json({ ok:false, success:false, authenticated:true, is_admin:false, isAdmin:false, error:"Bu hesap admin yetkisine sahip değil." });
-
+    const user = await findUserByEmail(email);
+    if (!user) {
+      return res.status(401).json({ ok:false, success:false, authenticated:false, error:"E-posta veya şifre hatalı." });
+    }
+    if (!verifyPassword(password, user)) {
+      return res.status(401).json({ ok:false, success:false, authenticated:false, error:"E-posta veya şifre hatalı." });
+    }
+    if (user.is_admin !== true) {
+      return res.status(403).json({ ok:false, success:false, authenticated:true, is_admin:false, isAdmin:false, error:"Bu hesap admin yetkisine sahip değil." });
+    }
     return await loginUser(user, password, res);
   } catch (error) {
     console.error("ADMIN LOGIN ERROR:", error);
-    return res.status(500).json({ ok:false, success:false, authenticated:false, error:"Giriş sırasında sunucu hatası oluştu.", detail:error?.message || "Bilinmeyen hata", code:error?.code || null });
+    return res.status(500).json({
+      ok:false, success:false, authenticated:false,
+      error:"Giriş sırasında sunucu hatası oluştu.",
+      detail:error?.message || "Bilinmeyen hata",
+      code:error?.code || null,
+      details:error?.details || null,
+      hint:error?.hint || null
+    });
   }
 });
 
