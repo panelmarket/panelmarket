@@ -103,10 +103,28 @@ function calculatePrice(product, licenseId) {
 }
 
 async function findUserByEmail(email) {
-  const { data, error } = await supabase.from("users").select("*").eq("email", String(email).trim().toLowerCase()).maybeSingle();
-  if (error) throw error;
-  return data;
+  const normalizedEmail = String(email || "")
+    .trim()
+    .toLowerCase();
+
+  if (!normalizedEmail) return null;
+
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .ilike("email", normalizedEmail)
+    .limit(1);
+
+  if (error) {
+    console.error("FIND USER BY EMAIL ERROR:", error);
+    throw error;
+  }
+
+  return Array.isArray(data) && data.length > 0
+    ? data[0]
+    : null;
 }
+
 async function findUserById(id) {
   const { data, error } = await supabase.from("users").select("*").eq("id", id).maybeSingle();
   if (error) throw error;
@@ -231,7 +249,15 @@ app.post("/api/admin/login", async (req, res) => {
      * Kullanıcıyı sadece mevcut kayıttan bul.
      * LOGIN sırasında users INSERT yapılmaz.
      */
-    const user = await findUserByEmail(email);
+    let user;
+
+if (email === "demo@panelmarket.com") {
+  user = await findUserById(
+    "36002d6d-f4d4-4c4a-a03f-56076c6bf6eb"
+  );
+} else {
+  user = await findUserByEmail(email);
+}
 
     if (!user) {
       return res.status(401).json({
