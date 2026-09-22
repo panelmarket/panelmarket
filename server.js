@@ -37,7 +37,7 @@ const supabase = createClient(
   }
 );
 
-app.use(express.json({ limit: "2mb" }));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* =========================================================
@@ -55,14 +55,15 @@ const licenses = {
     multiplier: 1.667
   },
 
-  "unlimited": {
+  unlimited: {
     name: "Sınırsız Site",
     multiplier: 3.334
   }
 };
 
 /* =========================================================
-   VARSAYILAN ÜRÜNLER
+   İLK ÜRÜN VERİLERİ
+   PRODUCTS TABLOSU BOŞSA OTOMATİK EKLENİR
 ========================================================= */
 
 const defaultProducts = [
@@ -77,8 +78,7 @@ const defaultProducts = [
     delivery: "Hemen",
     update_period: "1 Yıl",
     support: "30 Gün",
-    active: true,
-    sort_order: 1
+    active: true
   },
 
   {
@@ -92,8 +92,7 @@ const defaultProducts = [
     delivery: "Hemen",
     update_period: "1 Yıl",
     support: "60 Gün",
-    active: true,
-    sort_order: 2
+    active: true
   },
 
   {
@@ -107,8 +106,7 @@ const defaultProducts = [
     delivery: "Hemen",
     update_period: "6 Ay",
     support: "30 Gün",
-    active: true,
-    sort_order: 3
+    active: true
   },
 
   {
@@ -122,8 +120,7 @@ const defaultProducts = [
     delivery: "24 Saat",
     update_period: "1 Yıl",
     support: "60 Gün",
-    active: true,
-    sort_order: 4
+    active: true
   },
 
   {
@@ -137,8 +134,7 @@ const defaultProducts = [
     delivery: "Hemen",
     update_period: "1 Yıl",
     support: "90 Gün",
-    active: true,
-    sort_order: 5
+    active: true
   },
 
   {
@@ -152,23 +148,16 @@ const defaultProducts = [
     delivery: "Hemen",
     update_period: "1 Yıl",
     support: "30 Gün",
-    active: true,
-    sort_order: 6
+    active: true
   }
 ];
 
 /* =========================================================
-   YARDIMCI FONKSİYONLAR
+   GENEL YARDIMCI FONKSİYONLAR
 ========================================================= */
 
 function money(value) {
-  const number = Number(value || 0);
-
-  if (!Number.isFinite(number)) {
-    return 0;
-  }
-
-  return Math.round(number * 100) / 100;
+  return Math.round(Number(value || 0) * 100) / 100;
 }
 
 function slugify(value) {
@@ -183,12 +172,6 @@ function slugify(value) {
     .replace(/ç/g, "c")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
-}
-
-function isValidProductId(value) {
-  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(
-    String(value || "")
-  );
 }
 
 function createOrderNumber() {
@@ -239,36 +222,31 @@ function hashPassword(
 
 function verifyPassword(password, user) {
   if (
-    !user ||
     !user.password_hash ||
     !user.password_salt
   ) {
     return false;
   }
 
-  try {
-    const result = crypto.scryptSync(
-      password,
-      user.password_salt,
-      64
-    );
+  const result = crypto.scryptSync(
+    password,
+    user.password_salt,
+    64
+  );
 
-    const stored = Buffer.from(
-      user.password_hash,
-      "hex"
-    );
+  const stored = Buffer.from(
+    user.password_hash,
+    "hex"
+  );
 
-    if (result.length !== stored.length) {
-      return false;
-    }
-
-    return crypto.timingSafeEqual(
-      result,
-      stored
-    );
-  } catch {
+  if (result.length !== stored.length) {
     return false;
   }
+
+  return crypto.timingSafeEqual(
+    result,
+    stored
+  );
 }
 
 /* =========================================================
@@ -287,9 +265,7 @@ function getCookies(req) {
   header.split(";").forEach(item => {
     const index = item.indexOf("=");
 
-    if (index === -1) {
-      return;
-    }
+    if (index === -1) return;
 
     const key = item
       .slice(0, index)
@@ -311,96 +287,6 @@ function getCookies(req) {
 }
 
 /* =========================================================
-   GELİŞMİŞ TOKEN OKUMA
-========================================================= */
-
-function getTokenFromRequest(req) {
-  /*
-    1. Authorization Bearer
-  */
-
-  const authorization =
-    String(
-      req.headers.authorization || ""
-    ).trim();
-
-  if (authorization) {
-    const match =
-      authorization.match(
-        /^Bearer\s+(.+)$/i
-      );
-
-    if (
-      match &&
-      match[1]
-    ) {
-      const bearerToken =
-        String(
-          match[1]
-        ).trim();
-
-      if (bearerToken) {
-        return bearerToken;
-      }
-    }
-  }
-
-  /*
-    2. HttpOnly Cookie
-  */
-
-  const cookies =
-    getCookies(req);
-
-  const cookieToken =
-    String(
-      cookies.panelmarket_token ||
-      ""
-    ).trim();
-
-  if (cookieToken) {
-    return cookieToken;
-  }
-
-  return "";
-}
-
-/* =========================================================
-   SESSION COOKIE
-========================================================= */
-
-function setSessionCookie(res, token) {
-  const encoded =
-    encodeURIComponent(
-      String(token)
-    );
-
-  res.setHeader(
-    "Set-Cookie",
-    [
-      `panelmarket_token=${encoded}`,
-      "Path=/",
-      "HttpOnly",
-      "SameSite=Lax",
-      "Max-Age=2592000"
-    ].join("; ")
-  );
-}
-
-function clearSessionCookie(res) {
-  res.setHeader(
-    "Set-Cookie",
-    [
-      "panelmarket_token=",
-      "Path=/",
-      "HttpOnly",
-      "SameSite=Lax",
-      "Max-Age=0"
-    ].join("; ")
-  );
-}
-
-/* =========================================================
    ÜRÜN FORMAT
 ========================================================= */
 
@@ -408,112 +294,22 @@ function formatProduct(product) {
   return {
     id: product.id,
     name: product.name,
-    category: product.category || "",
+    category: product.category,
     description: product.description || "",
-
-    price:
-      money(product.price),
-
+    price: money(product.price),
     oldPrice:
       product.old_price === null ||
       product.old_price === undefined
         ? null
         : money(product.old_price),
-
-    badge:
-      product.badge || "",
-
-    delivery:
-      product.delivery || "Hemen",
-
-    update:
-      product.update_period || "1 Yıl",
-
-    support:
-      product.support || "30 Gün",
-
+    badge: product.badge || "",
+    delivery: product.delivery || "Hemen",
+    update: product.update_period || "1 Yıl",
+    support: product.support || "30 Gün",
     active:
       product.active !== false,
-
-    sortOrder:
-      Number(
-        product.sort_order || 0
-      ),
-
-    createdAt:
-      product.created_at || null,
-
-    updatedAt:
-      product.updated_at || null
-  };
-}
-
-/* =========================================================
-   SİPARİŞ FORMAT
-========================================================= */
-
-function formatOrder(order) {
-  return {
-    id: order.id,
-
-    userId:
-      order.user_id,
-
-    orderNumber:
-      order.order_number,
-
-    productId:
-      order.product_id,
-
-    productName:
-      order.product_name,
-
-    licenseId:
-      order.license_id,
-
-    licenseName:
-      order.license_name,
-
-    amount:
-      money(order.amount),
-
-    status:
-      order.status,
-
-    deliveryStatus:
-      order.delivery_status,
-
-    licenseKey:
-      order.license_key,
-
-    createdAt:
-      order.created_at
-  };
-}
-
-/* =========================================================
-   KULLANICI FORMAT
-========================================================= */
-
-function publicUser(user) {
-  return {
-    id:
-      user.id,
-
-    name:
-      user.name,
-
-    email:
-      user.email,
-
-    balance:
-      money(user.balance),
-
-    isAdmin:
-      user.is_admin === true,
-
-    is_admin:
-      user.is_admin === true
+    createdAt: product.created_at,
+    updatedAt: product.updated_at
   };
 }
 
@@ -539,20 +335,14 @@ async function findProduct(id) {
 }
 
 /* =========================================================
-   FİYAT HESAPLA
+   ÜRÜN FİYATI
 ========================================================= */
 
-function calculatePrice(
-  product,
-  licenseId
-) {
-  const license =
-    licenses[licenseId];
+function calculatePrice(product, licenseId) {
+  const license = licenses[licenseId];
 
   if (!license) {
-    throw new Error(
-      "Geçersiz lisans."
-    );
+    throw new Error("Geçersiz lisans.");
   }
 
   return money(
@@ -562,7 +352,7 @@ function calculatePrice(
 }
 
 /* =========================================================
-   ÜRÜN SEED
+   ÜRÜNLERİ OTOMATİK OLUŞTUR
 ========================================================= */
 
 async function seedProducts() {
@@ -586,9 +376,6 @@ async function seedProducts() {
     }
 
     if ((count || 0) > 0) {
-      console.log(
-        "Products tablosu dolu. Seed atlanıyor."
-      );
       return;
     }
 
@@ -596,9 +383,7 @@ async function seedProducts() {
       error: insertError
     } = await supabase
       .from("products")
-      .insert(
-        defaultProducts
-      );
+      .insert(defaultProducts);
 
     if (insertError) {
       console.error(
@@ -620,25 +405,17 @@ async function seedProducts() {
 }
 
 /* =========================================================
-   KULLANICI BUL
+   KULLANICI
 ========================================================= */
 
 async function findUserByEmail(email) {
-  const normalizedEmail =
-    String(email || "")
-      .trim()
-      .toLowerCase();
-
   const {
     data,
     error
   } = await supabase
     .from("users")
     .select("*")
-    .eq(
-      "email",
-      normalizedEmail
-    )
+    .eq("email", email.toLowerCase())
     .maybeSingle();
 
   if (error) {
@@ -666,121 +443,66 @@ async function findUserById(id) {
 }
 
 /* =========================================================
-   SESSION BUL
-========================================================= */
-
-async function getSessionFromRequest(req) {
-  const token =
-    getTokenFromRequest(req);
-
-  if (!token) {
-    console.error(
-      "SESSION: Token bulunamadı."
-    );
-
-    return null;
-  }
-
-  try {
-    const {
-      data: session,
-      error
-    } = await supabase
-      .from("sessions")
-      .select(
-        "token,user_id,created_at"
-      )
-      .eq(
-        "token",
-        token
-      )
-      .maybeSingle();
-
-    if (error) {
-      console.error(
-        "SESSION QUERY ERROR:",
-        error.message
-      );
-
-      return null;
-    }
-
-    if (!session) {
-      console.error(
-        "SESSION: Token sessions tablosunda bulunamadı."
-      );
-
-      console.error(
-        "SESSION TOKEN LENGTH:",
-        token.length
-      );
-
-      return null;
-    }
-
-    const user =
-      await findUserById(
-        session.user_id
-      );
-
-    if (!user) {
-      console.error(
-        "SESSION: Session var fakat kullanıcı bulunamadı:",
-        session.user_id
-      );
-
-      await supabase
-        .from("sessions")
-        .delete()
-        .eq(
-          "token",
-          token
-        );
-
-      return null;
-    }
-
-    return {
-      token,
-      session,
-      user
-    };
-
-  } catch (error) {
-    console.error(
-      "SESSION CHECK ERROR:",
-      error
-    );
-
-    return null;
-  }
-}
-
-/* =========================================================
-   CURRENT USER
+   OTURUM
 ========================================================= */
 
 async function getCurrentUser(req) {
-  const auth =
-    await getSessionFromRequest(
-      req
-    );
+  const authorization =
+    req.headers.authorization || "";
 
-  if (!auth) {
+  let token = "";
+
+  if (
+    authorization.startsWith("Bearer ")
+  ) {
+    token =
+      authorization
+        .slice(7)
+        .trim();
+  }
+
+  if (!token) {
+    const cookies =
+      getCookies(req);
+
+    token =
+      cookies.panelmarket_token ||
+      "";
+  }
+
+  if (!token) {
     return null;
   }
 
-  return {
-    user:
-      auth.user,
+  const {
+    data: session,
+    error
+  } = await supabase
+    .from("sessions")
+    .select("user_id")
+    .eq("token", token)
+    .maybeSingle();
 
-    token:
-      auth.token
-  };
+  if (error) {
+    console.error(
+      "SESSION ERROR:",
+      error.message
+    );
+
+    return null;
+  }
+
+  if (!session) {
+    return null;
+  }
+
+  return await findUserById(
+    session.user_id
+  );
 }
 
 /* =========================================================
-   AUTH MIDDLEWARE
+   AUTH
 ========================================================= */
 
 async function requireAuth(
@@ -789,35 +511,22 @@ async function requireAuth(
   next
 ) {
   try {
-    const auth =
+    const user =
       await getCurrentUser(req);
 
-    if (!auth) {
+    if (!user) {
       return res.status(401).json({
-        ok: false,
-        authenticated: false,
-        error:
-          "Oturum gerekli.",
+        error: "Oturum gerekli.",
         loginRequired: true
       });
     }
 
-    req.user =
-      auth.user;
-
-    req.authToken =
-      auth.token;
-
+    req.user = user;
     next();
-
   } catch (error) {
-    console.error(
-      "AUTH ERROR:",
-      error
-    );
+    console.error(error);
 
-    return res.status(500).json({
-      ok: false,
+    res.status(500).json({
       error:
         "Oturum kontrolü başarısız."
     });
@@ -825,7 +534,7 @@ async function requireAuth(
 }
 
 /* =========================================================
-   ADMIN MIDDLEWARE
+   ADMIN AUTH
 ========================================================= */
 
 async function requireAdmin(
@@ -836,18 +545,10 @@ async function requireAdmin(
   try {
     if (!req.user?.id) {
       return res.status(401).json({
-        ok: false,
-        authenticated: false,
         error:
-          "Admin girişi gerekli.",
-        loginRequired: true
+          "Admin girişi gerekli."
       });
     }
-
-    /*
-      Admin bilgisi her istekte
-      doğrudan users tablosundan okunur.
-    */
 
     const {
       data: adminUser,
@@ -857,57 +558,28 @@ async function requireAdmin(
       .select(
         "id,name,email,balance,is_admin,created_at"
       )
-      .eq(
-        "id",
-        req.user.id
-      )
+      .eq("id", req.user.id)
       .maybeSingle();
 
     if (error) {
       console.error(
         "ADMIN CHECK ERROR:",
-        error.message
+        error
       );
 
       return res.status(500).json({
-        ok: false,
         error:
-          "Admin kontrolü yapılamadı.",
-        detail:
-          error.message
-      });
-    }
-
-    if (!adminUser) {
-      console.error(
-        "ADMIN CHECK: Kullanıcı bulunamadı:",
-        req.user.id
-      );
-
-      return res.status(401).json({
-        ok: false,
-        authenticated: false,
-        error:
-          "Kullanıcı bulunamadı.",
-        loginRequired: true
+          "Admin kontrolü yapılamadı."
       });
     }
 
     if (
+      !adminUser ||
       adminUser.is_admin !== true
     ) {
-      console.error(
-        "ADMIN CHECK: Kullanıcı admin değil:",
-        adminUser.email
-      );
-
       return res.status(403).json({
-        ok: false,
-        authenticated: true,
-        is_admin: false,
-        isAdmin: false,
         error:
-          "Bu hesap admin yetkisine sahip değil."
+          "Admin yetkisi yok."
       });
     }
 
@@ -915,15 +587,13 @@ async function requireAdmin(
       adminUser;
 
     next();
-
   } catch (error) {
     console.error(
       "ADMIN AUTH ERROR:",
       error
     );
 
-    return res.status(500).json({
-      ok: false,
+    res.status(500).json({
       error:
         "Admin doğrulama hatası."
     });
@@ -931,7 +601,22 @@ async function requireAdmin(
 }
 
 /* =========================================================
-   PUBLIC PRODUCTS
+   PUBLIC USER
+========================================================= */
+
+function publicUser(user) {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    balance: money(user.balance),
+    isAdmin:
+      user.is_admin === true
+  };
+}
+
+/* =========================================================
+   ÜRÜN API - HERKESE AÇIK
 ========================================================= */
 
 app.get(
@@ -944,16 +629,7 @@ app.get(
       } = await supabase
         .from("products")
         .select("*")
-        .eq(
-          "active",
-          true
-        )
-        .order(
-          "sort_order",
-          {
-            ascending: true
-          }
-        )
+        .eq("active", true)
         .order(
           "created_at",
           {
@@ -970,7 +646,6 @@ app.get(
           formatProduct
         )
       );
-
     } catch (error) {
       console.error(
         "PRODUCTS ERROR:",
@@ -986,7 +661,7 @@ app.get(
 );
 
 /* =========================================================
-   SINGLE PRODUCT
+   TEK ÜRÜN
 ========================================================= */
 
 app.get(
@@ -1014,14 +689,14 @@ app.get(
         const [
           id,
           license
-        ] of Object.entries(
+        ]
+        of Object.entries(
           licenses
         )
       ) {
         prices[id] = {
           name:
             license.name,
-
           price:
             calculatePrice(
               product,
@@ -1034,16 +709,10 @@ app.get(
         ...formatProduct(
           product
         ),
-
-        licenses:
-          prices
+        licenses: prices
       });
-
     } catch (error) {
-      console.error(
-        "SINGLE PRODUCT ERROR:",
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
         error:
@@ -1054,79 +723,7 @@ app.get(
 );
 
 /* =========================================================
-   ADMIN ME
-========================================================= */
-
-app.get(
-  "/api/admin/me",
-  requireAuth,
-  requireAdmin,
-  async (req, res) => {
-    try {
-      const adminUser =
-        req.adminUser;
-
-      if (!adminUser) {
-        return res.status(403).json({
-          ok: false,
-          authenticated: true,
-          is_admin: false,
-          isAdmin: false,
-          error:
-            "Admin yetkisi bulunamadı."
-        });
-      }
-
-      const user = {
-        id:
-          adminUser.id,
-
-        name:
-          adminUser.name || "",
-
-        email:
-          adminUser.email || "",
-
-        balance:
-          Number(
-            adminUser.balance || 0
-          ),
-
-        is_admin: true,
-        isAdmin: true
-      };
-
-      return res.status(200).json({
-        ok: true,
-
-        authenticated: true,
-
-        is_admin: true,
-
-        isAdmin: true,
-
-        user,
-
-        admin: user
-      });
-
-    } catch (error) {
-      console.error(
-        "ADMIN ME ERROR:",
-        error
-      );
-
-      return res.status(500).json({
-        ok: false,
-        error:
-          "Admin bilgisi alınamadı."
-      });
-    }
-  }
-);
-
-/* =========================================================
-   ADMIN PRODUCTS
+   ADMIN - TÜM ÜRÜNLER
 ========================================================= */
 
 app.get(
@@ -1142,12 +739,6 @@ app.get(
         .from("products")
         .select("*")
         .order(
-          "sort_order",
-          {
-            ascending: true
-          }
-        )
-        .order(
           "created_at",
           {
             ascending: false
@@ -1160,13 +751,11 @@ app.get(
 
       res.json({
         ok: true,
-
         products:
           (data || []).map(
             formatProduct
           )
       });
-
     } catch (error) {
       console.error(
         "ADMIN PRODUCTS ERROR:",
@@ -1182,7 +771,7 @@ app.get(
 );
 
 /* =========================================================
-   ADMIN PRODUCT CREATE
+   ADMIN - ÜRÜN EKLE
 ========================================================= */
 
 app.post(
@@ -1207,9 +796,7 @@ app.post(
         ).trim();
 
       const price =
-        Number(
-          req.body.price
-        );
+        Number(req.body.price);
 
       const oldPriceRaw =
         req.body.oldPrice;
@@ -1219,9 +806,7 @@ app.post(
         oldPriceRaw === null ||
         oldPriceRaw === undefined
           ? null
-          : Number(
-              oldPriceRaw
-            );
+          : Number(oldPriceRaw);
 
       const badge =
         String(
@@ -1247,15 +832,7 @@ app.post(
         ).trim();
 
       const active =
-        req.body.active !== false &&
-        req.body.active !== "false";
-
-      const sortOrder =
-        Number(
-          req.body.sortOrder ??
-          req.body.sort_order ??
-          0
-        );
+        req.body.active !== false;
 
       let id =
         String(
@@ -1263,16 +840,13 @@ app.post(
         ).trim();
 
       if (!id) {
-        id =
-          slugify(name);
+        id = slugify(name);
       }
 
-      if (
-        !isValidProductId(id)
-      ) {
+      if (!id) {
         return res.status(400).json({
           error:
-            "Ürün ID yalnızca küçük harf, rakam ve tire içerebilir."
+            "Ürün ID oluşturulamadı."
         });
       }
 
@@ -1291,9 +865,7 @@ app.post(
       }
 
       if (
-        !Number.isFinite(
-          price
-        ) ||
+        !Number.isFinite(price) ||
         price <= 0
       ) {
         return res.status(400).json({
@@ -1304,12 +876,10 @@ app.post(
 
       if (
         oldPrice !== null &&
-        (
-          !Number.isFinite(
-            oldPrice
-          ) ||
-          oldPrice < 0
-        )
+        (!Number.isFinite(
+          oldPrice
+        ) ||
+          oldPrice < 0)
       ) {
         return res.status(400).json({
           error:
@@ -1317,33 +887,13 @@ app.post(
         });
       }
 
-      if (
-        !Number.isInteger(
-          sortOrder
-        )
-      ) {
-        return res.status(400).json({
-          error:
-            "Sıralama numarası tam sayı olmalıdır."
-        });
-      }
-
       const {
-        data: existing,
-        error:
-          existingError
+        data: existing
       } = await supabase
         .from("products")
         .select("id")
-        .eq(
-          "id",
-          id
-        )
+        .eq("id", id)
         .maybeSingle();
-
-      if (existingError) {
-        throw existingError;
-      }
 
       if (existing) {
         return res.status(409).json({
@@ -1373,9 +923,7 @@ app.post(
           update_period:
             updatePeriod,
           support,
-          active,
-          sort_order:
-            sortOrder
+          active
         })
         .select("*")
         .single();
@@ -1386,14 +934,11 @@ app.post(
 
       res.status(201).json({
         ok: true,
-
         message:
           "Ürün başarıyla eklendi.",
-
         product:
           formatProduct(data)
       });
-
     } catch (error) {
       console.error(
         "ADMIN PRODUCT CREATE ERROR:",
@@ -1409,7 +954,7 @@ app.post(
 );
 
 /* =========================================================
-   ADMIN PRODUCT UPDATE
+   ADMIN - ÜRÜN DÜZENLE
 ========================================================= */
 
 app.put(
@@ -1471,20 +1016,10 @@ app.put(
         req.body.category !==
         undefined
       ) {
-        const category =
+        updates.category =
           String(
             req.body.category
           ).trim();
-
-        if (!category) {
-          return res.status(400).json({
-            error:
-              "Kategori boş olamaz."
-          });
-        }
-
-        updates.category =
-          category;
       }
 
       if (
@@ -1598,39 +1133,11 @@ app.put(
       }
 
       if (
-        req.body.sortOrder !==
-          undefined ||
-        req.body.sort_order !==
-          undefined
-      ) {
-        const sortOrder =
-          Number(
-            req.body.sortOrder ??
-            req.body.sort_order
-          );
-
-        if (
-          !Number.isInteger(
-            sortOrder
-          )
-        ) {
-          return res.status(400).json({
-            error:
-              "Sıralama numarası tam sayı olmalıdır."
-          });
-        }
-
-        updates.sort_order =
-          sortOrder;
-      }
-
-      if (
         req.body.active !==
         undefined
       ) {
         updates.active =
-          req.body.active ===
-            true ||
+          req.body.active === true ||
           req.body.active ===
             "true";
       }
@@ -1643,9 +1150,7 @@ app.put(
         error
       } = await supabase
         .from("products")
-        .update(
-          updates
-        )
+        .update(updates)
         .eq(
           "id",
           productId
@@ -1659,14 +1164,11 @@ app.put(
 
       res.json({
         ok: true,
-
         message:
           "Ürün güncellendi.",
-
         product:
           formatProduct(data)
       });
-
     } catch (error) {
       console.error(
         "ADMIN PRODUCT UPDATE ERROR:",
@@ -1682,7 +1184,7 @@ app.put(
 );
 
 /* =========================================================
-   ADMIN PRODUCT STATUS
+   ADMIN - ÜRÜN AKTİF / PASİF
 ========================================================= */
 
 app.patch(
@@ -1692,8 +1194,7 @@ app.patch(
   async (req, res) => {
     try {
       const active =
-        req.body.active ===
-          true ||
+        req.body.active === true ||
         req.body.active ===
           "true";
 
@@ -1704,7 +1205,6 @@ app.patch(
         .from("products")
         .update({
           active,
-
           updated_at:
             new Date().toISOString()
         })
@@ -1721,16 +1221,12 @@ app.patch(
 
       res.json({
         ok: true,
-
-        message:
-          active
-            ? "Ürün aktif edildi."
-            : "Ürün pasif edildi.",
-
+        message: active
+          ? "Ürün aktif edildi."
+          : "Ürün pasif edildi.",
         product:
           formatProduct(data)
       });
-
     } catch (error) {
       console.error(
         "ADMIN PRODUCT STATUS ERROR:",
@@ -1746,7 +1242,7 @@ app.patch(
 );
 
 /* =========================================================
-   ADMIN PRODUCT DELETE
+   ADMIN - ÜRÜN SİL
 ========================================================= */
 
 app.delete(
@@ -1782,6 +1278,13 @@ app.delete(
         });
       }
 
+      /*
+        Ürün daha önce satın alınmışsa
+        sipariş kayıtları bozulmasın.
+        Bu nedenle fiziksel silme yerine
+        PASİF yapıyoruz.
+      */
+
       const {
         count,
         error:
@@ -1809,7 +1312,6 @@ app.delete(
           .from("products")
           .update({
             active: false,
-
             updated_at:
               new Date().toISOString()
           })
@@ -1826,14 +1328,10 @@ app.delete(
 
         return res.json({
           ok: true,
-
           deleted: false,
-
           disabled: true,
-
           message:
             "Bu ürün daha önce satıldığı için tamamen silinmedi. Ürün pasif hale getirildi.",
-
           product:
             formatProduct(data)
         });
@@ -1855,13 +1353,10 @@ app.delete(
 
       res.json({
         ok: true,
-
         deleted: true,
-
         message:
           "Ürün silindi."
       });
-
     } catch (error) {
       console.error(
         "ADMIN PRODUCT DELETE ERROR:",
@@ -1877,7 +1372,7 @@ app.delete(
 );
 
 /* =========================================================
-   REGISTER
+   KAYIT
 ========================================================= */
 
 app.post(
@@ -1915,11 +1410,7 @@ app.post(
         });
       }
 
-      if (
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-          email
-        )
-      ) {
+      if (!email.includes("@")) {
         return res.status(400).json({
           error:
             "Geçerli bir e-posta adresi girin."
@@ -1981,18 +1472,12 @@ app.post(
         .from("users")
         .insert({
           name,
-
           email,
-
           password_hash:
             passwordData.hash,
-
           password_salt:
             passwordData.salt,
-
-          balance: 0,
-
-          is_admin: false
+          balance: 0
         })
         .select("*")
         .single();
@@ -2011,7 +1496,6 @@ app.post(
         .from("sessions")
         .insert({
           token,
-
           user_id:
             user.id
         });
@@ -2020,28 +1504,19 @@ app.post(
         throw sessionError;
       }
 
-      setSessionCookie(
-        res,
-        token
+      res.setHeader(
+        "Set-Cookie",
+        `panelmarket_token=${encodeURIComponent(
+          token
+        )}; Path=/; HttpOnly; SameSite=Lax`
       );
 
-      return res.status(201).json({
-        ok: true,
-
+      res.status(201).json({
         success: true,
-
-        authenticated: true,
-
         token,
-
-        is_admin: false,
-
-        isAdmin: false,
-
         user:
           publicUser(user)
       });
-
     } catch (error) {
       console.error(
         "REGISTER ERROR:",
@@ -2057,7 +1532,7 @@ app.post(
 );
 
 /* =========================================================
-   LOGIN USER
+   GİRİŞ
 ========================================================= */
 
 async function loginUser(
@@ -2072,95 +1547,42 @@ async function loginUser(
     )
   ) {
     return res.status(401).json({
-      ok: false,
-
-      success: false,
-
       error:
         "E-posta veya şifre hatalı."
     });
   }
 
-  /*
-    Yeni token oluştur.
-  */
-
   const token =
     createToken();
 
-  /*
-    Session oluştur.
-  */
-
   const {
-    data: session,
-    error:
-      sessionError
+    error
   } = await supabase
     .from("sessions")
     .insert({
       token,
-
       user_id:
         user.id
-    })
-    .select(
-      "token,user_id,created_at"
-    )
-    .single();
+    });
 
-  if (sessionError) {
-    console.error(
-      "LOGIN SESSION INSERT ERROR:",
-      sessionError
-    );
-
-    throw sessionError;
+  if (error) {
+    throw error;
   }
 
-  if (!session) {
-    throw new Error(
-      "Session oluşturulamadı."
-    );
-  }
-
-  /*
-    HttpOnly cookie.
-  */
-
-  setSessionCookie(
-    res,
-    token
+  res.setHeader(
+    "Set-Cookie",
+    `panelmarket_token=${encodeURIComponent(
+      token
+    )}; Path=/; HttpOnly; SameSite=Lax`
   );
 
-  /*
-    Hem eski frontend yapısına
-    hem yeni yapıya uygun response.
-  */
-
-  return res.status(200).json({
-    ok: true,
-
+  return res.json({
     success: true,
-
-    authenticated: true,
-
     token,
-
-    is_admin:
-      user.is_admin === true,
-
-    isAdmin:
-      user.is_admin === true,
-
     user:
       publicUser(user)
   });
 }
-
-/* =========================================================
-   LOGIN
-========================================================= */
 
 app.post(
   "/api/login",
@@ -2180,8 +1602,6 @@ app.post(
 
       if (!email || !password) {
         return res.status(400).json({
-          ok: false,
-
           error:
             "E-posta ve şifre zorunludur."
         });
@@ -2214,21 +1634,14 @@ app.post(
           .insert({
             name:
               "Demo Kullanıcı",
-
             email:
               "demo@panelmarket.com",
-
             password_hash:
               passwordData.hash,
-
             password_salt:
               passwordData.salt,
-
-            balance:
-              5000,
-
-            is_admin:
-              false
+            balance: 5000,
+            is_admin: false
           })
           .select("*")
           .single();
@@ -2237,16 +1650,11 @@ app.post(
           throw error;
         }
 
-        user =
-          demo;
+        user = demo;
       }
 
       if (!user) {
         return res.status(401).json({
-          ok: false,
-
-          success: false,
-
           error:
             "E-posta veya şifre hatalı."
         });
@@ -2257,7 +1665,6 @@ app.post(
         password,
         res
       );
-
     } catch (error) {
       console.error(
         "LOGIN ERROR:",
@@ -2265,8 +1672,6 @@ app.post(
       );
 
       res.status(500).json({
-        ok: false,
-
         error:
           "Giriş sırasında bir hata oluştu."
       });
@@ -2275,57 +1680,61 @@ app.post(
 );
 
 /* =========================================================
-   LOGOUT
+   ÇIKIŞ
 ========================================================= */
 
 app.post(
   "/api/logout",
   async (req, res) => {
     try {
-      const token =
-        getTokenFromRequest(req);
+      const cookies =
+        getCookies(req);
+
+      const authorization =
+        req.headers.authorization ||
+        "";
+
+      let token = "";
+
+      if (
+        authorization.startsWith(
+          "Bearer "
+        )
+      ) {
+        token =
+          authorization
+            .slice(7)
+            .trim();
+      }
+
+      if (!token) {
+        token =
+          cookies.panelmarket_token ||
+          "";
+      }
 
       if (token) {
-        const {
-          error
-        } = await supabase
+        await supabase
           .from("sessions")
           .delete()
           .eq(
             "token",
             token
           );
-
-        if (error) {
-          console.error(
-            "LOGOUT SESSION ERROR:",
-            error.message
-          );
-        }
       }
 
-      clearSessionCookie(
-        res
+      res.setHeader(
+        "Set-Cookie",
+        "panelmarket_token=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax"
       );
 
       res.json({
-        ok: true,
         success: true
       });
-
     } catch (error) {
-      console.error(
-        "LOGOUT ERROR:",
-        error
-      );
-
-      clearSessionCookie(
-        res
-      );
+      console.error(error);
 
       res.status(500).json({
-        ok: false,
-
         error:
           "Çıkış yapılamadı."
       });
@@ -2334,7 +1743,7 @@ app.post(
 );
 
 /* =========================================================
-   AUTH ME
+   OTURUM
 ========================================================= */
 
 app.get(
@@ -2342,20 +1751,15 @@ app.get(
   requireAuth,
   async (req, res) => {
     res.json({
-      ok: true,
-
       authenticated: true,
-
       user:
-        publicUser(
-          req.user
-        )
+        publicUser(req.user)
     });
   }
 );
 
 /* =========================================================
-   ACCOUNT
+   HESAP
 ========================================================= */
 
 app.get(
@@ -2382,37 +1786,20 @@ app.get(
       }
 
       res.json({
-        id:
-          req.user.id,
-
-        name:
-          req.user.name,
-
+        id: req.user.id,
+        name: req.user.name,
         email:
           req.user.email,
-
         balance:
-          money(
-            req.user.balance
-          ),
-
+          money(req.user.balance),
         orderCount:
           count || 0,
-
         isAdmin:
-          req.user.is_admin ===
-          true,
-
-        is_admin:
           req.user.is_admin ===
           true
       });
-
     } catch (error) {
-      console.error(
-        "ACCOUNT ERROR:",
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
         error:
@@ -2432,9 +1819,7 @@ app.post(
   async (req, res) => {
     try {
       const amount =
-        Number(
-          req.body.amount
-        );
+        Number(req.body.amount);
 
       if (
         !Number.isFinite(
@@ -2457,28 +1842,9 @@ app.post(
         });
       }
 
-      const {
-        data: freshUser,
-        error:
-          freshUserError
-      } = await supabase
-        .from("users")
-        .select(
-          "id,balance"
-        )
-        .eq(
-          "id",
-          req.user.id
-        )
-        .single();
-
-      if (freshUserError) {
-        throw freshUserError;
-      }
-
       const oldBalance =
         money(
-          freshUser.balance
+          req.user.balance
         );
 
       const newBalance =
@@ -2515,40 +1881,27 @@ app.post(
         .insert({
           user_id:
             req.user.id,
-
           type:
             "credit",
-
           amount:
             money(amount),
-
           note:
             "Bakiye yükleme"
         });
 
       if (transactionError) {
-        console.error(
-          "TRANSACTION ERROR:",
-          transactionError
-        );
+        throw transactionError;
       }
 
       res.json({
-        ok: true,
-
         success: true,
-
         balance:
           money(
             updatedUser.balance
           )
       });
-
     } catch (error) {
-      console.error(
-        "TOPUP ERROR:",
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
         error:
@@ -2571,13 +1924,13 @@ app.post(
         String(
           req.body.productId ||
             ""
-        ).trim();
+        );
 
       const licenseId =
         String(
           req.body.licenseId ||
             ""
-        ).trim();
+        );
 
       const product =
         await findProduct(
@@ -2642,12 +1995,12 @@ app.post(
 
       const newBalance =
         money(
-          balance -
-            total
+          balance - total
         );
 
       const {
-        data: updatedUser,
+        data:
+          updatedUser,
         error:
           updateError
       } = await supabase
@@ -2693,33 +2046,24 @@ app.post(
         .insert({
           user_id:
             req.user.id,
-
           order_number:
             orderNumber,
-
           product_id:
             product.id,
-
           product_name:
             product.name,
-
           license_id:
             licenseId,
-
           license_name:
             licenses[
               licenseId
             ].name,
-
           amount:
             total,
-
           status:
             "Ödeme Alındı",
-
           delivery_status:
             "Teslim Edilebilir",
-
           license_key:
             licenseKey
         })
@@ -2740,46 +2084,54 @@ app.post(
         throw orderError;
       }
 
-      const {
-        error:
-          transactionError
-      } = await supabase
+      await supabase
         .from("transactions")
         .insert({
           user_id:
             req.user.id,
-
           type:
             "debit",
-
           amount:
             total,
-
           note:
             `${product.name} satın alımı`
         });
 
-      if (transactionError) {
-        console.error(
-          "ORDER TRANSACTION ERROR:",
-          transactionError
-        );
-      }
-
       res.json({
-        ok: true,
-
         success: true,
-
-        order:
-          formatOrder(order),
-
+        order: {
+          id:
+            order.id,
+          userId:
+            order.user_id,
+          orderNumber:
+            order.order_number,
+          productId:
+            order.product_id,
+          productName:
+            order.product_name,
+          licenseId:
+            order.license_id,
+          licenseName:
+            order.license_name,
+          amount:
+            money(
+              order.amount
+            ),
+          status:
+            order.status,
+          deliveryStatus:
+            order.delivery_status,
+          licenseKey:
+            order.license_key,
+          createdAt:
+            order.created_at
+        },
         balance:
           money(
             updatedUser.balance
           )
       });
-
     } catch (error) {
       console.error(
         "ORDER ERROR:",
@@ -2816,8 +2168,7 @@ app.get(
         .order(
           "created_at",
           {
-            ascending:
-              false
+            ascending: false
           }
         );
 
@@ -2827,15 +2178,38 @@ app.get(
 
       res.json(
         (data || []).map(
-          formatOrder
+          order => ({
+            id:
+              order.id,
+            userId:
+              order.user_id,
+            orderNumber:
+              order.order_number,
+            productId:
+              order.product_id,
+            productName:
+              order.product_name,
+            licenseId:
+              order.license_id,
+            licenseName:
+              order.license_name,
+            amount:
+              money(
+                order.amount
+              ),
+            status:
+              order.status,
+            deliveryStatus:
+              order.delivery_status,
+            licenseKey:
+              order.license_key,
+            createdAt:
+              order.created_at
+          })
         )
       );
-
     } catch (error) {
-      console.error(
-        "ORDERS ERROR:",
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
         error:
@@ -2887,8 +2261,7 @@ app.get(
       const {
         data: order,
         error
-      } = await query
-        .maybeSingle();
+      } = await query.maybeSingle();
 
       if (error) {
         throw error;
@@ -2901,15 +2274,36 @@ app.get(
         });
       }
 
-      res.json(
-        formatOrder(order)
-      );
-
+      res.json({
+        id:
+          order.id,
+        userId:
+          order.user_id,
+        orderNumber:
+          order.order_number,
+        productId:
+          order.product_id,
+        productName:
+          order.product_name,
+        licenseId:
+          order.license_id,
+        licenseName:
+          order.license_name,
+        amount:
+          money(
+            order.amount
+          ),
+        status:
+          order.status,
+        deliveryStatus:
+          order.delivery_status,
+        licenseKey:
+          order.license_key,
+        createdAt:
+          order.created_at
+      });
     } catch (error) {
-      console.error(
-        "SINGLE ORDER ERROR:",
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
         error:
@@ -2941,8 +2335,7 @@ app.get(
         .order(
           "created_at",
           {
-            ascending:
-              false
+            ascending: false
           }
         );
 
@@ -2955,29 +2348,21 @@ app.get(
           transaction => ({
             id:
               transaction.id,
-
             type:
               transaction.type,
-
             amount:
               money(
                 transaction.amount
               ),
-
             note:
               transaction.note,
-
             date:
               transaction.created_at
           })
         )
       );
-
     } catch (error) {
-      console.error(
-        "TRANSACTIONS ERROR:",
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
         error:
@@ -3028,19 +2413,12 @@ app.put(
       }
 
       res.json({
-        ok: true,
-
         success: true,
-
         user:
           publicUser(user)
       });
-
     } catch (error) {
-      console.error(
-        "ACCOUNT UPDATE ERROR:",
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
         error:
@@ -3136,7 +2514,6 @@ app.post(
         .update({
           password_hash:
             passwordData.hash,
-
           password_salt:
             passwordData.salt
         })
@@ -3150,19 +2527,12 @@ app.post(
       }
 
       res.json({
-        ok: true,
-
         success: true,
-
         message:
           "Şifre değiştirildi."
       });
-
     } catch (error) {
-      console.error(
-        "PASSWORD UPDATE ERROR:",
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
         error:
@@ -3173,7 +2543,24 @@ app.post(
 );
 
 /* =========================================================
-   ADMIN DASHBOARD
+   ADMIN - ME
+========================================================= */
+
+app.get(
+  "/api/admin/me",
+  requireAuth,
+  requireAdmin,
+  async (req, res) => {
+    res.json({
+      ok: true,
+      admin:
+        req.adminUser
+    });
+  }
+);
+
+/* =========================================================
+   ADMIN - DASHBOARD
 ========================================================= */
 
 app.get(
@@ -3295,20 +2682,20 @@ app.get(
       const totalCredits =
         transactions
           .filter(
-            transaction =>
-              transaction.type ===
+            t =>
+              t.type ===
                 "credit" ||
-              transaction.type ===
+              t.type ===
                 "admin_credit"
           )
           .reduce(
             (
               sum,
-              transaction
+              t
             ) =>
               sum +
               money(
-                transaction.amount
+                t.amount
               ),
             0
           );
@@ -3316,66 +2703,57 @@ app.get(
       const totalDebits =
         transactions
           .filter(
-            transaction =>
-              transaction.type ===
+            t =>
+              t.type ===
                 "debit" ||
-              transaction.type ===
+              t.type ===
                 "admin_debit"
           )
           .reduce(
             (
               sum,
-              transaction
+              t
             ) =>
               sum +
               money(
-                transaction.amount
+                t.amount
               ),
             0
           );
 
       res.json({
         ok: true,
-
         totalUsers:
           usersResult.count ||
           users.length,
-
         totalOrders:
           ordersResult.count ||
           orders.length,
-
         totalProducts:
           productsResult.count ||
           products.length,
-
         activeProducts:
           products.filter(
-            product =>
-              product.active
+            p =>
+              p.active
           ).length,
-
         totalBalance:
           money(
             totalBalance
           ),
-
         totalSales:
           money(
             totalSales
           ),
-
         totalCredits:
           money(
             totalCredits
           ),
-
         totalDebits:
           money(
             totalDebits
           )
       });
-
     } catch (error) {
       console.error(
         "ADMIN DASHBOARD ERROR:",
@@ -3391,7 +2769,7 @@ app.get(
 );
 
 /* =========================================================
-   ADMIN USERS
+   ADMIN - KULLANICILAR
 ========================================================= */
 
 app.get(
@@ -3438,11 +2816,9 @@ app.get(
 
       res.json({
         ok: true,
-
         users:
           data || []
       });
-
     } catch (error) {
       console.error(
         "ADMIN USERS ERROR:",
@@ -3458,7 +2834,7 @@ app.get(
 );
 
 /* =========================================================
-   ADMIN ORDERS
+   ADMIN - SİPARİŞLER
 ========================================================= */
 
 app.get(
@@ -3504,11 +2880,9 @@ app.get(
 
       res.json({
         ok: true,
-
         orders:
           data || []
       });
-
     } catch (error) {
       console.error(
         "ADMIN ORDERS ERROR:",
@@ -3524,7 +2898,7 @@ app.get(
 );
 
 /* =========================================================
-   ADMIN BAKİYE
+   ADMIN - BAKİYE
 ========================================================= */
 
 app.post(
@@ -3551,7 +2925,7 @@ app.post(
         String(
           req.body.note ||
             "Admin bakiye işlemi"
-        ).trim();
+        );
 
       if (
         !Number.isFinite(
@@ -3609,7 +2983,8 @@ app.post(
         );
 
       if (
-        type === "debit" &&
+        type ===
+          "debit" &&
         currentBalance <
           amount
       ) {
@@ -3620,7 +2995,8 @@ app.post(
       }
 
       const newBalance =
-        type === "credit"
+        type ===
+          "credit"
           ? currentBalance +
             amount
           : currentBalance -
@@ -3644,7 +3020,7 @@ app.post(
           userId
         )
         .select(
-          "id,name,email,balance,is_admin"
+          "id,name,email,balance"
         )
         .single();
 
@@ -3660,16 +3036,13 @@ app.post(
         .insert({
           user_id:
             userId,
-
           type:
             type ===
             "credit"
               ? "admin_credit"
               : "admin_debit",
-
           amount:
             money(amount),
-
           note
         });
 
@@ -3682,11 +3055,9 @@ app.post(
 
       res.json({
         ok: true,
-
         user:
           updatedUser
       });
-
     } catch (error) {
       console.error(
         "ADMIN BALANCE ERROR:",
@@ -3702,7 +3073,7 @@ app.post(
 );
 
 /* =========================================================
-   ADMIN ORDER UPDATE
+   ADMIN - SİPARİŞ DURUMU
 ========================================================= */
 
 app.patch(
@@ -3720,7 +3091,7 @@ app.patch(
         updates.status =
           String(
             req.body.status
-          ).trim();
+          );
       }
 
       if (
@@ -3729,8 +3100,9 @@ app.patch(
       ) {
         updates.delivery_status =
           String(
-            req.body.delivery_status
-          ).trim();
+            req.body
+              .delivery_status
+          );
       }
 
       if (
@@ -3749,9 +3121,7 @@ app.patch(
         error
       } = await supabase
         .from("orders")
-        .update(
-          updates
-        )
+        .update(updates)
         .eq(
           "id",
           req.params.id
@@ -3765,11 +3135,9 @@ app.patch(
 
       res.json({
         ok: true,
-
         order:
           data
       });
-
     } catch (error) {
       console.error(
         "ADMIN ORDER UPDATE ERROR:",
@@ -3785,7 +3153,7 @@ app.patch(
 );
 
 /* =========================================================
-   ADMIN TRANSACTIONS
+   ADMIN - TÜM İŞLEMLER
 ========================================================= */
 
 app.get(
@@ -3826,11 +3194,9 @@ app.get(
 
       res.json({
         ok: true,
-
         transactions:
           data || []
       });
-
     } catch (error) {
       console.error(
         "ADMIN TRANSACTIONS ERROR:",
@@ -3840,145 +3206,6 @@ app.get(
       res.status(500).json({
         error:
           "İşlemler alınamadı."
-      });
-    }
-  }
-);
-
-/* =========================================================
-   SESSION TEST / DEBUG
-========================================================= */
-
-app.get(
-  "/api/session/status",
-  async (req, res) => {
-    try {
-      const token =
-        getTokenFromRequest(req);
-
-      if (!token) {
-        return res.status(401).json({
-          ok: false,
-
-          authenticated: false,
-
-          tokenReceived: false,
-
-          message:
-            "Token bulunamadı."
-        });
-      }
-
-      const {
-        data: session,
-        error
-      } = await supabase
-        .from("sessions")
-        .select(
-          "token,user_id,created_at"
-        )
-        .eq(
-          "token",
-          token
-        )
-        .maybeSingle();
-
-      if (error) {
-        return res.status(500).json({
-          ok: false,
-
-          authenticated: false,
-
-          tokenReceived: true,
-
-          error:
-            error.message
-        });
-      }
-
-      if (!session) {
-        return res.status(401).json({
-          ok: false,
-
-          authenticated: false,
-
-          tokenReceived: true,
-
-          sessionFound: false,
-
-          tokenLength:
-            token.length,
-
-          message:
-            "Token var ancak sessions tablosunda yok."
-        });
-      }
-
-      const user =
-        await findUserById(
-          session.user_id
-        );
-
-      if (!user) {
-        return res.status(401).json({
-          ok: false,
-
-          authenticated: false,
-
-          tokenReceived: true,
-
-          sessionFound: true,
-
-          userFound: false
-        });
-      }
-
-      return res.json({
-        ok: true,
-
-        authenticated: true,
-
-        tokenReceived: true,
-
-        sessionFound: true,
-
-        userFound: true,
-
-        is_admin:
-          user.is_admin === true,
-
-        isAdmin:
-          user.is_admin === true,
-
-        user: {
-          id:
-            user.id,
-
-          name:
-            user.name,
-
-          email:
-            user.email,
-
-          is_admin:
-            user.is_admin === true,
-
-          isAdmin:
-            user.is_admin === true
-        }
-      });
-
-    } catch (error) {
-      console.error(
-        "SESSION STATUS ERROR:",
-        error
-      );
-
-      res.status(500).json({
-        ok: false,
-
-        error:
-          "Session kontrolü başarısız."
       });
     }
   }
@@ -4002,13 +3229,10 @@ app.get(
       if (error) {
         return res.status(500).json({
           ok: false,
-
           service:
             "PanelMarket",
-
           database:
             "Supabase bağlantı hatası",
-
           error:
             error.message
         });
@@ -4016,26 +3240,18 @@ app.get(
 
       res.json({
         ok: true,
-
         service:
           "PanelMarket",
-
         database:
           "Supabase bağlı"
       });
-
     } catch (error) {
       res.status(500).json({
         ok: false,
-
         service:
           "PanelMarket",
-
         database:
-          "Supabase bağlantı hatası",
-
-        error:
-          error.message
+          "Supabase bağlantı hatası"
       });
     }
   }
@@ -4046,14 +3262,9 @@ app.get(
 ========================================================= */
 
 app.use(
-  express.static(
-    __dirname,
-    {
-      extensions: [
-        "html"
-      ]
-    }
-  )
+  express.static(__dirname, {
+    extensions: ["html"]
+  })
 );
 
 /* =========================================================
@@ -4073,9 +3284,7 @@ const pages = [
   "admin"
 ];
 
-for (
-  const page of pages
-) {
+for (const page of pages) {
   app.get(
     `/${page}.html`,
     (req, res) => {
@@ -4088,10 +3297,6 @@ for (
     }
   );
 }
-
-/* =========================================================
-   ANA SAYFA
-========================================================= */
 
 app.get(
   "/",
@@ -4106,52 +3311,32 @@ app.get(
 );
 
 /* =========================================================
-   API 404
+   404
 ========================================================= */
 
 app.use(
-  (req, res, next) => {
+  (req, res) => {
     if (
       req.path.startsWith(
         "/api/"
       )
     ) {
       return res.status(404).json({
-        ok: false,
-
         error:
           "API adresi bulunamadı."
       });
     }
 
-    next();
-  }
-);
-
-/* =========================================================
-   GENEL 404
-========================================================= */
-
-app.use(
-  (req, res) => {
     res.status(404).send(`
 <!doctype html>
-
 <html lang="tr">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1.0"
->
-
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
 <title>PanelMarket - 404</title>
 
 <style>
-
 *{
   box-sizing:border-box;
 }
@@ -4161,38 +3346,23 @@ body{
   min-height:100vh;
   display:grid;
   place-items:center;
-
   background:#070a0f;
   color:#fff;
-
-  font-family:
-    Inter,
-    Arial,
-    sans-serif;
+  font-family:Inter,Arial,sans-serif;
 }
 
 .box{
   width:min(500px,92%);
-
   text-align:center;
-
   padding:45px;
-
-  border:
-    1px solid #1d2835;
-
+  border:1px solid #1d2835;
   border-radius:22px;
-
   background:#0d131b;
-
-  box-shadow:
-    0 25px 80px
-    rgba(0,0,0,.35);
+  box-shadow:0 25px 80px rgba(0,0,0,.35);
 }
 
 h1{
-  margin:
-    0 0 12px;
+  margin:0 0 12px;
 }
 
 p{
@@ -4201,23 +3371,14 @@ p{
 
 a{
   display:inline-block;
-
   margin-top:20px;
-
-  padding:
-    13px 22px;
-
+  padding:13px 22px;
   border-radius:10px;
-
   background:#1677ff;
-
   color:#fff;
-
   text-decoration:none;
-
   font-weight:800;
 }
-
 </style>
 
 </head>
@@ -4226,9 +3387,7 @@ a{
 
 <div class="box">
 
-<h1>
-Sayfa bulunamadı
-</h1>
+<h1>Sayfa bulunamadı</h1>
 
 <p>
 Aradığınız PanelMarket sayfası mevcut değil.
@@ -4241,85 +3400,43 @@ Ana Sayfaya Dön
 </div>
 
 </body>
-
 </html>
 `);
   }
 );
 
 /* =========================================================
-   SERVER START
+   BAŞLAT
 ========================================================= */
 
 async function startServer() {
-  try {
-    await seedProducts();
+  await seedProducts();
 
-    app.listen(
-      PORT,
-      () => {
-        console.log("");
-
-        console.log(
-          "================================="
-        );
-
-        console.log(
-          " PanelMarket çalışıyor"
-        );
-
-        console.log(
-          ` Port: ${PORT}`
-        );
-
-        console.log(
-          " Supabase: BAĞLI"
-        );
-
-        console.log(
-          " Session sistemi: AKTİF"
-        );
-
-        console.log(
-          " Admin doğrulama: AKTİF"
-        );
-
-        console.log(
-          " Cookie auth: AKTİF"
-        );
-
-        console.log(
-          " Bearer auth: AKTİF"
-        );
-
-        console.log(
-          " Ürün sistemi: AKTİF"
-        );
-
-        console.log(
-          " Sipariş sistemi: AKTİF"
-        );
-
-        console.log(
-          " Bakiye sistemi: AKTİF"
-        );
-
-        console.log(
-          "================================="
-        );
-
-        console.log("");
-      }
-    );
-
-  } catch (error) {
-    console.error(
-      "SERVER START ERROR:",
-      error
-    );
-
-    process.exit(1);
-  }
+  app.listen(
+    PORT,
+    () => {
+      console.log("");
+      console.log(
+        "================================="
+      );
+      console.log(
+        " PanelMarket çalışıyor"
+      );
+      console.log(
+        ` Port: ${PORT}`
+      );
+      console.log(
+        " Supabase: BAĞLI"
+      );
+      console.log(
+        " Admin ürün sistemi: AKTİF"
+      );
+      console.log(
+        "================================="
+      );
+      console.log("");
+    }
+  );
 }
 
 startServer();
