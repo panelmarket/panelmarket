@@ -236,6 +236,11 @@ app.post("/api/admin/login", async (req, res) => {
     const email = String(req.body.email || "").trim().toLowerCase();
     const password = String(req.body.password || "");
 
+    console.log("ADMIN LOGIN REQUEST:", {
+      email,
+      passwordLength: password.length
+    });
+
     if (!email || !password) {
       return res.status(400).json({
         ok: false,
@@ -245,19 +250,76 @@ app.post("/api/admin/login", async (req, res) => {
       });
     }
 
-    /*
-     * Kullanıcıyı sadece mevcut kayıttan bul.
-     * LOGIN sırasında users INSERT yapılmaz.
-     */
-    let user;
+    let user = null;
 
-if (email === "demo@panelmarket.com") {
-  user = await findUserById(
-    "36002d6d-f4d4-4c4a-a03f-56076c6bf6eb"
-  );
-} else {
-  user = await findUserByEmail(email);
-}
+    /* DEMO ADMIN - DOĞRUDAN ID */
+    if (email === "demo@panelmarket.com") {
+
+      const adminId =
+        "36002d6d-f4d4-4c4a-a03f-56076c6bf6eb";
+
+      const result = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", adminId)
+        .maybeSingle();
+
+      console.log("ADMIN ID QUERY:", {
+        found: !!result.data,
+        error: result.error
+          ? {
+              code: result.error.code,
+              message: result.error.message,
+              details: result.error.details,
+              hint: result.error.hint
+            }
+          : null
+      });
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      user = result.data;
+
+      /* ID ile bulunamazsa e-posta ile tekrar dene */
+      if (!user) {
+        const emailResult = await supabase
+          .from("users")
+          .select("*")
+          .eq("email", "demo@panelmarket.com")
+          .maybeSingle();
+
+        console.log("ADMIN EMAIL QUERY:", {
+          found: !!emailResult.data,
+          error: emailResult.error
+            ? {
+                code: emailResult.error.code,
+                message: emailResult.error.message,
+                details: emailResult.error.details,
+                hint: emailResult.error.hint
+              }
+            : null
+        });
+
+        if (emailResult.error) {
+          throw emailResult.error;
+        }
+
+        user = emailResult.data;
+      }
+
+    } else {
+      user = await findUserByEmail(email);
+    }
+
+    console.log("ADMIN USER RESULT:", user ? {
+      id: user.id,
+      email: user.email,
+      is_admin: user.is_admin,
+      hasPasswordHash: !!user.password_hash,
+      hasPasswordSalt: !!user.password_salt
+    } : null);
 
     if (!user) {
       return res.status(401).json({
@@ -268,9 +330,6 @@ if (email === "demo@panelmarket.com") {
       });
     }
 
-    /*
-     * Admin kontrolü
-     */
     if (user.is_admin !== true) {
       return res.status(403).json({
         ok: false,
@@ -282,10 +341,10 @@ if (email === "demo@panelmarket.com") {
       });
     }
 
-    /*
-     * Şifre kontrolü
-     */
+    /* ŞİFRE */
     if (!verifyPassword(password, user)) {
+      console.log("ADMIN PASSWORD CHECK: BAŞARISIZ");
+
       return res.status(401).json({
         ok: false,
         success: false,
@@ -294,9 +353,9 @@ if (email === "demo@panelmarket.com") {
       });
     }
 
-    /*
-     * Yeni session oluştur.
-     */
+    console.log("ADMIN PASSWORD CHECK: BAŞARILI");
+
+    /* SESSION */
     const token = createToken();
 
     const {
@@ -322,9 +381,6 @@ if (email === "demo@panelmarket.com") {
       });
     }
 
-    /*
-     * Session cookie
-     */
     setSessionCookie(res, token);
 
     console.log(
@@ -345,7 +401,12 @@ if (email === "demo@panelmarket.com") {
     });
 
   } catch (e) {
-    console.error("ADMIN LOGIN ERROR:", e);
+    console.error("ADMIN LOGIN ERROR:", {
+      code: e?.code || null,
+      message: e?.message || null,
+      details: e?.details || null,
+      hint: e?.hint || null
+    });
 
     return res.status(500).json({
       ok: false,
