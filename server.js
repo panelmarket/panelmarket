@@ -401,57 +401,23 @@ app.get("/api/admin/me",requireAuth,requireAdmin,async(req,res)=>{
    PANELMARKET - ŞİFRE SIFIRLAMA SİSTEMİ
    ========================================================= */
 
-/*
-   RENDER ENVIRONMENT VARIABLES
-
-   PASSWORD_RESET_SECRET=uzun-rastgele-bir-secret
-   PUBLIC_BASE_URL=https://panelmarket.onrender.com
-
-   E-posta gönderimi için:
-
-   RESEND_API_KEY=...
-   MAIL_FROM=PanelMarket <dogrulanmis-gonderici@alanadiniz.com>
-
-   NOT:
-   Mevcut kullanıcı şifre sistemi SCRYPT kullanıyor.
-   Şifre sıfırlama da aynı hashPassword() fonksiyonunu
-   kullanıyor.
-*/
-
-
-/* =========================================================
-   RESET AYARLARI
-   ========================================================= */
-
 const PASSWORD_RESET_SECRET =
-  String(
-    process.env.PASSWORD_RESET_SECRET || ""
-  ).trim();
-
+  String(process.env.PASSWORD_RESET_SECRET || "").trim();
 
 const PUBLIC_BASE_URL =
   String(
     process.env.PUBLIC_BASE_URL ||
     "https://panelmarket.onrender.com"
   )
-  .trim()
-  .replace(/\/+$/, "");
+    .trim()
+    .replace(/\/+$/, "");
 
-
-const PASSWORD_RESET_EXPIRE_SECONDS =
-  30 * 60;
-
-
-/* =========================================================
-   RESET SECRET KONTROLÜ
-   ========================================================= */
+const PASSWORD_RESET_EXPIRE_SECONDS = 30 * 60;
 
 if (!PASSWORD_RESET_SECRET) {
-
   console.warn(
-    "UYARI: PASSWORD_RESET_SECRET tanımlı değil."
+    "UYARI: PASSWORD_RESET_SECRET Render Environment Variables içinde tanımlı değil."
   );
-
 }
 
 
@@ -460,7 +426,6 @@ if (!PASSWORD_RESET_SECRET) {
    ========================================================= */
 
 function createPasswordResetToken(user) {
-
   if (!PASSWORD_RESET_SECRET) {
     throw new Error(
       "PASSWORD_RESET_SECRET tanımlı değil."
@@ -468,52 +433,28 @@ function createPasswordResetToken(user) {
   }
 
   const expires =
-    Math.floor(
-      Date.now() / 1000
-    ) +
+    Math.floor(Date.now() / 1000) +
     PASSWORD_RESET_EXPIRE_SECONDS;
 
-
   const payload = {
-
     uid: String(user.id),
-
-    email:
-      String(user.email || "")
-        .trim()
-        .toLowerCase(),
-
+    email: String(user.email || "")
+      .trim()
+      .toLowerCase(),
     exp: expires,
-
     type: "password-reset"
-
   };
 
+  const encodedPayload = Buffer
+    .from(JSON.stringify(payload), "utf8")
+    .toString("base64url");
 
-  const encodedPayload =
-    Buffer
-      .from(
-        JSON.stringify(payload),
-        "utf8"
-      )
-      .toString("base64url");
+  const signature = crypto
+    .createHmac("sha256", PASSWORD_RESET_SECRET)
+    .update(encodedPayload)
+    .digest("base64url");
 
-
-  const signature =
-    crypto
-      .createHmac(
-        "sha256",
-        PASSWORD_RESET_SECRET
-      )
-      .update(encodedPayload)
-      .digest("base64url");
-
-
-  return (
-    encodedPayload +
-    "." +
-    signature
-  );
+  return `${encodedPayload}.${signature}`;
 }
 
 
@@ -522,54 +463,36 @@ function createPasswordResetToken(user) {
    ========================================================= */
 
 function verifyPasswordResetToken(token) {
-
   try {
-
     if (!PASSWORD_RESET_SECRET) {
       return null;
     }
 
-
-    const parts =
-      String(token || "")
-        .trim()
-        .split(".");
-
+    const parts = String(token || "")
+      .trim()
+      .split(".");
 
     if (parts.length !== 2) {
       return null;
     }
 
+    const encodedPayload = parts[0];
+    const receivedSignature = parts[1];
 
-    const encodedPayload =
-      parts[0];
+    const expectedSignature = crypto
+      .createHmac("sha256", PASSWORD_RESET_SECRET)
+      .update(encodedPayload)
+      .digest("base64url");
 
-    const receivedSignature =
-      parts[1];
+    const receivedBuffer = Buffer.from(
+      receivedSignature,
+      "utf8"
+    );
 
-
-    const expectedSignature =
-      crypto
-        .createHmac(
-          "sha256",
-          PASSWORD_RESET_SECRET
-        )
-        .update(encodedPayload)
-        .digest("base64url");
-
-
-    const receivedBuffer =
-      Buffer.from(
-        receivedSignature,
-        "utf8"
-      );
-
-    const expectedBuffer =
-      Buffer.from(
-        expectedSignature,
-        "utf8"
-      );
-
+    const expectedBuffer = Buffer.from(
+      expectedSignature,
+      "utf8"
+    );
 
     if (
       receivedBuffer.length !==
@@ -577,7 +500,6 @@ function verifyPasswordResetToken(token) {
     ) {
       return null;
     }
-
 
     if (
       !crypto.timingSafeEqual(
@@ -588,48 +510,32 @@ function verifyPasswordResetToken(token) {
       return null;
     }
 
-
-    const payload =
-      JSON.parse(
-        Buffer
-          .from(
-            encodedPayload,
-            "base64url"
-          )
-          .toString("utf8")
-      );
-
+    const payload = JSON.parse(
+      Buffer.from(
+        encodedPayload,
+        "base64url"
+      ).toString("utf8")
+    );
 
     if (
       !payload ||
       !payload.uid ||
       !payload.email ||
       !payload.exp ||
-      payload.type !==
-        "password-reset"
+      payload.type !== "password-reset"
     ) {
       return null;
     }
 
+    const now = Math.floor(Date.now() / 1000);
 
-    const now =
-      Math.floor(
-        Date.now() / 1000
-      );
-
-
-    if (
-      Number(payload.exp) <= now
-    ) {
+    if (Number(payload.exp) <= now) {
       return null;
     }
-
 
     return payload;
 
-
   } catch (e) {
-
     console.error(
       "PASSWORD RESET TOKEN ERROR:",
       e.message
@@ -644,98 +550,51 @@ function verifyPasswordResetToken(token) {
    ŞİFRE SIFIRLAMA E-POSTASI
    ========================================================= */
 
-async function sendPasswordResetEmail(
-  user,
-  resetUrl
-) {
+async function sendPasswordResetEmail(user, resetUrl) {
 
-  const apiKey =
-    String(
-      process.env.RESEND_API_KEY || ""
-    ).trim();
+  const apiKey = String(
+    process.env.RESEND_API_KEY || ""
+  ).trim();
 
-
-  const from =
-    String(
-      process.env.MAIL_FROM || ""
-    ).trim();
-
+  const from = String(
+    process.env.MAIL_FROM || ""
+  ).trim();
 
   if (!apiKey) {
-
     throw new Error(
       "RESEND_API_KEY Render Environment Variables içinde bulunamadı."
     );
   }
 
-
   if (!from) {
-
     throw new Error(
       "MAIL_FROM Render Environment Variables içinde bulunamadı."
     );
   }
 
-
-  if (
-    !user ||
-    !user.email
-  ) {
-
+  if (!user?.email) {
     throw new Error(
       "Kullanıcının e-posta adresi bulunamadı."
     );
   }
 
+  /*
+     DİKKAT:
+     HTML artık JavaScript template string'i içinde.
+     Bu nedenle server.js syntax hatası vermez.
+  */
 
-  const response =
-    await fetch(
-      "https://api.resend.com/emails",
-      {
-
-        method: "POST",
-
-        headers: {
-
-          "Authorization":
-            `Bearer ${apiKey}`,
-
-          "Content-Type":
-            "application/json"
-
-        },
-
-        body:
-          JSON.stringify({
-
-            from: from,
-
-            to: [
-              String(user.email)
-            ],
-
-            subject:
-              "PanelMarket - Şifre Sıfırlama",
-
+  const html = `
 <!DOCTYPE html>
-
 <html lang="tr">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta
   name="viewport"
   content="width=device-width,initial-scale=1.0"
 >
-
-<title>
-PanelMarket - Şifre Sıfırlama
-</title>
-
+<title>PanelMarket - Şifre Sıfırlama</title>
 </head>
-
 
 <body style="
   margin:0;
@@ -768,13 +627,10 @@ PanelMarket - Şifre Sıfırlama
   font-size:25px;
   font-weight:800;
 ">
-
 PanelMarket
-
 </div>
 
 </div>
-
 
 <div style="
   padding:32px;
@@ -784,35 +640,26 @@ PanelMarket
   margin:0 0 15px;
   color:#111827;
 ">
-
 Şifre Sıfırlama
-
 </h2>
-
 
 <p style="
   margin:0 0 15px;
   color:#4b5563;
   line-height:1.7;
 ">
-
 PanelMarket hesabınız için
 şifre sıfırlama isteği aldık.
-
 </p>
-
 
 <p style="
   margin:0 0 25px;
   color:#4b5563;
   line-height:1.7;
 ">
-
 Yeni şifrenizi oluşturmak için
 aşağıdaki butona tıklayın.
-
 </p>
-
 
 <div style="
   margin:30px 0;
@@ -830,13 +677,10 @@ aşağıdaki butona tıklayın.
     font-weight:700;
   "
 >
-
 Şifremi Sıfırla
-
 </a>
 
 </div>
-
 
 <p style="
   margin:0 0 10px;
@@ -844,12 +688,9 @@ aşağıdaki butona tıklayın.
   font-size:13px;
   line-height:1.6;
 ">
-
 Bu bağlantı 30 dakika boyunca
 geçerlidir.
-
 </p>
-
 
 <p style="
   margin:0;
@@ -857,52 +698,50 @@ geçerlidir.
   font-size:13px;
   line-height:1.6;
 ">
-
 Bu isteği siz yapmadıysanız
 e-postayı dikkate almayabilirsiniz.
-
 </p>
 
 </div>
-
 </div>
-
 </div>
 
 </body>
-
 </html>
+`;
 
-          })
+  const response = await fetch(
+    "https://api.resend.com/emails",
+    {
+      method: "POST",
 
-      }
-    );
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
 
+      body: JSON.stringify({
+        from,
+        to: [String(user.email)],
+        subject: "PanelMarket - Şifre Sıfırlama",
+        html
+      })
+    }
+  );
 
-  const responseText =
-    await response.text();
-
+  const responseText = await response.text();
 
   let result = {};
 
   try {
-
-    result =
-      JSON.parse(
-        responseText
-      );
-
+    result = JSON.parse(responseText);
   } catch {
-
     result = {
       raw: responseText
     };
-
   }
 
-
   if (!response.ok) {
-
     console.error(
       "RESEND PASSWORD RESET ERROR:",
       {
@@ -911,14 +750,12 @@ e-postayı dikkate almayabilirsiniz.
       }
     );
 
-
     throw new Error(
       result?.message ||
       result?.error ||
       `E-posta gönderilemedi. HTTP ${response.status}`
     );
   }
-
 
   return result;
 }
@@ -934,105 +771,73 @@ app.post(
 
     try {
 
-      const email =
-        String(
-          req.body.email || ""
-        )
+      const email = String(
+        req.body.email || ""
+      )
         .trim()
         .toLowerCase();
-
 
       if (
         !email ||
         !email.includes("@")
       ) {
-
         return res.status(400).json({
-
           ok: false,
-
           success: false,
-
           error:
             "Geçerli bir e-posta adresi girin."
-
         });
-
       }
-
 
       console.log(
         "PASSWORD RESET REQUEST:",
         email
       );
 
-
       const user =
-        await findUserByEmail(
-          email
-        );
-
+        await findUserByEmail(email);
 
       /*
-        Kullanıcı bulunamazsa bile
-        aynı genel cevabı döndür.
+         Kullanıcı bulunmasa bile
+         aynı cevabı döndür.
       */
 
       if (!user) {
-
         return res.status(200).json({
-
           ok: true,
-
           success: true,
-
           message:
             "Eğer bu e-posta kayıtlıysa şifre sıfırlama bağlantısı gönderildi."
-
         });
-
       }
 
-
       const token =
-        createPasswordResetToken(
-          user
-        );
-
+        createPasswordResetToken(user);
 
       const resetUrl =
         `${PUBLIC_BASE_URL}/reset-password.html?token=${encodeURIComponent(token)}`;
-
 
       console.log(
         "PASSWORD RESET URL CREATED FOR:",
         user.email
       );
 
-
       await sendPasswordResetEmail(
         user,
         resetUrl
       );
-
 
       console.log(
         "PASSWORD RESET EMAIL SENT:",
         user.email
       );
 
-
       return res.status(200).json({
-
         ok: true,
-
         success: true,
-
         message:
           "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi."
-
       });
-
 
     } catch (e) {
 
@@ -1041,25 +846,310 @@ app.post(
         e
       );
 
-
       return res.status(500).json({
-
         ok: false,
-
         success: false,
-
         error:
           "Şifre sıfırlama e-postası gönderilemedi.",
-
         detail:
           process.env.NODE_ENV === "production"
             ? undefined
             : e?.message
+      });
+    }
+  }
+);
 
+
+/* =========================================================
+   RESET TOKEN KONTROLÜ
+   ========================================================= */
+
+app.get(
+  "/api/reset-password/verify",
+  async (req, res) => {
+
+    try {
+
+      const token = String(
+        req.query.token || ""
+      ).trim();
+
+      if (!token) {
+        return res.status(400).json({
+          ok: false,
+          valid: false,
+          error:
+            "Şifre sıfırlama bağlantısı bulunamadı."
+        });
+      }
+
+      const payload =
+        verifyPasswordResetToken(token);
+
+      if (!payload) {
+        return res.status(400).json({
+          ok: false,
+          valid: false,
+          error:
+            "Şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş."
+        });
+      }
+
+      const user =
+        await findUserById(payload.uid);
+
+      if (!user) {
+        return res.status(404).json({
+          ok: false,
+          valid: false,
+          error:
+            "Kullanıcı bulunamadı."
+        });
+      }
+
+      const databaseEmail =
+        String(user.email || "")
+          .trim()
+          .toLowerCase();
+
+      const tokenEmail =
+        String(payload.email || "")
+          .trim()
+          .toLowerCase();
+
+      if (
+        databaseEmail !==
+        tokenEmail
+      ) {
+        return res.status(400).json({
+          ok: false,
+          valid: false,
+          error:
+            "Şifre sıfırlama bağlantısı geçersiz."
+        });
+      }
+
+      return res.json({
+        ok: true,
+        valid: true,
+        email: user.email
       });
 
-    }
+    } catch (e) {
 
+      console.error(
+        "RESET TOKEN VERIFY ERROR:",
+        e
+      );
+
+      return res.status(500).json({
+        ok: false,
+        valid: false,
+        error:
+          "Şifre sıfırlama bağlantısı kontrol edilemedi."
+      });
+    }
+  }
+);
+
+
+/* =========================================================
+   YENİ ŞİFRE OLUŞTUR
+   ========================================================= */
+
+app.post(
+  "/api/reset-password",
+  async (req, res) => {
+
+    try {
+
+      const token = String(
+        req.body.token || ""
+      ).trim();
+
+      const newPassword = String(
+        req.body.newPassword || ""
+      );
+
+      if (!token) {
+        return res.status(400).json({
+          ok: false,
+          success: false,
+          error:
+            "Şifre sıfırlama bağlantısı bulunamadı."
+        });
+      }
+
+      if (newPassword.length < 8) {
+        return res.status(400).json({
+          ok: false,
+          success: false,
+          error:
+            "Yeni şifre en az 8 karakter olmalıdır."
+        });
+      }
+
+      if (!/[A-Za-z]/.test(newPassword)) {
+        return res.status(400).json({
+          ok: false,
+          success: false,
+          error:
+            "Yeni şifre en az bir harf içermelidir."
+        });
+      }
+
+      if (!/[0-9]/.test(newPassword)) {
+        return res.status(400).json({
+          ok: false,
+          success: false,
+          error:
+            "Yeni şifre en az bir rakam içermelidir."
+        });
+      }
+
+      const payload =
+        verifyPasswordResetToken(token);
+
+      if (!payload) {
+        return res.status(400).json({
+          ok: false,
+          success: false,
+          error:
+            "Şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş."
+        });
+      }
+
+      const user =
+        await findUserById(payload.uid);
+
+      if (!user) {
+        return res.status(404).json({
+          ok: false,
+          success: false,
+          error:
+            "Kullanıcı bulunamadı."
+        });
+      }
+
+      const databaseEmail =
+        String(user.email || "")
+          .trim()
+          .toLowerCase();
+
+      const tokenEmail =
+        String(payload.email || "")
+          .trim()
+          .toLowerCase();
+
+      if (
+        databaseEmail !==
+        tokenEmail
+      ) {
+        return res.status(400).json({
+          ok: false,
+          success: false,
+          error:
+            "Şifre sıfırlama bağlantısı geçersiz."
+        });
+      }
+
+      /*
+         ÖNEMLİ:
+         Giriş sistemi SCRYPT kullanıyor.
+         Şifre sıfırlamada da SCRYPT kullanılıyor.
+      */
+
+      const pw =
+        hashPassword(newPassword);
+
+      const {
+        data,
+        error
+      } = await supabase
+        .from("users")
+        .update({
+          password_hash: pw.hash,
+          password_salt: pw.salt
+        })
+        .eq("id", user.id)
+        .select("id,email")
+        .single();
+
+      if (error) {
+        console.error(
+          "RESET PASSWORD DB ERROR:",
+          error
+        );
+
+        return res.status(500).json({
+          ok: false,
+          success: false,
+          error:
+            "Şifre veritabanında güncellenemedi.",
+          databaseError:
+            error.message
+        });
+      }
+
+      if (!data) {
+        return res.status(404).json({
+          ok: false,
+          success: false,
+          error:
+            "Kullanıcı bulunamadı."
+        });
+      }
+
+      /*
+         Eski oturumların tamamını kapat.
+      */
+
+      const {
+        error: sessionError
+      } = await supabase
+        .from("sessions")
+        .delete()
+        .eq("user_id", user.id);
+
+      if (sessionError) {
+        console.error(
+          "RESET SESSION DELETE ERROR:",
+          sessionError.message
+        );
+      }
+
+      console.log(
+        "PASSWORD RESET SUCCESS:",
+        user.email
+      );
+
+      return res.status(200).json({
+        ok: true,
+        success: true,
+        passwordChanged: true,
+        message:
+          "Şifreniz başarıyla sıfırlandı. Yeni şifrenizle giriş yapabilirsiniz."
+      });
+
+    } catch (e) {
+
+      console.error(
+        "RESET PASSWORD ERROR:",
+        e
+      );
+
+      return res.status(500).json({
+        ok: false,
+        success: false,
+        error:
+          "Şifre sıfırlama sırasında bir hata oluştu.",
+        detail:
+          process.env.NODE_ENV === "production"
+            ? undefined
+            : e?.message
+      });
+    }
   }
 );
 
