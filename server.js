@@ -236,11 +236,6 @@ app.post("/api/admin/login", async (req, res) => {
     const email = String(req.body.email || "").trim().toLowerCase();
     const password = String(req.body.password || "");
 
-    console.log("ADMIN LOGIN REQUEST:", {
-      email,
-      passwordLength: password.length
-    });
-
     if (!email || !password) {
       return res.status(400).json({
         ok: false,
@@ -252,74 +247,53 @@ app.post("/api/admin/login", async (req, res) => {
 
     let user = null;
 
-    /* DEMO ADMIN - DOĞRUDAN ID */
+    // DEMO ADMIN HESABI
     if (email === "demo@panelmarket.com") {
-
-      const adminId =
+      const ADMIN_ID =
         "36002d6d-f4d4-4c4a-a03f-56076c6bf6eb";
 
-      const result = await supabase
+      // Önce ID ile bul
+      const { data, error } = await supabase
         .from("users")
         .select("*")
-        .eq("id", adminId)
+        .eq("id", ADMIN_ID)
+        .single();
+
+      if (error) {
+        console.error("DEMO ADMIN QUERY ERROR:", error);
+
+        return res.status(500).json({
+          ok: false,
+          success: false,
+          authenticated: false,
+          error: "Admin hesabı veritabanından okunamadı.",
+          databaseError: error.message
+        });
+      }
+
+      user = data;
+    } else {
+      // Normal kullanıcı
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("email", email)
         .maybeSingle();
 
-      console.log("ADMIN ID QUERY:", {
-        found: !!result.data,
-        error: result.error
-          ? {
-              code: result.error.code,
-              message: result.error.message,
-              details: result.error.details,
-              hint: result.error.hint
-            }
-          : null
-      });
+      if (error) {
+        console.error("ADMIN USER QUERY ERROR:", error);
 
-      if (result.error) {
-        throw result.error;
-      }
-
-      user = result.data;
-
-      /* ID ile bulunamazsa e-posta ile tekrar dene */
-      if (!user) {
-        const emailResult = await supabase
-          .from("users")
-          .select("*")
-          .eq("email", "demo@panelmarket.com")
-          .maybeSingle();
-
-        console.log("ADMIN EMAIL QUERY:", {
-          found: !!emailResult.data,
-          error: emailResult.error
-            ? {
-                code: emailResult.error.code,
-                message: emailResult.error.message,
-                details: emailResult.error.details,
-                hint: emailResult.error.hint
-              }
-            : null
+        return res.status(500).json({
+          ok: false,
+          success: false,
+          authenticated: false,
+          error: "Kullanıcı sorgulanamadı.",
+          databaseError: error.message
         });
-
-        if (emailResult.error) {
-          throw emailResult.error;
-        }
-
-        user = emailResult.data;
       }
 
-    } else {
-      user = await findUserByEmail(email);
+      user = data;
     }
-
-    console.log("ADMIN USER RESULT:", user ? {
-      id: user.id,
-      email: user.email,
-      is_admin: user.is_admin,
-      hasPasswordHash: !!user.password_hash,
-      hasPasswordSalt: !!user.password_salt
-    } : null);
 
     if (!user) {
       return res.status(401).json({
@@ -330,6 +304,13 @@ app.post("/api/admin/login", async (req, res) => {
       });
     }
 
+    console.log("ADMIN USER FOUND:", {
+      id: user.id,
+      email: user.email,
+      is_admin: user.is_admin
+    });
+
+    // ADMIN KONTROLÜ
     if (user.is_admin !== true) {
       return res.status(403).json({
         ok: false,
@@ -341,10 +322,8 @@ app.post("/api/admin/login", async (req, res) => {
       });
     }
 
-    /* ŞİFRE */
+    // ŞİFRE KONTROLÜ
     if (!verifyPassword(password, user)) {
-      console.log("ADMIN PASSWORD CHECK: BAŞARISIZ");
-
       return res.status(401).json({
         ok: false,
         success: false,
@@ -353,9 +332,7 @@ app.post("/api/admin/login", async (req, res) => {
       });
     }
 
-    console.log("ADMIN PASSWORD CHECK: BAŞARILI");
-
-    /* SESSION */
+    // SESSION OLUŞTUR
     const token = createToken();
 
     const {
@@ -364,7 +341,7 @@ app.post("/api/admin/login", async (req, res) => {
     } = await supabase
       .from("sessions")
       .insert({
-        token,
+        token: token,
         user_id: user.id
       })
       .select("token,user_id,created_at")
@@ -377,7 +354,8 @@ app.post("/api/admin/login", async (req, res) => {
         ok: false,
         success: false,
         authenticated: false,
-        error: "Admin oturumu oluşturulamadı."
+        error: "Admin oturumu oluşturulamadı.",
+        databaseError: sessionError.message
       });
     }
 
@@ -386,7 +364,6 @@ app.post("/api/admin/login", async (req, res) => {
     console.log(
       "ADMIN LOGIN BAŞARILI:",
       user.email,
-      "USER ID:",
       user.id
     );
 
@@ -394,25 +371,21 @@ app.post("/api/admin/login", async (req, res) => {
       ok: true,
       success: true,
       authenticated: true,
-      token,
+      token: token,
       is_admin: true,
       isAdmin: true,
       user: publicUser(user)
     });
 
   } catch (e) {
-    console.error("ADMIN LOGIN ERROR:", {
-      code: e?.code || null,
-      message: e?.message || null,
-      details: e?.details || null,
-      hint: e?.hint || null
-    });
+    console.error("ADMIN LOGIN ERROR:", e);
 
     return res.status(500).json({
       ok: false,
       success: false,
       authenticated: false,
-      error: "Admin girişi sırasında bir hata oluştu."
+      error: "Admin girişi sırasında bir hata oluştu.",
+      databaseError: e?.message || null
     });
   }
 });
