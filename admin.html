@@ -39,8 +39,6 @@ a{
   text-decoration:none;
 }
 
-/* HEADER */
-
 .header{
   height:76px;
   position:sticky;
@@ -111,8 +109,6 @@ a{
   border-color:#398cff;
 }
 
-/* LAYOUT */
-
 .layout{
   width:min(1400px,94%);
   margin:30px auto 60px;
@@ -161,8 +157,6 @@ a{
 .side-btn.active{
   box-shadow:inset 3px 0 #2988ff;
 }
-
-/* MAIN */
 
 .main{
   min-width:0;
@@ -222,12 +216,6 @@ a{
   border-radius:9px;
 }
 
-.danger:hover{
-  background:#32151c;
-}
-
-/* STATS */
-
 .stats{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -252,8 +240,6 @@ a{
   font-weight:900;
   margin-top:8px;
 }
-
-/* PANEL */
 
 .panel{
   background:#0d131b;
@@ -294,8 +280,6 @@ a{
 .field textarea:focus{
   border-color:#368cff;
 }
-
-/* TABLE */
 
 .table-wrap{
   overflow-x:auto;
@@ -379,8 +363,6 @@ td{
   border-color:#e84d5d;
   color:#ff8490;
 }
-
-/* MODAL */
 
 .modal{
   position:fixed;
@@ -506,8 +488,6 @@ td{
   border-top:1px solid #1c2633;
 }
 
-/* ALERT */
-
 .alert{
   display:none;
   padding:13px 15px;
@@ -533,8 +513,6 @@ td{
   color:#67d9a5;
 }
 
-/* LOADING */
-
 .loading{
   padding:45px;
   text-align:center;
@@ -546,8 +524,6 @@ td{
   text-align:center;
   color:#718096;
 }
-
-/* RESPONSIVE */
 
 @media(max-width:1000px){
 
@@ -640,509 +616,450 @@ td{
 
 <header class="header">
 
-  <div class="header-inner">
+<div class="header-inner">
 
-    <div class="logo-area">
+<div class="logo-area">
 
-      <div class="logo">
-        P
-      </div>
+<div class="logo">P</div>
 
-      <div class="logo-text">
-        Panel<span>Market</span> Admin
-      </div>
+<div class="logo-text">
+Panel<span>Market</span> Admin
+</div>
 
-    </div>
+</div>
 
-    <div class="header-right">
+<div class="header-right">
 
-      <div
-        class="admin-user"
-        id="adminUser">
-        Kontrol ediliyor...
-      </div>
+<div
+class="admin-user"
+id="adminUser">
+Kontrol ediliyor...
+</div>
 
-      <button
-        class="logout"
-        id="logoutBtn">
-        ÇIKIŞ YAP
-      </button>
+<button
+class="logout"
+id="logoutBtn">
+ÇIKIŞ YAP
+</button>
 
-    </div>
+</div>
 
-  </div>
+</div>
 
 </header>
 
 
 <div class="layout">
 
-  <aside class="sidebar">
+<aside class="sidebar">
 
-    <div class="side-title">
-      Yönetim
-    </div>
+<div class="side-title">
+Yönetim
+</div>
 
-    <button
-      class="side-btn"
-      onclick="location.href='/index.html'">
-      🏠 Ana Sayfa
-    </button>
+<button
+class="side-btn"
+onclick="location.href='/index.html'">
+🏠 Ana Sayfa
+</button>
 
-    <button
-      class="side-btn active">
-      📦 Ürünler
-    </button>
+<button
+class="side-btn active">
+📦 Ürünler
+</button>
 
-    <button
-      class="side-btn"
-      onclick="location.href='/admin.html#users'">
-      👥 Kullanıcılar
-    </button>
+<button
+class="side-btn"
+onclick="location.href='/admin.html#users'">
+👥 Kullanıcılar
+</button>
 
-    <button
-      class="side-btn"
-      onclick="location.href='/admin.html#orders'">
-      🛒 Siparişler
-    </button>
+<button
+class="side-btn"
+onclick="location.href='/admin.html#orders'">
+🛒 Siparişler
+</button>
 
-    <button
-      class="side-btn"
-      onclick="location.href='/admin.html#transactions'">
-      💳 İşlemler
-    </button>
+<button
+class="side-btn"
+onclick="location.href='/admin.html#transactions'">
+💳 İşlemler
+</button>
 
-  </aside>
+</aside>
 
 
-  <main class="main">
+<main class="main">
 
-    <div class="page-title">
+<div class="page-title">
 
-      <div>
+<div>
 
-        <h1>
-          Ürünler
-        </h1>
+<h1>Ürünler</h1>
 
-        <p>
-          PanelMarket ürün kataloğunu buradan tamamen yönet.
-        </p>
+<p>
+PanelMarket ürün kataloğunu buradan tamamen yönet.
+</p>
 
-      </div>
+</div>
 
-      <button
-        class="primary"
-        id="newProductBtn">
-        + YENİ ÜRÜN
-      </button>
-
-    </div>
-
-
-    <div
-      id="alert"
-      class="alert">
-    </div>
-
-
-    <section class="stats">
-
-      <div class="stat">
-
-        <div class="stat-label">
-          Toplam Ürün
-        </div>
-
-        <div
-          class="stat-value"
-          id="totalProducts">
-          0
-        </div>
-
-      </div>
-
-
-      <div class="stat">
-
-        <div class="stat-label">
-          Aktif Ürün
-        </div>
-
-        <div
-          class="stat-value"
-          id="activeProducts">
-          0
-        </div>
-
-      </div>
-
-
-      <div class="stat">
-
-        <div class="stat-label">
-          Pasif Ürün
-        </div>
-
-        <div
-          class="stat-value"
-          id="passiveProducts">
-          0
-        </div>
-
-      </div>
-
-
-      <div class="stat">
-
-        <div class="stat-label">
-          Katalog Durumu
-        </div>
-
-        <div
-          class="stat-value"
-          id="catalogStatus">
-          —
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <section class="panel">
-
-      <div class="panel-header">
-
-        <h2>
-          Ürün Kataloğu
-        </h2>
-
-        <input
-          class="search"
-          id="searchInput"
-          type="search"
-          placeholder="Ürün ara..."
-        >
-
-      </div>
-
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-
-              <th>
-                Ürün
-              </th>
-
-              <th>
-                Kategori
-              </th>
-
-              <th>
-                Fiyat
-              </th>
-
-              <th>
-                Rozet
-              </th>
-
-              <th>
-                Teslimat
-              </th>
-
-              <th>
-                Durum
-              </th>
-
-              <th>
-                Sıra
-              </th>
-
-              <th>
-                İşlem
-              </th>
-
-            </tr>
-
-          </thead>
-
-
-          <tbody id="productsTable">
-
-            <tr>
-
-              <td colspan="8">
-
-                <div class="loading">
-                  Ürünler yükleniyor...
-                </div>
-
-              </td>
-
-            </tr>
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </section>
-
-  </main>
+<button
+class="primary"
+id="newProductBtn">
++ YENİ ÜRÜN
+</button>
 
 </div>
 
 
-<!-- PRODUCT MODAL -->
+<div
+id="alert"
+class="alert">
+</div>
+
+
+<section class="stats">
+
+<div class="stat">
+
+<div class="stat-label">
+Toplam Ürün
+</div>
 
 <div
-  class="modal"
-  id="productModal">
+class="stat-value"
+id="totalProducts">
+0
+</div>
 
-  <div class="modal-box">
+</div>
 
-    <div class="modal-header">
 
-      <h2 id="modalTitle">
-        Yeni Ürün
-      </h2>
+<div class="stat">
 
-      <button
-        class="close"
-        id="closeModal"
-        type="button">
-        ×
-      </button>
+<div class="stat-label">
+Aktif Ürün
+</div>
 
-    </div>
+<div
+class="stat-value"
+id="activeProducts">
+0
+</div>
 
+</div>
 
-    <form
-      class="form"
-      id="productForm">
 
-      <div class="form-grid">
+<div class="stat">
 
+<div class="stat-label">
+Pasif Ürün
+</div>
 
-        <div class="field">
+<div
+class="stat-value"
+id="passiveProducts">
+0
+</div>
 
-          <label>
-            Ürün ID / Slug
-          </label>
+</div>
 
-          <input
-            id="productId"
-            type="text"
-            placeholder="admin-panel"
-            required>
 
-        </div>
+<div class="stat">
 
+<div class="stat-label">
+Katalog Durumu
+</div>
 
-        <div class="field">
+<div
+class="stat-value"
+id="catalogStatus">
+—
+</div>
 
-          <label>
-            Ürün Adı
-          </label>
+</div>
 
-          <input
-            id="productName"
-            type="text"
-            placeholder="Profesyonel Admin Paneli"
-            required>
+</section>
 
-        </div>
 
+<section class="panel">
 
-        <div class="field">
+<div class="panel-header">
 
-          <label>
-            Kategori
-          </label>
+<h2>Ürün Kataloğu</h2>
 
-          <input
-            id="productCategory"
-            type="text"
-            placeholder="Admin Paneli"
-            required>
+<input
+class="search"
+id="searchInput"
+type="search"
+placeholder="Ürün ara...">
 
-        </div>
+</div>
 
 
-        <div class="field">
+<div class="table-wrap">
 
-          <label>
-            Fiyat (₺)
-          </label>
+<table>
 
-          <input
-            id="productPrice"
-            type="number"
-            min="0.01"
-            step="0.01"
-            placeholder="1499"
-            required>
+<thead>
 
-        </div>
+<tr>
 
+<th>Ürün</th>
+<th>Kategori</th>
+<th>Fiyat</th>
+<th>Rozet</th>
+<th>Teslimat</th>
+<th>Durum</th>
+<th>Sıra</th>
+<th>İşlem</th>
 
-        <div class="field">
+</tr>
 
-          <label>
-            Eski Fiyat (₺)
-          </label>
+</thead>
 
-          <input
-            id="productOldPrice"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="1999">
+<tbody id="productsTable">
 
-        </div>
+<tr>
 
+<td colspan="8">
 
-        <div class="field">
+<div class="loading">
+Ürünler yükleniyor...
+</div>
 
-          <label>
-            Rozet
-          </label>
+</td>
 
-          <input
-            id="productBadge"
-            type="text"
-            placeholder="ÇOK SATAN">
+</tr>
 
-        </div>
+</tbody>
 
+</table>
 
-        <div class="field">
+</div>
 
-          <label>
-            Teslimat
-          </label>
+</section>
 
-          <input
-            id="productDelivery"
-            type="text"
-            placeholder="Hemen"
-            value="Hemen">
+</main>
 
-        </div>
+</div>
 
 
-        <div class="field">
+<div
+class="modal"
+id="productModal">
 
-          <label>
-            Güncelleme
-          </label>
+<div class="modal-box">
 
-          <input
-            id="productUpdate"
-            type="text"
-            placeholder="1 Yıl"
-            value="1 Yıl">
+<div class="modal-header">
 
-        </div>
+<h2 id="modalTitle">
+Yeni Ürün
+</h2>
 
+<button
+class="close"
+id="closeModal"
+type="button">
+×
+</button>
 
-        <div class="field">
+</div>
 
-          <label>
-            Destek
-          </label>
 
-          <input
-            id="productSupport"
-            type="text"
-            placeholder="30 Gün"
-            value="30 Gün">
+<form
+class="form"
+id="productForm">
 
-        </div>
+<div class="form-grid">
 
 
-        <div class="field">
+<div class="field">
 
-          <label>
-            Sıralama
-          </label>
+<label>Ürün ID / Slug</label>
 
-          <input
-            id="productSort"
-            type="number"
-            min="0"
-            step="1"
-            value="0">
+<input
+id="productId"
+type="text"
+placeholder="admin-panel"
+required>
 
-        </div>
+</div>
 
 
-        <div class="field full">
+<div class="field">
 
-          <label>
-            Açıklama
-          </label>
+<label>Ürün Adı</label>
 
-          <textarea
-            id="productDescription"
-            placeholder="Ürün hakkında kısa açıklama..."></textarea>
+<input
+id="productName"
+type="text"
+placeholder="Profesyonel Admin Paneli"
+required>
 
-        </div>
+</div>
 
 
-        <div class="field full">
+<div class="field">
 
-          <label>
-            Ürün Durumu
-          </label>
+<label>Kategori</label>
 
-          <label class="checkbox">
+<input
+id="productCategory"
+type="text"
+placeholder="Admin Paneli"
+required>
 
-            <input
-              id="productActive"
-              type="checkbox"
-              checked>
+</div>
 
-            <span>
-              Ürün satışta / aktif
-            </span>
 
-          </label>
+<div class="field">
 
-        </div>
+<label>Fiyat (₺)</label>
 
+<input
+id="productPrice"
+type="number"
+min="0.01"
+step="0.01"
+placeholder="1499"
+required>
 
-      </div>
+</div>
 
 
-      <div class="form-actions">
+<div class="field">
 
-        <button
-          type="button"
-          class="secondary"
-          id="cancelBtn">
-          İPTAL
-        </button>
+<label>Eski Fiyat (₺)</label>
 
-        <button
-          type="submit"
-          class="primary"
-          id="saveBtn">
-          ÜRÜNÜ KAYDET
-        </button>
+<input
+id="productOldPrice"
+type="number"
+min="0"
+step="0.01"
+placeholder="1999">
 
-      </div>
+</div>
 
-    </form>
 
-  </div>
+<div class="field">
+
+<label>Rozet</label>
+
+<input
+id="productBadge"
+type="text"
+placeholder="ÇOK SATAN">
+
+</div>
+
+
+<div class="field">
+
+<label>Teslimat</label>
+
+<input
+id="productDelivery"
+type="text"
+placeholder="Hemen"
+value="Hemen">
+
+</div>
+
+
+<div class="field">
+
+<label>Güncelleme</label>
+
+<input
+id="productUpdate"
+type="text"
+placeholder="1 Yıl"
+value="1 Yıl">
+
+</div>
+
+
+<div class="field">
+
+<label>Destek</label>
+
+<input
+id="productSupport"
+type="text"
+placeholder="30 Gün"
+value="30 Gün">
+
+</div>
+
+
+<div class="field">
+
+<label>Sıralama</label>
+
+<input
+id="productSort"
+type="number"
+min="0"
+step="1"
+value="0">
+
+</div>
+
+
+<div class="field full">
+
+<label>Açıklama</label>
+
+<textarea
+id="productDescription"
+placeholder="Ürün hakkında kısa açıklama..."></textarea>
+
+</div>
+
+
+<div class="field full">
+
+<label>Ürün Durumu</label>
+
+<label class="checkbox">
+
+<input
+id="productActive"
+type="checkbox"
+checked>
+
+<span>Ürün satışta / aktif</span>
+
+</label>
+
+</div>
+
+
+</div>
+
+
+<div class="form-actions">
+
+<button
+type="button"
+class="secondary"
+id="cancelBtn">
+İPTAL
+</button>
+
+<button
+type="submit"
+class="primary"
+id="saveBtn">
+ÜRÜNÜ KAYDET
+</button>
+
+</div>
+
+</form>
+
+</div>
 
 </div>
 
@@ -1153,37 +1070,64 @@ td{
 
 
 /* =========================================================
-   PANELMARKET ADMIN
+   PANELMARKET ADMIN - OTURUM
 ========================================================= */
 
-const tokenKey =
-  "panelmarket_token";
+const tokenKey = "panelmarket_token";
 
-let token =
-  localStorage.getItem(tokenKey);
-
+let token = null;
 let products = [];
-
 let editingId = null;
+
+
+/* =========================================================
+   TOKEN'I HER SEFERİNDE GÜNCELLE
+========================================================= */
+
+function getToken(){
+
+  const value =
+    localStorage.getItem(tokenKey);
+
+  if(!value){
+    return null;
+  }
+
+  return String(value).trim() || null;
+
+}
 
 
 /* =========================================================
    API
 ========================================================= */
 
-async function api(url, options = {}) {
+async function api(url, options = {}){
+
+  const currentToken =
+    getToken();
 
   const headers = {
-    "Content-Type":"application/json",
+    "Accept":"application/json",
     ...(options.headers || {})
   };
 
-  if(token){
 
-    headers.Authorization =
-      "Bearer " + token;
+  if(options.body !== undefined){
+
+    headers["Content-Type"] =
+      "application/json";
 
   }
+
+
+  if(currentToken){
+
+    headers["Authorization"] =
+      "Bearer " + currentToken;
+
+  }
+
 
   const response =
     await fetch(url,{
@@ -1215,12 +1159,20 @@ async function api(url, options = {}) {
 
   if(!response.ok){
 
-    const message =
-      data.error ||
-      data.message ||
-      "İşlem gerçekleştirilemedi.";
+    const error =
+      new Error(
+        data.error ||
+        data.message ||
+        `HTTP ${response.status}`
+      );
 
-    throw new Error(message);
+    error.status =
+      response.status;
+
+    error.data =
+      data;
+
+    throw error;
 
   }
 
@@ -1234,10 +1186,7 @@ async function api(url, options = {}) {
    ALERT
 ========================================================= */
 
-function showAlert(
-  message,
-  type = "success"
-){
+function showAlert(message,type="success"){
 
   const alert =
     document.getElementById("alert");
@@ -1258,7 +1207,7 @@ function showAlert(
       alert.className =
         "alert";
 
-    },4000);
+    },5000);
 
 }
 
@@ -1270,29 +1219,45 @@ function showAlert(
 async function checkAdmin(){
 
   const adminUser =
-    document.getElementById("adminUser");
+    document.getElementById(
+      "adminUser"
+    );
 
 
   adminUser.textContent =
     "Kontrol ediliyor...";
 
 
-  /* -----------------------------------------
-     TOKEN YOK
-  ----------------------------------------- */
+  /* HER SEFERİNDE GÜNCEL TOKEN */
+
+  token =
+    getToken();
+
 
   if(!token){
 
     console.error(
-      "ADMIN: panelmarket_token bulunamadı."
+      "ADMIN: localStorage içinde panelmarket_token yok."
     );
 
     adminUser.textContent =
       "Oturum bulunamadı";
 
-    window.location.replace(
-      "/login.html"
+
+    showAlert(
+      "Admin paneli için önce giriş yapmalısınız.",
+      "error"
     );
+
+
+    setTimeout(()=>{
+
+      window.location.replace(
+        "/login.html"
+      );
+
+    },800);
+
 
     return false;
 
@@ -1302,13 +1267,15 @@ async function checkAdmin(){
   try{
 
     console.log(
-      "ADMIN: /api/admin/me kontrolü..."
+      "ADMIN TOKEN:",
+      token.substring(0,12) + "..."
     );
 
 
     const response =
       await fetch(
-        "/api/admin/me",
+        "/api/admin/me?t=" +
+        Date.now(),
         {
 
           method:"GET",
@@ -1318,13 +1285,15 @@ async function checkAdmin(){
               "Bearer " + token,
 
             "Accept":
-              "application/json"
+              "application/json",
+
+            "Cache-Control":
+              "no-cache"
           },
 
           credentials:"include",
 
           cache:"no-store"
-
         }
       );
 
@@ -1344,43 +1313,66 @@ async function checkAdmin(){
 
 
     console.log(
-      "ADMIN /api/admin/me:",
-      response.status,
+      "ADMIN ME STATUS:",
+      response.status
+    );
+
+    console.log(
+      "ADMIN ME DATA:",
       data
     );
 
 
-    /* -----------------------------------------
-       401 = TOKEN GEÇERSİZ
-    ----------------------------------------- */
+    /* =====================================================
+       401
+    ===================================================== */
 
     if(response.status === 401){
 
+      /*
+        Burada artık hemen login'e atmıyoruz.
+        Önce ekranda gerçek hatayı gösteriyoruz.
+      */
+
+      adminUser.textContent =
+        "Oturum doğrulanamadı";
+
+
+      showAlert(
+        data.error ||
+        data.message ||
+        "Sunucu bu oturumu doğrulayamadı.",
+        "error"
+      );
+
+
       console.error(
-        "ADMIN TOKEN GEÇERSİZ:",
+        "ADMIN 401:",
         data
       );
 
 
-      localStorage.removeItem(
-        tokenKey
-      );
+      /*
+        3 saniye sonra login.
+      */
 
-      localStorage.removeItem(
-        "panelmarket_user"
-      );
+      setTimeout(()=>{
 
+        localStorage.removeItem(
+          tokenKey
+        );
 
-      token = null;
+        localStorage.removeItem(
+          "panelmarket_user"
+        );
 
+        token = null;
 
-      adminUser.textContent =
-        "Oturum geçersiz";
+        window.location.replace(
+          "/login.html"
+        );
 
-
-      window.location.replace(
-        "/login.html"
-      );
+      },3000);
 
 
       return false;
@@ -1388,19 +1380,11 @@ async function checkAdmin(){
     }
 
 
-    /* -----------------------------------------
-       403 = ADMIN YETKİSİ YOK
-
-       TOKEN SİLİNMİYOR.
-    ----------------------------------------- */
+    /* =====================================================
+       403
+    ===================================================== */
 
     if(response.status === 403){
-
-      console.error(
-        "ADMIN YETKİSİ YOK:",
-        data
-      );
-
 
       adminUser.textContent =
         "Admin yetkisi yok";
@@ -1408,28 +1392,32 @@ async function checkAdmin(){
 
       showAlert(
         data.error ||
-        "Bu hesap admin olarak tanımlanmamış. Supabase users tablosunda is_admin değerini true yap.",
+        data.message ||
+        "Bu kullanıcı admin değil.",
         "error"
       );
 
+
+      console.error(
+        "ADMIN 403:",
+        data
+      );
+
+
+      /*
+        403'te TOKEN SİLİNMİYOR.
+      */
 
       return false;
 
     }
 
 
-    /* -----------------------------------------
-       DİĞER HATA
-    ----------------------------------------- */
+    /* =====================================================
+       DİĞER SUNUCU HATASI
+    ===================================================== */
 
     if(!response.ok){
-
-      console.error(
-        "ADMIN SUNUCU HATASI:",
-        response.status,
-        data
-      );
-
 
       adminUser.textContent =
         "Sunucu hatası";
@@ -1438,8 +1426,15 @@ async function checkAdmin(){
       showAlert(
         data.error ||
         data.message ||
-        "Admin kontrolü sırasında hata oluştu.",
+        "Admin kontrolü başarısız.",
         "error"
+      );
+
+
+      console.error(
+        "ADMIN HTTP ERROR:",
+        response.status,
+        data
       );
 
 
@@ -1448,42 +1443,41 @@ async function checkAdmin(){
     }
 
 
-    /* -----------------------------------------
-       KULLANICIYI BUL
-    ----------------------------------------- */
+    /* =====================================================
+       KULLANICI
+    ===================================================== */
 
     const user =
       data.user ||
       data.admin ||
+      data.userData ||
       data;
 
 
     console.log(
-      "ADMIN KULLANICI:",
+      "ADMIN USER:",
       user
     );
 
 
-    /* -----------------------------------------
-       ADMIN ALANLARINI KONTROL ET
-    ----------------------------------------- */
+    /* =====================================================
+       ADMIN KONTROLÜ
+    ===================================================== */
 
     const isAdmin =
       data.is_admin === true ||
       data.isAdmin === true ||
+      data.admin === true ||
       user.is_admin === true ||
-      user.isAdmin === true;
+      user.isAdmin === true ||
+      user.admin === true;
 
 
     console.log(
-      "ADMIN YETKİSİ:",
+      "ADMIN IS ADMIN:",
       isAdmin
     );
 
-
-    /* -----------------------------------------
-       ADMIN DEĞİL
-    ----------------------------------------- */
 
     if(!isAdmin){
 
@@ -1492,7 +1486,7 @@ async function checkAdmin(){
 
 
       showAlert(
-        "Bu hesap admin olarak tanımlanmamış. Supabase'de is_admin = true yap.",
+        "Sunucu kullanıcıyı doğruladı fakat bu hesap admin değil.",
         "error"
       );
 
@@ -1502,9 +1496,9 @@ async function checkAdmin(){
     }
 
 
-    /* -----------------------------------------
-       ADMIN DOĞRULANDI
-    ----------------------------------------- */
+    /* =====================================================
+       ADMIN BAŞARILI
+    ===================================================== */
 
     adminUser.textContent =
       user.email ||
@@ -1512,8 +1506,26 @@ async function checkAdmin(){
       "Admin";
 
 
+    /*
+      Sunucu yeni token gönderirse
+      onu da sakla.
+    */
+
+    if(data.token){
+
+      localStorage.setItem(
+        tokenKey,
+        data.token
+      );
+
+      token =
+        data.token;
+
+    }
+
+
     console.log(
-      "✓ PANELMARKET ADMIN DOĞRULANDI"
+      "PANELMARKET ADMIN DOĞRULANDI"
     );
 
 
@@ -1523,7 +1535,7 @@ async function checkAdmin(){
   }catch(error){
 
     console.error(
-      "ADMIN BAĞLANTI HATASI:",
+      "ADMIN FETCH ERROR:",
       error
     );
 
@@ -1533,7 +1545,8 @@ async function checkAdmin(){
 
 
     showAlert(
-      "Admin sunucusuna bağlanılamadı. Render sunucusunu kontrol et.",
+      "Admin sunucusuna bağlanılamadı: " +
+      error.message,
       "error"
     );
 
@@ -1576,17 +1589,6 @@ async function loadProducts(){
       );
 
 
-    /*
-      Sunucu şu yapılardan birini
-      döndürebilir:
-
-      { products:[...] }
-
-      veya
-
-      [...]
-    */
-
     if(Array.isArray(data)){
 
       products =
@@ -1605,24 +1607,7 @@ async function loadProducts(){
 
 
     renderStats();
-
     renderProducts();
-
-
-    if(products.length){
-
-      console.log(
-        "✓ Ürünler yüklendi:",
-        products.length
-      );
-
-    }else{
-
-      console.log(
-        "Ürün kataloğu boş."
-      );
-
-    }
 
 
   }catch(error){
@@ -1665,12 +1650,10 @@ function renderStats(){
   const total =
     products.length;
 
-
   const active =
     products.filter(
       p => p.active !== false
     ).length;
-
 
   const passive =
     total - active;
@@ -1705,7 +1688,7 @@ function renderStats(){
 
 
 /* =========================================================
-   RENDER PRODUCTS
+   RENDER
 ========================================================= */
 
 function renderProducts(){
@@ -1717,13 +1700,11 @@ function renderProducts(){
 
 
   const search =
-    document
-      .getElementById(
-        "searchInput"
-      )
-      .value
-      .trim()
-      .toLowerCase();
+    document.getElementById(
+      "searchInput"
+    ).value
+    .trim()
+    .toLowerCase();
 
 
   const filtered =
@@ -1732,13 +1713,9 @@ function renderProducts(){
       const text = [
 
         product.id,
-
         product.name,
-
         product.category,
-
         product.description,
-
         product.badge
 
       ]
@@ -1746,9 +1723,7 @@ function renderProducts(){
       .toLowerCase();
 
 
-      return text.includes(
-        search
-      );
+      return text.includes(search);
 
     });
 
@@ -1780,41 +1755,33 @@ function renderProducts(){
       const id =
         product.id || "";
 
-
       const name =
         product.name ||
         "İsimsiz ürün";
 
-
       const category =
         product.category ||
         "-";
-
 
       const price =
         Number(
           product.price || 0
         );
 
-
       const oldPrice =
         product.oldPrice ??
         product.old_price;
-
 
       const badge =
         product.badge ||
         "";
 
-
       const delivery =
         product.delivery ||
         "Hemen";
 
-
       const active =
         product.active !== false;
-
 
       const sortOrder =
         product.sortOrder ??
@@ -1824,143 +1791,114 @@ function renderProducts(){
 
       return `
 
-        <tr>
+<tr>
 
-          <td>
+<td>
 
-            <div class="product-name">
-              ${escapeHtml(name)}
-            </div>
+<div class="product-name">
+${escapeHtml(name)}
+</div>
 
-            <div class="product-id">
-              ${escapeHtml(id)}
-            </div>
+<div class="product-id">
+${escapeHtml(id)}
+</div>
 
-          </td>
+</td>
 
+<td>
+${escapeHtml(category)}
+</td>
 
-          <td>
-            ${escapeHtml(category)}
-          </td>
+<td>
 
+<strong>
+${formatMoney(price)}
+</strong>
 
-          <td>
+${
+oldPrice !== null &&
+oldPrice !== undefined &&
+Number(oldPrice) > 0
 
-            <strong>
-              ${formatMoney(price)}
-            </strong>
+? `
+<div style="
+color:#68778a;
+text-decoration:line-through;
+font-size:12px;
+margin-top:3px;
+">
+${formatMoney(Number(oldPrice))}
+</div>
+`
 
-            ${
-              oldPrice !== null &&
-              oldPrice !== undefined &&
-              Number(oldPrice) > 0
+: ""
+}
 
-              ? `
+</td>
 
-                <div style="
-                  color:#68778a;
-                  text-decoration:line-through;
-                  font-size:12px;
-                  margin-top:3px;
-                ">
+<td>
 
-                  ${formatMoney(
-                    Number(oldPrice)
-                  )}
+${
+badge
 
-                </div>
+? `
+<span class="badge">
+${escapeHtml(badge)}
+</span>
+`
 
-              `
+: `<span style="color:#5f6d80">—</span>`
+}
 
-              : ""
-            }
+</td>
 
-          </td>
+<td>
+${escapeHtml(delivery)}
+</td>
 
+<td>
 
-          <td>
+${
+active
+? `<span class="badge green">AKTİF</span>`
+: `<span class="badge red">PASİF</span>`
+}
 
-            ${
-              badge
+</td>
 
-              ? `
+<td>
+${escapeHtml(String(sortOrder))}
+</td>
 
-                <span class="badge">
-                  ${escapeHtml(badge)}
-                </span>
+<td>
 
-              `
+<div class="actions">
 
-              : `<span style="color:#5f6d80">—</span>`
+<button
+class="action-btn"
+onclick="editProduct('${jsEscape(id)}')">
+✏️ Düzenle
+</button>
 
-            }
+<button
+class="action-btn"
+onclick="toggleProduct('${jsEscape(id)}')">
+${active ? "⏸ Pasif" : "▶ Aktif"}
+</button>
 
-          </td>
+<button
+class="action-btn delete"
+onclick="deleteProduct('${jsEscape(id)}')">
+🗑 Sil
+</button>
 
+</div>
 
-          <td>
-            ${escapeHtml(delivery)}
-          </td>
+</td>
 
+</tr>
 
-          <td>
-
-            ${
-              active
-
-              ? `<span class="badge green">AKTİF</span>`
-
-              : `<span class="badge red">PASİF</span>`
-
-            }
-
-          </td>
-
-
-          <td>
-            ${escapeHtml(
-              String(sortOrder)
-            )}
-          </td>
-
-
-          <td>
-
-            <div class="actions">
-
-              <button
-                class="action-btn"
-                onclick="editProduct('${jsEscape(id)}')">
-                ✏️ Düzenle
-              </button>
-
-
-              <button
-                class="action-btn"
-                onclick="toggleProduct('${jsEscape(id)}')">
-
-                ${
-                  active
-                    ? "⏸ Pasif"
-                    : "▶ Aktif"
-                }
-
-              </button>
-
-
-              <button
-                class="action-btn delete"
-                onclick="deleteProduct('${jsEscape(id)}')">
-                🗑 Sil
-              </button>
-
-            </div>
-
-          </td>
-
-        </tr>
-
-      `;
+`;
 
     }).join("");
 
@@ -1975,59 +1913,49 @@ function newProduct(){
 
   editingId = null;
 
-
   document.getElementById(
     "modalTitle"
   ).textContent =
     "Yeni Ürün";
-
 
   document.getElementById(
     "saveBtn"
   ).textContent =
     "ÜRÜNÜ KAYDET";
 
-
   document.getElementById(
     "productForm"
   ).reset();
-
 
   document.getElementById(
     "productDelivery"
   ).value =
     "Hemen";
 
-
   document.getElementById(
     "productUpdate"
   ).value =
     "1 Yıl";
-
 
   document.getElementById(
     "productSupport"
   ).value =
     "30 Gün";
 
-
   document.getElementById(
     "productSort"
   ).value =
     products.length;
-
 
   document.getElementById(
     "productActive"
   ).checked =
     true;
 
-
   document.getElementById(
     "productId"
   ).disabled =
     false;
-
 
   openModal();
 
@@ -2035,7 +1963,7 @@ function newProduct(){
 
 
 /* =========================================================
-   EDIT PRODUCT
+   EDIT
 ========================================================= */
 
 function editProduct(id){
@@ -2156,10 +2084,6 @@ function editProduct(id){
     product.active !== false;
 
 
-  /*
-    Mevcut ürünün ID'si değiştirilmez.
-  */
-
   document.getElementById(
     "productId"
   ).disabled =
@@ -2172,7 +2096,7 @@ function editProduct(id){
 
 
 /* =========================================================
-   SAVE PRODUCT
+   SAVE
 ========================================================= */
 
 async function saveProduct(event){
@@ -2189,22 +2113,19 @@ async function saveProduct(event){
   const id =
     document.getElementById(
       "productId"
-    ).value
-    .trim();
+    ).value.trim();
 
 
   const name =
     document.getElementById(
       "productName"
-    ).value
-    .trim();
+    ).value.trim();
 
 
   const category =
     document.getElementById(
       "productCategory"
-    ).value
-    .trim();
+    ).value.trim();
 
 
   const price =
@@ -2230,36 +2151,31 @@ async function saveProduct(event){
   const badge =
     document.getElementById(
       "productBadge"
-    ).value
-    .trim();
+    ).value.trim();
 
 
   const delivery =
     document.getElementById(
       "productDelivery"
-    ).value
-    .trim();
+    ).value.trim();
 
 
   const updatePeriod =
     document.getElementById(
       "productUpdate"
-    ).value
-    .trim();
+    ).value.trim();
 
 
   const support =
     document.getElementById(
       "productSupport"
-    ).value
-    .trim();
+    ).value.trim();
 
 
   const description =
     document.getElementById(
       "productDescription"
-    ).value
-    .trim();
+    ).value.trim();
 
 
   const sortOrder =
@@ -2276,8 +2192,6 @@ async function saveProduct(event){
     ).checked;
 
 
-  /* VALIDATION */
-
   if(!id){
 
     showAlert(
@@ -2290,12 +2204,10 @@ async function saveProduct(event){
   }
 
 
-  if(
-    !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)
-  ){
+  if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)){
 
     showAlert(
-      "Ürün ID sadece küçük harf, rakam ve tire içerebilir. Örnek: admin-panel",
+      "Ürün ID sadece küçük harf, rakam ve tire içerebilir.",
       "error"
     );
 
@@ -2328,10 +2240,7 @@ async function saveProduct(event){
   }
 
 
-  if(
-    !Number.isFinite(price) ||
-    price <= 0
-  ){
+  if(!Number.isFinite(price) || price <= 0){
 
     showAlert(
       "Geçerli bir fiyat gir.",
@@ -2379,42 +2288,34 @@ async function saveProduct(event){
   const payload = {
 
     id,
-
     name,
-
     category,
-
     description,
-
     price,
-
     oldPrice,
-
+    old_price:oldPrice,
     badge,
-
     delivery:
       delivery || "Hemen",
-
     update:
       updatePeriod || "1 Yıl",
-
+    update_period:
+      updatePeriod || "1 Yıl",
     support:
       support || "30 Gün",
-
     active,
-
-    sortOrder
+    sortOrder,
+    sort_order:sortOrder
 
   };
-
-
-  saveBtn.disabled =
-    true;
 
 
   const wasEditing =
     Boolean(editingId);
 
+
+  saveBtn.disabled =
+    true;
 
   saveBtn.textContent =
     "KAYDEDİLİYOR...";
@@ -2426,15 +2327,11 @@ async function saveProduct(event){
 
       await api(
         "/api/admin/products/" +
-        encodeURIComponent(
-          editingId
-        ),
+        encodeURIComponent(editingId),
         {
           method:"PUT",
           body:
-            JSON.stringify(
-              payload
-            )
+            JSON.stringify(payload)
         }
       );
 
@@ -2450,9 +2347,7 @@ async function saveProduct(event){
         {
           method:"POST",
           body:
-            JSON.stringify(
-              payload
-            )
+            JSON.stringify(payload)
         }
       );
 
@@ -2483,12 +2378,10 @@ async function saveProduct(event){
       "error"
     );
 
-
   }finally{
 
     saveBtn.disabled =
       false;
-
 
     saveBtn.textContent =
       wasEditing
@@ -2501,7 +2394,7 @@ async function saveProduct(event){
 
 
 /* =========================================================
-   TOGGLE PRODUCT
+   TOGGLE
 ========================================================= */
 
 async function toggleProduct(id){
@@ -2528,19 +2421,11 @@ async function toggleProduct(id){
     product.active === false;
 
 
-  const action =
-    newStatus
-      ? "aktif"
-      : "pasif";
-
-
-  const confirmed =
-    confirm(
-      `"${product.name}" ürününü ${action} yapmak istiyor musun?`
-    );
-
-
-  if(!confirmed) return;
+  if(!confirm(
+    `"${product.name}" ürününü ${
+      newStatus ? "aktif" : "pasif"
+    } yapmak istiyor musun?`
+  )) return;
 
 
   try{
@@ -2550,11 +2435,9 @@ async function toggleProduct(id){
       encodeURIComponent(id),
       {
         method:"PUT",
-
         body:
           JSON.stringify({
-            active:
-              newStatus
+            active:newStatus
           })
       }
     );
@@ -2590,7 +2473,7 @@ async function toggleProduct(id){
 
 
 /* =========================================================
-   DELETE PRODUCT
+   DELETE
 ========================================================= */
 
 async function deleteProduct(id){
@@ -2613,13 +2496,9 @@ async function deleteProduct(id){
   }
 
 
-  const confirmed =
-    confirm(
-      `"${product.name}" ürününü kalıcı olarak silmek istediğine emin misin?\n\nBu işlem geri alınamaz.`
-    );
-
-
-  if(!confirmed) return;
+  if(!confirm(
+    `"${product.name}" ürününü kalıcı olarak silmek istediğine emin misin?\n\nBu işlem geri alınamaz.`
+  )) return;
 
 
   try{
@@ -2667,12 +2546,8 @@ async function deleteProduct(id){
 function openModal(){
 
   document
-    .getElementById(
-      "productModal"
-    )
-    .classList.add(
-      "show"
-    );
+    .getElementById("productModal")
+    .classList.add("show");
 
 }
 
@@ -2680,12 +2555,8 @@ function openModal(){
 function closeModal(){
 
   document
-    .getElementById(
-      "productModal"
-    )
-    .classList.remove(
-      "show"
-    );
+    .getElementById("productModal")
+    .classList.remove("show");
 
 
   document.getElementById(
@@ -2701,7 +2572,7 @@ function closeModal(){
 
 
 /* =========================================================
-   FORMAT MONEY
+   MONEY
 ========================================================= */
 
 function formatMoney(value){
@@ -2721,63 +2592,28 @@ function formatMoney(value){
 
 
 /* =========================================================
-   ESCAPE HTML
+   ESCAPE
 ========================================================= */
 
 function escapeHtml(value){
 
-  return String(
-    value ?? ""
-  )
-  .replaceAll(
-    "&",
-    "&amp;"
-  )
-  .replaceAll(
-    "<",
-    "&lt;"
-  )
-  .replaceAll(
-    ">",
-    "&gt;"
-  )
-  .replaceAll(
-    '"',
-    "&quot;"
-  )
-  .replaceAll(
-    "'",
-    "&#039;"
-  );
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 
 }
 
 
-/* =========================================================
-   ESCAPE JS
-========================================================= */
-
 function jsEscape(value){
 
-  return String(
-    value ?? ""
-  )
-  .replaceAll(
-    "\\",
-    "\\\\"
-  )
-  .replaceAll(
-    "'",
-    "\\'"
-  )
-  .replaceAll(
-    "\n",
-    "\\n"
-  )
-  .replaceAll(
-    "\r",
-    "\\r"
-  );
+  return String(value ?? "")
+    .replaceAll("\\","\\\\")
+    .replaceAll("'","\\'")
+    .replaceAll("\n","\\n")
+    .replaceAll("\r","\\r");
 
 }
 
@@ -2787,138 +2623,123 @@ function jsEscape(value){
 ========================================================= */
 
 document
-  .getElementById(
-    "newProductBtn"
-  )
-  .addEventListener(
-    "click",
-    newProduct
-  );
+.getElementById("newProductBtn")
+.addEventListener(
+  "click",
+  newProduct
+);
 
 
 document
-  .getElementById(
-    "closeModal"
-  )
-  .addEventListener(
-    "click",
-    closeModal
-  );
+.getElementById("closeModal")
+.addEventListener(
+  "click",
+  closeModal
+);
 
 
 document
-  .getElementById(
-    "cancelBtn"
-  )
-  .addEventListener(
-    "click",
-    closeModal
-  );
+.getElementById("cancelBtn")
+.addEventListener(
+  "click",
+  closeModal
+);
 
 
 document
-  .getElementById(
-    "productForm"
-  )
-  .addEventListener(
-    "submit",
-    saveProduct
-  );
+.getElementById("productForm")
+.addEventListener(
+  "submit",
+  saveProduct
+);
 
 
 document
-  .getElementById(
-    "searchInput"
-  )
-  .addEventListener(
-    "input",
-    renderProducts
-  );
+.getElementById("searchInput")
+.addEventListener(
+  "input",
+  renderProducts
+);
 
 
-/* LOGOUT */
+/* =========================================================
+   LOGOUT
+========================================================= */
 
 document
-  .getElementById(
-    "logoutBtn"
-  )
-  .addEventListener(
-    "click",
-    async () => {
+.getElementById("logoutBtn")
+.addEventListener(
+  "click",
+  async()=>{
 
-      try{
+    try{
 
-        await api(
-          "/api/logout",
-          {
-            method:"POST"
-          }
-        );
-
-      }catch(error){
-
-        console.warn(
-          "Logout API:",
-          error
-        );
-
-      }
-
-
-      localStorage.removeItem(
-        tokenKey
+      await api(
+        "/api/logout",
+        {
+          method:"POST"
+        }
       );
 
-      localStorage.removeItem(
-        "panelmarket_user"
+    }catch(error){
+
+      console.warn(
+        "Logout API:",
+        error
       );
 
-
-      token =
-        null;
-
-
-      location.href =
-        "/login.html";
-
     }
-  );
 
 
-/* MODAL DIŞINA TIKLAMA */
+    localStorage.removeItem(
+      tokenKey
+    );
+
+    localStorage.removeItem(
+      "panelmarket_user"
+    );
+
+
+    token = null;
+
+
+    window.location.href =
+      "/login.html";
+
+  }
+);
+
+
+/* =========================================================
+   MODAL DIŞI
+========================================================= */
 
 document
-  .getElementById(
-    "productModal"
-  )
-  .addEventListener(
-    "click",
-    event => {
+.getElementById("productModal")
+.addEventListener(
+  "click",
+  event => {
 
-      if(
-        event.target ===
-        document.getElementById(
-          "productModal"
-        )
-      ){
+    if(
+      event.target ===
+      document.getElementById(
+        "productModal"
+      )
+    ){
 
-        closeModal();
-
-      }
+      closeModal();
 
     }
-  );
 
+  }
+);
 
-/* ESC */
 
 document.addEventListener(
   "keydown",
   event => {
 
-    if(
-      event.key === "Escape"
-    ){
+    if(event.key === "Escape"){
 
       closeModal();
 
@@ -2935,7 +2756,11 @@ document.addEventListener(
 (async function start(){
 
   console.log(
-    "PanelMarket Admin başlatılıyor..."
+    "========== PANELMARKET ADMIN =========="
+  );
+
+  console.log(
+    "Admin paneli başlatılıyor..."
   );
 
 
