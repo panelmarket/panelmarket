@@ -1,5 +1,5 @@
+```html
 <!DOCTYPE html>
-
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
@@ -7,11 +7,7 @@
 <title>Hesabım - PanelMarket</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box}
 
 body{
     min-height:100vh;
@@ -20,14 +16,8 @@ body{
     color:#f5f7fb;
 }
 
-a{
-    text-decoration:none;
-    color:inherit;
-}
-
-button{
-    font-family:inherit;
-}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit}
 
 .header{
     height:76px;
@@ -341,9 +331,7 @@ button{
     margin-bottom:18px;
 }
 
-.message.show{
-    display:block;
-}
+.message.show{display:block}
 
 .message.error{
     color:#ff9b9b;
@@ -355,6 +343,120 @@ button{
     color:#8ff0b4;
     background:rgba(40,210,120,.08);
     border:1px solid rgba(40,210,120,.25);
+}
+
+/* DETAY SAYFASI */
+
+.detail-panel{
+    display:none;
+}
+
+.detail-panel.show{
+    display:block;
+}
+
+.detail-title{
+    font-size:18px;
+    margin-bottom:7px;
+}
+
+.detail-subtitle{
+    color:#718096;
+    font-size:12px;
+    margin-bottom:22px;
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+}
+
+.detail-item{
+    background:#080d13;
+    border:1px solid #202b38;
+    border-radius:12px;
+    padding:16px;
+}
+
+.detail-item span{
+    display:block;
+    color:#718096;
+    font-size:10px;
+    font-weight:800;
+    margin-bottom:7px;
+}
+
+.detail-item strong{
+    font-size:13px;
+    word-break:break-word;
+}
+
+.back-button{
+    margin-top:20px;
+    border:1px solid #273241;
+    background:#111923;
+    color:#d7deea;
+    padding:11px 15px;
+    border-radius:9px;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:800;
+}
+
+.back-button:hover{
+    background:#1677ff;
+    border-color:#1677ff;
+    color:#fff;
+}
+
+/* ŞİFRE FORMU */
+
+.password-form{
+    max-width:520px;
+}
+
+.form-group{
+    margin-bottom:15px;
+}
+
+.form-group label{
+    display:block;
+    color:#aab5c5;
+    font-size:11px;
+    font-weight:800;
+    margin-bottom:7px;
+}
+
+.form-group input{
+    width:100%;
+    height:45px;
+    border:1px solid #273241;
+    background:#080d13;
+    color:#fff;
+    border-radius:9px;
+    padding:0 13px;
+    outline:none;
+}
+
+.form-group input:focus{
+    border-color:#1677ff;
+}
+
+.save-button{
+    width:100%;
+    height:45px;
+    border:0;
+    border-radius:9px;
+    background:#1677ff;
+    color:#fff;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:900;
+}
+
+.save-button:hover{
+    background:#0868ed;
 }
 
 .loading{
@@ -399,6 +501,10 @@ footer{
     .stats{
         grid-template-columns:1fr;
     }
+
+    .detail-grid{
+        grid-template-columns:1fr;
+    }
 }
 
 @media(max-width:500px){
@@ -432,283 +538,534 @@ footer{
     }
 }
 </style>
-
 </head>
 
 <body>
 
 <header class="header">
-    <div class="header-inner">
 
-```
-    <a href="/index.html" class="logo">
-        <span class="logo-icon">P</span>
-        <span>PanelMarket</span>
-    </a>
+<div class="header-inner">
 
-    <nav class="nav">
-        <a href="/index.html">Ana Sayfa</a>
-        <a href="/siparislerim.html">Siparişlerim</a>
-        <a href="/hesabım.html" class="active">Hesabım</a>
-    </nav>
+<a href="/index.html" class="logo">
+    <span class="logo-icon">P</span>
+    <span>PanelMarket</span>
+</a>
 
-    <div class="user-area">
-        <span class="user-email" id="headerEmail">
-            Kontrol ediliyor...
-        </span>
+<nav class="nav">
+    <a href="/index.html">Ana Sayfa</a>
+    <a href="/siparislerim.html">Siparişlerim</a>
+    <a href="/hesabim.html" class="active">Hesabım</a>
+</nav>
 
-        <button class="logout-small" onclick="logout()">
-            ÇIKIŞ
-        </button>
-    </div>
+<div class="user-area">
+
+    <span class="user-email" id="headerEmail">
+        Kontrol ediliyor...
+    </span>
+
+    <button class="logout-small" onclick="logout()">
+        ÇIKIŞ
+    </button>
 
 </div>
-```
 
+</div>
 </header>
+
 
 <main class="main">
 
-```
 <div class="page-title">
     <h1>Hesabım</h1>
     <p>PanelMarket hesabınızı buradan yönetin.</p>
 </div>
 
+
 <div id="message" class="message"></div>
+
 
 <div id="loading" class="loading">
     Hesap bilgileriniz yükleniyor...
 </div>
 
+
 <div id="account" class="account-layout" style="display:none;">
 
-    <aside class="sidebar">
+<!-- SOL MENÜ -->
 
-        <button class="menu-button active" onclick="goHome()">
-            👤 Hesabım
-        </button>
+<aside class="sidebar">
 
-        <button class="menu-button" onclick="goOrders()">
-            📦 Siparişlerim
-        </button>
+<button class="menu-button active" id="menuAccount" onclick="showSection('accountHome')">
+    👤 Hesabım
+</button>
 
-        <button class="menu-button" onclick="showBalance()">
-            💰 Bakiyem
-        </button>
+<button class="menu-button" id="menuOrders" onclick="goOrders()">
+    📦 Siparişlerim
+</button>
 
-        <button class="menu-button" onclick="showHistory()">
-            🧾 Sipariş Geçmişi
-        </button>
+<button class="menu-button" id="menuBalance" onclick="showSection('balanceSection')">
+    💰 Bakiyem
+</button>
 
-        <button class="menu-button" onclick="changePassword()">
-            🔐 Şifre Değiştir
-        </button>
+<button class="menu-button" id="menuHistory" onclick="goOrders()">
+    🧾 Sipariş Geçmişi
+</button>
 
-        <button class="menu-button" onclick="logout()">
-            🚪 Çıkış Yap
-        </button>
+<button class="menu-button" id="menuPassword" onclick="showSection('passwordSection')">
+    🔐 Şifre Değiştir
+</button>
 
-    </aside>
+<button class="menu-button" onclick="logout()">
+    🚪 Çıkış Yap
+</button>
 
-    <section class="content">
+</aside>
 
-        <div class="card profile-card">
 
-            <div class="avatar" id="avatar">
-                P
-            </div>
+<section class="content">
 
-            <div class="profile-info">
-                <h2 id="userName">
-                    PanelMarket Kullanıcısı
-                </h2>
 
-                <p id="userEmail">
-                    -
-                </p>
+<!-- ANA HESAP -->
 
-                <span class="status">
-                    ● AKTİF HESAP
-                </span>
-            </div>
+<div id="accountHome">
 
-        </div>
+<div class="card profile-card">
 
-        <div class="stats">
+<div class="avatar" id="avatar">
+    P
+</div>
 
-            <div class="stat">
-                <div class="stat-label">
-                    Bakiye
-                </div>
+<div class="profile-info">
 
-                <div class="stat-value" id="balance">
-                    ₺0,00
-                </div>
-            </div>
+<h2 id="userName">
+    PanelMarket Kullanıcısı
+</h2>
 
-            <div class="stat">
-                <div class="stat-label">
-                    Sipariş
-                </div>
+<p id="userEmail">
+    -
+</p>
 
-                <div class="stat-value" id="orderCount">
-                    0
-                </div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-label">
-                    Hesap Durumu
-                </div>
-
-                <div class="stat-value">
-                    Aktif
-                </div>
-            </div>
-
-        </div>
-
-        <div class="card">
-
-            <h3 class="options-title">
-                Hesap Seçenekleri
-            </h3>
-
-            <div class="option">
-
-                <div class="option-left">
-
-                    <div class="option-icon">
-                        👤
-                    </div>
-
-                    <div class="option-text">
-                        <strong>Hesap Bilgilerim</strong>
-                        <span>Ad, e-posta ve hesap bilgilerinizi görüntüleyin.</span>
-                    </div>
-
-                </div>
-
-                <button class="option-button" onclick="accountInfo()">
-                    GÖRÜNTÜLE
-                </button>
-
-            </div>
-
-            <div class="option">
-
-                <div class="option-left">
-
-                    <div class="option-icon">
-                        📦
-                    </div>
-
-                    <div class="option-text">
-                        <strong>Siparişlerim</strong>
-                        <span>Satın aldığınız ürünleri ve siparişlerinizi görüntüleyin.</span>
-                    </div>
-
-                </div>
-
-                <button class="option-button" onclick="goOrders()">
-                    SİPARİŞLER
-                </button>
-
-            </div>
-
-            <div class="option">
-
-                <div class="option-left">
-
-                    <div class="option-icon">
-                        💰
-                    </div>
-
-                    <div class="option-text">
-                        <strong>Bakiyem</strong>
-                        <span>Hesabınızdaki mevcut bakiyeyi görüntüleyin.</span>
-                    </div>
-
-                </div>
-
-                <button class="option-button" onclick="showBalance()">
-                    BAKİYE
-                </button>
-
-            </div>
-
-            <div class="option">
-
-                <div class="option-left">
-
-                    <div class="option-icon">
-                        🧾
-                    </div>
-
-                    <div class="option-text">
-                        <strong>Sipariş Geçmişi</strong>
-                        <span>Geçmiş siparişlerinizi görüntüleyin.</span>
-                    </div>
-
-                </div>
-
-                <button class="option-button" onclick="showHistory()">
-                    GEÇMİŞ
-                </button>
-
-            </div>
-
-            <div class="option">
-
-                <div class="option-left">
-
-                    <div class="option-icon">
-                        🔐
-                    </div>
-
-                    <div class="option-text">
-                        <strong>Şifre Değiştir</strong>
-                        <span>Hesap şifrenizi değiştirme işlemi.</span>
-                    </div>
-
-                </div>
-
-                <button class="option-button" onclick="changePassword()">
-                    DEĞİŞTİR
-                </button>
-
-            </div>
-
-            <button class="logout-button" onclick="logout()">
-                🚪 HESAPTAN ÇIKIŞ YAP
-            </button>
-
-        </div>
-
-    </section>
+<span class="status">
+    ● AKTİF HESAP
+</span>
 
 </div>
-```
+
+</div>
+
+
+<div class="stats">
+
+<div class="stat">
+
+<div class="stat-label">
+    Bakiye
+</div>
+
+<div class="stat-value" id="balance">
+    ₺0,00
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-label">
+    Sipariş
+</div>
+
+<div class="stat-value" id="orderCount">
+    0
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-label">
+    Hesap Durumu
+</div>
+
+<div class="stat-value">
+    Aktif
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3 class="options-title">
+    Hesap Seçenekleri
+</h3>
+
+
+<div class="option">
+
+<div class="option-left">
+
+<div class="option-icon">
+    👤
+</div>
+
+<div class="option-text">
+
+<strong>
+    Hesap Bilgilerim
+</strong>
+
+<span>
+    Ad, e-posta ve hesap bilgilerinizi görüntüleyin.
+</span>
+
+</div>
+
+</div>
+
+<button class="option-button" onclick="showSection('infoSection')">
+    GÖRÜNTÜLE
+</button>
+
+</div>
+
+
+<div class="option">
+
+<div class="option-left">
+
+<div class="option-icon">
+    📦
+</div>
+
+<div class="option-text">
+
+<strong>
+    Siparişlerim
+</strong>
+
+<span>
+    Satın aldığınız ürünleri ve siparişlerinizi görüntüleyin.
+</span>
+
+</div>
+
+</div>
+
+<button class="option-button" onclick="goOrders()">
+    SİPARİŞLER
+</button>
+
+</div>
+
+
+<div class="option">
+
+<div class="option-left">
+
+<div class="option-icon">
+    💰
+</div>
+
+<div class="option-text">
+
+<strong>
+    Bakiyem
+</strong>
+
+<span>
+    Hesabınızdaki mevcut bakiyeyi görüntüleyin.
+</span>
+
+</div>
+
+</div>
+
+<button class="option-button" onclick="showSection('balanceSection')">
+    BAKİYE
+</button>
+
+</div>
+
+
+<div class="option">
+
+<div class="option-left">
+
+<div class="option-icon">
+    🧾
+</div>
+
+<div class="option-text">
+
+<strong>
+    Sipariş Geçmişi
+</strong>
+
+<span>
+    Geçmiş siparişlerinizi görüntüleyin.
+</span>
+
+</div>
+
+</div>
+
+<button class="option-button" onclick="goOrders()">
+    GEÇMİŞ
+</button>
+
+</div>
+
+
+<div class="option">
+
+<div class="option-left">
+
+<div class="option-icon">
+    🔐
+</div>
+
+<div class="option-text">
+
+<strong>
+    Şifre Değiştir
+</strong>
+
+<span>
+    Hesap şifrenizi değiştirme işlemi.
+</span>
+
+</div>
+
+</div>
+
+<button class="option-button" onclick="showSection('passwordSection')">
+    DEĞİŞTİR
+</button>
+
+</div>
+
+
+<button class="logout-button" onclick="logout()">
+    🚪 HESAPTAN ÇIKIŞ YAP
+</button>
+
+</div>
+
+</div>
+
+
+<!-- HESAP BİLGİLERİ -->
+
+<div id="infoSection" class="card detail-panel">
+
+<h2 class="detail-title">
+    Hesap Bilgilerim
+</h2>
+
+<p class="detail-subtitle">
+    Hesabınıza ait güncel bilgiler.
+</p>
+
+
+<div class="detail-grid">
+
+<div class="detail-item">
+
+<span>
+    AD
+</span>
+
+<strong id="detailName">
+    -
+</strong>
+
+</div>
+
+
+<div class="detail-item">
+
+<span>
+    E-POSTA
+</span>
+
+<strong id="detailEmail">
+    -
+</strong>
+
+</div>
+
+
+<div class="detail-item">
+
+<span>
+    KULLANICI ID
+</span>
+
+<strong id="detailId">
+    -
+</strong>
+
+</div>
+
+
+<div class="detail-item">
+
+<span>
+    HESAP DURUMU
+</span>
+
+<strong>
+    Aktif
+</strong>
+
+</div>
+
+</div>
+
+
+<button class="back-button" onclick="showSection('accountHome')">
+    ← Hesabıma Dön
+</button>
+
+</div>
+
+
+<!-- BAKİYE -->
+
+<div id="balanceSection" class="card detail-panel">
+
+<h2 class="detail-title">
+    Bakiyem
+</h2>
+
+<p class="detail-subtitle">
+    Hesabınızdaki güncel kullanılabilir bakiye.
+</p>
+
+
+<div class="detail-item">
+
+<span>
+    MEVCUT BAKİYE
+</span>
+
+<strong id="detailBalance" style="font-size:28px;">
+    ₺0,00
+</strong>
+
+</div>
+
+
+<button class="back-button" onclick="showSection('accountHome')">
+    ← Hesabıma Dön
+</button>
+
+</div>
+
+
+<!-- ŞİFRE DEĞİŞTİR -->
+
+<div id="passwordSection" class="card detail-panel">
+
+<h2 class="detail-title">
+    Şifre Değiştir
+</h2>
+
+<p class="detail-subtitle">
+    Hesap şifrenizi değiştirmek için bilgileri girin.
+</p>
+
+
+<div class="password-form">
+
+<div class="form-group">
+
+<label>
+    MEVCUT ŞİFRE
+</label>
+
+<input
+    type="password"
+    id="oldPassword"
+    placeholder="Mevcut şifreniz"
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+    YENİ ŞİFRE
+</label>
+
+<input
+    type="password"
+    id="newPassword"
+    placeholder="Yeni şifreniz"
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+    YENİ ŞİFRE TEKRAR
+</label>
+
+<input
+    type="password"
+    id="newPasswordAgain"
+    placeholder="Yeni şifrenizi tekrar girin"
+>
+
+</div>
+
+
+<button class="save-button" onclick="changePassword()">
+    ŞİFREYİ DEĞİŞTİR
+</button>
+
+</div>
+
+
+<button class="back-button" onclick="showSection('accountHome')">
+    ← Hesabıma Dön
+</button>
+
+</div>
+
+
+</section>
+
+</div>
 
 </main>
+
 
 <footer>
     © 2026 PanelMarket — Güvenli yazılım alışverişi
 </footer>
 
+
 <script>
 
 "use strict";
+
 
 const tokenKey = "panelmarket_token";
 
 let currentUser = null;
 
 
-/* =========================================================
+/* =====================================================
    TOKEN
-========================================================= */
+===================================================== */
 
 function getToken(){
 
@@ -729,9 +1086,9 @@ function getToken(){
 }
 
 
-/* =========================================================
+/* =====================================================
    API
-========================================================= */
+===================================================== */
 
 async function api(url, options = {}){
 
@@ -746,10 +1103,8 @@ async function api(url, options = {}){
     };
 
     if(token){
-
         headers.Authorization =
             "Bearer " + token;
-
     }
 
     return fetch(url,{
@@ -762,9 +1117,9 @@ async function api(url, options = {}){
 }
 
 
-/* =========================================================
+/* =====================================================
    MESAJ
-========================================================= */
+===================================================== */
 
 function showMessage(text,type){
 
@@ -781,9 +1136,90 @@ function showMessage(text,type){
 }
 
 
-/* =========================================================
+/* =====================================================
+   BÖLÜM DEĞİŞTİR
+===================================================== */
+
+function showSection(sectionId){
+
+    const sections = [
+        "accountHome",
+        "infoSection",
+        "balanceSection",
+        "passwordSection"
+    ];
+
+    sections.forEach(id => {
+
+        const el =
+            document.getElementById(id);
+
+        if(!el) return;
+
+        if(id === sectionId){
+
+            el.style.display =
+                id === "accountHome"
+                ? "block"
+                : "block";
+
+        }else{
+
+            el.style.display = "none";
+
+        }
+
+    });
+
+
+    document.querySelectorAll(
+        ".menu-button"
+    ).forEach(btn => {
+
+        btn.classList.remove("active");
+
+    });
+
+
+    if(sectionId === "accountHome"){
+
+        document.getElementById("menuAccount")
+            ?.classList.add("active");
+
+    }
+
+    if(sectionId === "balanceSection"){
+
+        document.getElementById("menuBalance")
+            ?.classList.add("active");
+
+    }
+
+    if(sectionId === "passwordSection"){
+
+        document.getElementById("menuPassword")
+            ?.classList.add("active");
+
+    }
+
+    if(sectionId === "infoSection"){
+
+        document.getElementById("menuAccount")
+            ?.classList.add("active");
+
+    }
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =====================================================
    HESAP KONTROLÜ
-========================================================= */
+===================================================== */
 
 async function loadAccount(){
 
@@ -795,11 +1231,13 @@ async function loadAccount(){
                 Date.now()
             );
 
+
         let data = {};
 
         try{
             data = await response.json();
         }catch{}
+
 
         if(!response.ok){
 
@@ -822,18 +1260,24 @@ async function loadAccount(){
 
         }
 
+
         currentUser =
             data.user || data;
 
+
         renderUser(currentUser);
 
+
         await loadAccountDetails();
+
 
         document.getElementById("loading")
             .style.display = "none";
 
+
         document.getElementById("account")
             .style.display = "grid";
+
 
     }catch(error){
 
@@ -842,8 +1286,10 @@ async function loadAccount(){
             error
         );
 
+
         document.getElementById("loading")
             .style.display = "none";
+
 
         showMessage(
             error.message ||
@@ -856,9 +1302,9 @@ async function loadAccount(){
 }
 
 
-/* =========================================================
+/* =====================================================
    HESAP DETAYLARI
-========================================================= */
+===================================================== */
 
 async function loadAccountDetails(){
 
@@ -870,18 +1316,27 @@ async function loadAccountDetails(){
                 Date.now()
             );
 
+
         if(!response.ok) return;
+
 
         const data =
             await response.json();
 
+
         if(data.balance !== undefined){
 
-            document.getElementById("balance")
-                .textContent =
+            const formatted =
                 formatMoney(data.balance);
 
+            document.getElementById("balance")
+                .textContent = formatted;
+
+            document.getElementById("detailBalance")
+                .textContent = formatted;
+
         }
+
 
         if(data.orderCount !== undefined){
 
@@ -903,9 +1358,9 @@ async function loadAccountDetails(){
 }
 
 
-/* =========================================================
-   KULLANICIYI GÖSTER
-========================================================= */
+/* =====================================================
+   KULLANICI
+===================================================== */
 
 function renderUser(user){
 
@@ -917,78 +1372,69 @@ function renderUser(user){
         user?.email ||
         "";
 
+    const id =
+        user?.id ||
+        "-";
+
+
     document.getElementById("userName")
         .textContent = name;
 
+
     document.getElementById("userEmail")
-        .textContent = email || "E-posta bilgisi yok";
+        .textContent =
+        email || "E-posta bilgisi yok";
+
 
     document.getElementById("headerEmail")
-        .textContent = email || name;
+        .textContent =
+        email || name;
+
+
+    document.getElementById("detailName")
+        .textContent = name;
+
+
+    document.getElementById("detailEmail")
+        .textContent =
+        email || "-";
+
+
+    document.getElementById("detailId")
+        .textContent = id;
+
 
     const first =
-        String(name).trim().charAt(0).toUpperCase();
+        String(name)
+        .trim()
+        .charAt(0)
+        .toUpperCase();
+
 
     document.getElementById("avatar")
-        .textContent = first || "P";
+        .textContent =
+        first || "P";
+
 
     if(user?.balance !== undefined){
 
-        document.getElementById("balance")
-            .textContent =
+        const formatted =
             formatMoney(user.balance);
+
+        document.getElementById("balance")
+            .textContent = formatted;
+
+        document.getElementById("detailBalance")
+            .textContent = formatted;
 
     }
 
 }
 
 
-/* =========================================================
-   HESAP BİLGİLERİ
-========================================================= */
-
-function accountInfo(){
-
-    if(!currentUser) return;
-
-    const name =
-        currentUser.name ||
-        "Belirtilmemiş";
-
-    const email =
-        currentUser.email ||
-        "Belirtilmemiş";
-
-    showMessage(
-        "Ad: " + name +
-        " | E-posta: " + email,
-        "success"
-    );
-
-}
-
-
-/* =========================================================
-   BAKİYE
-========================================================= */
-
-function showBalance(){
-
-    const value =
-        document.getElementById("balance")
-            .textContent;
-
-    showMessage(
-        "Mevcut bakiyeniz: " + value,
-        "success"
-    );
-
-}
-
-
-/* =========================================================
+/* =====================================================
    SİPARİŞLER
-========================================================= */
+===================================================== */
 
 function goOrders(){
 
@@ -998,47 +1444,149 @@ function goOrders(){
 }
 
 
-/* =========================================================
-   SİPARİŞ GEÇMİŞİ
-========================================================= */
-
-function showHistory(){
-
-    window.location.href =
-        "/siparislerim.html";
-
-}
-
-
-/* =========================================================
+/* =====================================================
    ŞİFRE DEĞİŞTİR
-========================================================= */
+===================================================== */
 
-function changePassword(){
+async function changePassword(){
 
-    showMessage(
-        "Şifre değiştirme bölümü hazır. Şifre değiştirme API'si etkinleştirildiğinde buradan çalışacaktır.",
-        "success"
-    );
+    const oldPassword =
+        document.getElementById(
+            "oldPassword"
+        )?.value.trim();
+
+
+    const newPassword =
+        document.getElementById(
+            "newPassword"
+        )?.value.trim();
+
+
+    const newPasswordAgain =
+        document.getElementById(
+            "newPasswordAgain"
+        )?.value.trim();
+
+
+    if(!oldPassword ||
+       !newPassword ||
+       !newPasswordAgain){
+
+        showMessage(
+            "Lütfen tüm şifre alanlarını doldurun.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(newPassword.length < 6){
+
+        showMessage(
+            "Yeni şifre en az 6 karakter olmalıdır.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(newPassword !== newPasswordAgain){
+
+        showMessage(
+            "Yeni şifreler aynı değil.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    /*
+      Backend'de henüz /api/change-password
+      endpoint'i yoksa burada hata gösterilir.
+      Mevcut login sistemini bozmaz.
+    */
+
+    try{
+
+        const response =
+            await api(
+                "/api/change-password",
+                {
+                    method:"POST",
+                    body:JSON.stringify({
+                        oldPassword,
+                        newPassword
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json()
+            .catch(() => ({}));
+
+
+        if(!response.ok){
+
+            showMessage(
+                data.error ||
+                "Şifre değiştirilemedi.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        showMessage(
+            "Şifreniz başarıyla değiştirildi.",
+            "success"
+        );
+
+
+        document.getElementById(
+            "oldPassword"
+        ).value = "";
+
+
+        document.getElementById(
+            "newPassword"
+        ).value = "";
+
+
+        document.getElementById(
+            "newPasswordAgain"
+        ).value = "";
+
+
+    }catch(error){
+
+        console.error(
+            "PASSWORD CHANGE ERROR:",
+            error
+        );
+
+
+        showMessage(
+            "Şifre değiştirme servisine ulaşılamadı.",
+            "error"
+        );
+
+    }
 
 }
 
 
-/* =========================================================
-   ANA SAYFA
-========================================================= */
-
-function goHome(){
-
-    window.location.href =
-        "/index.html";
-
-}
-
-
-/* =========================================================
+/* =====================================================
    ÇIKIŞ
-========================================================= */
+===================================================== */
 
 async function logout(){
 
@@ -1060,7 +1608,9 @@ async function logout(){
 
     }
 
+
     clearAuth();
+
 
     window.location.replace(
         "/login.html"
@@ -1069,9 +1619,9 @@ async function logout(){
 }
 
 
-/* =========================================================
+/* =====================================================
    AUTH TEMİZLE
-========================================================= */
+===================================================== */
 
 function clearAuth(){
 
@@ -1098,9 +1648,9 @@ function clearAuth(){
 }
 
 
-/* =========================================================
+/* =====================================================
    PARA
-========================================================= */
+===================================================== */
 
 function formatMoney(value){
 
@@ -1118,9 +1668,9 @@ function formatMoney(value){
 }
 
 
-/* =========================================================
+/* =====================================================
    BAŞLAT
-========================================================= */
+===================================================== */
 
 loadAccount();
 
@@ -1128,3 +1678,4 @@ loadAccount();
 
 </body>
 </html>
+```
