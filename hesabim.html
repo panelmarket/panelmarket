@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
@@ -6,986 +7,1120 @@
 <title>Hesabım - PanelMarket</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Inter,Arial,sans-serif;background:#070a0f;color:#f5f7fb}
-a{text-decoration:none;color:inherit}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-header{
-position:sticky;top:0;z-index:1000;height:76px;
-background:rgba(7,10,15,.92);
-backdrop-filter:blur(18px);
-border-bottom:1px solid #1c2531
+body{
+    min-height:100vh;
+    font-family:Inter,Arial,sans-serif;
+    background:#070a0f;
+    color:#f5f7fb;
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+button{
+    font-family:inherit;
 }
 
 .header{
-width:min(1200px,94%);height:100%;margin:auto;
-display:flex;align-items:center;justify-content:space-between
+    height:76px;
+    background:rgba(7,10,15,.94);
+    border-bottom:1px solid #1c2531;
+    display:flex;
+    align-items:center;
+}
+
+.header-inner{
+    width:min(1200px,94%);
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
 }
 
 .logo{
-display:flex;
-align-items:center;
-gap:11px;
-font-size:21px;
-font-weight:900
+    display:flex;
+    align-items:center;
+    gap:11px;
+    font-size:21px;
+    font-weight:900;
 }
 
 .logo-icon{
-width:40px;
-height:40px;
-border-radius:12px;
-display:grid;
-place-items:center;
-background:linear-gradient(135deg,#1677ff,#7347ff);
-box-shadow:0 8px 30px rgba(22,119,255,.25)
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,#1677ff,#7347ff);
+    box-shadow:0 8px 30px rgba(22,119,255,.25);
 }
 
 .nav{
-display:flex;
-gap:28px
+    display:flex;
+    align-items:center;
+    gap:25px;
 }
 
 .nav a{
-color:#8995a7;
-font-size:13px
+    color:#8995a7;
+    font-size:13px;
+    font-weight:700;
 }
 
-.nav a:hover{
-color:#fff
+.nav a:hover,
+.nav a.active{
+    color:#fff;
 }
 
-.header-buttons{
-display:flex;
-gap:9px
+.user-area{
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
-.header-btn{
-padding:11px 16px;
-border-radius:9px;
-font-size:12px;
-font-weight:800
+.user-email{
+    color:#8995a7;
+    font-size:12px;
+    max-width:190px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
 }
 
-.login{
-border:1px solid #273241
+.logout-small{
+    border:1px solid #273241;
+    background:#0d131b;
+    color:#cbd5e1;
+    padding:10px 13px;
+    border-radius:9px;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:800;
 }
 
-.register{
-background:#1677ff
+.logout-small:hover{
+    border-color:#ff4d5e;
+    color:#ff7d89;
 }
 
-.container{
-width:min(1050px,94%);
-margin:45px auto 90px
+.main{
+    width:min(1100px,94%);
+    margin:0 auto;
+    padding:55px 0 80px;
 }
 
-.title{
-margin-bottom:25px
+.page-title{
+    margin-bottom:25px;
 }
 
-.title h1{
-font-size:36px;
-letter-spacing:-1.5px
+.page-title h1{
+    font-size:31px;
+    letter-spacing:-1px;
 }
 
-.title p{
-color:#8995a7;
-margin-top:8px
+.page-title p{
+    margin-top:7px;
+    color:#8995a7;
+    font-size:13px;
 }
 
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:18px
+.account-layout{
+    display:grid;
+    grid-template-columns:250px 1fr;
+    gap:20px;
+}
+
+.sidebar,
+.card{
+    background:#0d131b;
+    border:1px solid #1c2633;
+    border-radius:18px;
+}
+
+.sidebar{
+    padding:12px;
+    height:max-content;
+}
+
+.menu-button{
+    width:100%;
+    border:0;
+    background:transparent;
+    color:#8995a7;
+    padding:14px 13px;
+    border-radius:10px;
+    text-align:left;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:800;
+    margin-bottom:4px;
+}
+
+.menu-button:hover,
+.menu-button.active{
+    background:#151e29;
+    color:#fff;
+}
+
+.menu-button.active{
+    box-shadow:inset 3px 0 0 #1677ff;
+}
+
+.content{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
 }
 
 .card{
-background:#0d131b;
-border:1px solid #1c2633;
-border-radius:18px;
-padding:25px
+    padding:24px;
 }
 
-.profile{
-display:flex;
-align-items:center;
-gap:18px;
-margin-bottom:25px
+.profile-card{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    background:
+        radial-gradient(circle at 90% 0%,rgba(22,119,255,.12),transparent 35%),
+        #0d131b;
 }
 
 .avatar{
-width:70px;
-height:70px;
-border-radius:20px;
-display:grid;
-place-items:center;
-font-size:27px;
-font-weight:900;
-background:linear-gradient(135deg,#1677ff,#7347ff)
+    width:65px;
+    height:65px;
+    flex-shrink:0;
+    border-radius:18px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,#1677ff,#7347ff);
+    font-size:25px;
+    font-weight:900;
 }
 
-.name{
-font-size:22px;
-font-weight:900
+.profile-info h2{
+    font-size:19px;
 }
 
-.email{
-margin-top:5px;
-font-size:13px;
-color:#8995a7
+.profile-info p{
+    margin-top:5px;
+    color:#8995a7;
+    font-size:12px;
 }
 
-.balance{
-padding:22px;
-border-radius:14px;
-background:
-radial-gradient(circle at 0 0,rgba(22,119,255,.2),transparent 55%),
-#09111a;
-border:1px solid #203149
-}
-
-.balance-label{
-font-size:12px;
-color:#8995a7
-}
-
-.balance-value{
-font-size:32px;
-font-weight:900;
-margin-top:7px
+.status{
+    display:inline-flex;
+    margin-top:9px;
+    padding:5px 9px;
+    border-radius:7px;
+    background:rgba(40,210,120,.08);
+    border:1px solid rgba(40,210,120,.2);
+    color:#8ff0b4;
+    font-size:10px;
+    font-weight:800;
 }
 
 .stats{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-margin-top:15px
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
 }
 
 .stat{
-padding:18px;
-border-radius:12px;
-background:#0a1017;
-border:1px solid #1d2937
+    background:#080d13;
+    border:1px solid #202b38;
+    border-radius:13px;
+    padding:18px;
 }
 
 .stat-label{
-font-size:11px;
-color:#8995a7
+    color:#718096;
+    font-size:10px;
+    font-weight:800;
+    text-transform:uppercase;
 }
 
 .stat-value{
-font-size:22px;
-font-weight:900;
-margin-top:6px
+    margin-top:8px;
+    font-size:20px;
+    font-weight:900;
 }
 
-h2{
-font-size:19px;
-margin-bottom:18px
+.options-title{
+    font-size:16px;
+    margin-bottom:15px;
 }
 
-.menu{
-display:flex;
-flex-direction:column;
-gap:10px
+.option{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    padding:16px 0;
+    border-bottom:1px solid #19222d;
 }
 
-.menu a{
-padding:15px;
-background:#0a1017;
-border:1px solid #1d2937;
-border-radius:10px;
-font-size:13px;
-font-weight:800
+.option:last-child{
+    border-bottom:0;
 }
 
-.menu a:hover{
-border-color:#315f91;
-background:#0c141e
+.option-left{
+    display:flex;
+    align-items:center;
+    gap:13px;
 }
 
-.transaction{
-padding:13px 0;
-border-bottom:1px solid #19222d;
-display:flex;
-justify-content:space-between;
-gap:15px;
-font-size:13px
+.option-icon{
+    width:39px;
+    height:39px;
+    border-radius:10px;
+    background:#151e29;
+    display:grid;
+    place-items:center;
+    font-size:17px;
 }
 
-.transaction:last-child{
-border:0
+.option-text strong{
+    display:block;
+    font-size:12px;
 }
 
-.credit{
-color:#63e69b
+.option-text span{
+    display:block;
+    margin-top:4px;
+    color:#718096;
+    font-size:10px;
 }
 
-.debit{
-color:#ff8888
+.option-button{
+    border:1px solid #273241;
+    background:#111923;
+    color:#d7deea;
+    padding:9px 12px;
+    border-radius:8px;
+    font-size:10px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.option-button:hover{
+    background:#1677ff;
+    border-color:#1677ff;
+    color:#fff;
+}
+
+.logout-button{
+    width:100%;
+    margin-top:18px;
+    height:46px;
+    border:1px solid rgba(255,70,85,.3);
+    border-radius:10px;
+    background:rgba(255,70,85,.06);
+    color:#ff8b94;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:900;
+}
+
+.logout-button:hover{
+    background:rgba(255,70,85,.12);
+}
+
+.message{
+    display:none;
+    padding:13px;
+    border-radius:10px;
+    font-size:12px;
+    margin-bottom:18px;
+}
+
+.message.show{
+    display:block;
+}
+
+.message.error{
+    color:#ff9b9b;
+    background:rgba(255,60,60,.08);
+    border:1px solid rgba(255,60,60,.25);
+}
+
+.message.success{
+    color:#8ff0b4;
+    background:rgba(40,210,120,.08);
+    border:1px solid rgba(40,210,120,.25);
 }
 
 .loading{
-color:#8995a7;
-padding:25px 0
-}
-
-.error{
-padding:18px;
-background:rgba(255,60,60,.1);
-border:1px solid rgba(255,60,60,.3);
-border-radius:12px;
-color:#ff9b9b
-}
-
-.login-required{
-text-align:center;
-padding:55px 20px
-}
-
-.login-required-icon{
-font-size:48px;
-margin-bottom:15px
-}
-
-.login-required p{
-color:#8995a7;
-margin:10px 0 20px
-}
-
-.login-btn{
-display:inline-block;
-padding:13px 20px;
-border-radius:9px;
-background:#1677ff;
-color:#fff;
-font-size:12px;
-font-weight:900
-}
-
-.login-btn:hover{
-background:#2a87ff
+    text-align:center;
+    padding:45px;
+    color:#718096;
+    font-size:13px;
 }
 
 footer{
-border-top:1px solid #1c2531;
-padding:30px 3%;
-text-align:center;
-color:#657184;
-font-size:12px
+    border-top:1px solid #1c2531;
+    padding:27px 3%;
+    text-align:center;
+    color:#657184;
+    font-size:12px;
 }
 
 @media(max-width:800px){
 
-.nav{
-display:none
+    .nav{
+        display:none;
+    }
+
+    .user-email{
+        display:none;
+    }
+
+    .account-layout{
+        grid-template-columns:1fr;
+    }
+
+    .sidebar{
+        display:grid;
+        grid-template-columns:repeat(2,1fr);
+        gap:4px;
+    }
+
+    .menu-button{
+        margin:0;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
 }
 
-.grid{
-grid-template-columns:1fr
-}
+@media(max-width:500px){
 
+    .main{
+        padding-top:30px;
+    }
+
+    .page-title h1{
+        font-size:26px;
+    }
+
+    .profile-card{
+        padding:18px;
+    }
+
+    .card{
+        padding:18px;
+    }
+
+    .sidebar{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .option{
+        align-items:flex-start;
+    }
+
+    .option-button{
+        flex-shrink:0;
+    }
 }
 </style>
+
 </head>
 
 <body>
 
-<header>
-<div class="header">
+<header class="header">
+    <div class="header-inner">
 
-<a href="/index.html" class="logo">
-<span class="logo-icon">P</span>
-<span>PanelMarket</span>
-</a>
+```
+    <a href="/index.html" class="logo">
+        <span class="logo-icon">P</span>
+        <span>PanelMarket</span>
+    </a>
 
-<nav class="nav">
-<a href="/index.html">Ana Sayfa</a>
-<a href="/siparislerim.html">Siparişlerim</a>
-<a href="/hesabim.html">Hesabım</a>
-</nav>
+    <nav class="nav">
+        <a href="/index.html">Ana Sayfa</a>
+        <a href="/siparislerim.html">Siparişlerim</a>
+        <a href="/hesabım.html" class="active">Hesabım</a>
+    </nav>
 
-<div class="header-buttons">
+    <div class="user-area">
+        <span class="user-email" id="headerEmail">
+            Kontrol ediliyor...
+        </span>
 
-<a
-href="/login.html"
-class="header-btn login"
-id="loginButton">
-GİRİŞ YAP
-</a>
-
-<a
-href="/register.html"
-class="header-btn register"
-id="registerButton">
-KAYIT OL
-</a>
+        <button class="logout-small" onclick="logout()">
+            ÇIKIŞ
+        </button>
+    </div>
 
 </div>
+```
 
-</div>
 </header>
 
+<main class="main">
 
-<main class="container">
-
-<div class="title">
-<h1>Hesabım</h1>
-<p>Hesap bilgilerinizi, bakiyenizi ve işlemlerinizi görüntüleyin.</p>
+```
+<div class="page-title">
+    <h1>Hesabım</h1>
+    <p>PanelMarket hesabınızı buradan yönetin.</p>
 </div>
 
+<div id="message" class="message"></div>
 
-<div id="pageContent">
-
-<div class="card loading">
-Hesap bilgileri yükleniyor...
+<div id="loading" class="loading">
+    Hesap bilgileriniz yükleniyor...
 </div>
 
+<div id="account" class="account-layout" style="display:none;">
+
+    <aside class="sidebar">
+
+        <button class="menu-button active" onclick="goHome()">
+            👤 Hesabım
+        </button>
+
+        <button class="menu-button" onclick="goOrders()">
+            📦 Siparişlerim
+        </button>
+
+        <button class="menu-button" onclick="showBalance()">
+            💰 Bakiyem
+        </button>
+
+        <button class="menu-button" onclick="showHistory()">
+            🧾 Sipariş Geçmişi
+        </button>
+
+        <button class="menu-button" onclick="changePassword()">
+            🔐 Şifre Değiştir
+        </button>
+
+        <button class="menu-button" onclick="logout()">
+            🚪 Çıkış Yap
+        </button>
+
+    </aside>
+
+    <section class="content">
+
+        <div class="card profile-card">
+
+            <div class="avatar" id="avatar">
+                P
+            </div>
+
+            <div class="profile-info">
+                <h2 id="userName">
+                    PanelMarket Kullanıcısı
+                </h2>
+
+                <p id="userEmail">
+                    -
+                </p>
+
+                <span class="status">
+                    ● AKTİF HESAP
+                </span>
+            </div>
+
+        </div>
+
+        <div class="stats">
+
+            <div class="stat">
+                <div class="stat-label">
+                    Bakiye
+                </div>
+
+                <div class="stat-value" id="balance">
+                    ₺0,00
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">
+                    Sipariş
+                </div>
+
+                <div class="stat-value" id="orderCount">
+                    0
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">
+                    Hesap Durumu
+                </div>
+
+                <div class="stat-value">
+                    Aktif
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <h3 class="options-title">
+                Hesap Seçenekleri
+            </h3>
+
+            <div class="option">
+
+                <div class="option-left">
+
+                    <div class="option-icon">
+                        👤
+                    </div>
+
+                    <div class="option-text">
+                        <strong>Hesap Bilgilerim</strong>
+                        <span>Ad, e-posta ve hesap bilgilerinizi görüntüleyin.</span>
+                    </div>
+
+                </div>
+
+                <button class="option-button" onclick="accountInfo()">
+                    GÖRÜNTÜLE
+                </button>
+
+            </div>
+
+            <div class="option">
+
+                <div class="option-left">
+
+                    <div class="option-icon">
+                        📦
+                    </div>
+
+                    <div class="option-text">
+                        <strong>Siparişlerim</strong>
+                        <span>Satın aldığınız ürünleri ve siparişlerinizi görüntüleyin.</span>
+                    </div>
+
+                </div>
+
+                <button class="option-button" onclick="goOrders()">
+                    SİPARİŞLER
+                </button>
+
+            </div>
+
+            <div class="option">
+
+                <div class="option-left">
+
+                    <div class="option-icon">
+                        💰
+                    </div>
+
+                    <div class="option-text">
+                        <strong>Bakiyem</strong>
+                        <span>Hesabınızdaki mevcut bakiyeyi görüntüleyin.</span>
+                    </div>
+
+                </div>
+
+                <button class="option-button" onclick="showBalance()">
+                    BAKİYE
+                </button>
+
+            </div>
+
+            <div class="option">
+
+                <div class="option-left">
+
+                    <div class="option-icon">
+                        🧾
+                    </div>
+
+                    <div class="option-text">
+                        <strong>Sipariş Geçmişi</strong>
+                        <span>Geçmiş siparişlerinizi görüntüleyin.</span>
+                    </div>
+
+                </div>
+
+                <button class="option-button" onclick="showHistory()">
+                    GEÇMİŞ
+                </button>
+
+            </div>
+
+            <div class="option">
+
+                <div class="option-left">
+
+                    <div class="option-icon">
+                        🔐
+                    </div>
+
+                    <div class="option-text">
+                        <strong>Şifre Değiştir</strong>
+                        <span>Hesap şifrenizi değiştirme işlemi.</span>
+                    </div>
+
+                </div>
+
+                <button class="option-button" onclick="changePassword()">
+                    DEĞİŞTİR
+                </button>
+
+            </div>
+
+            <button class="logout-button" onclick="logout()">
+                🚪 HESAPTAN ÇIKIŞ YAP
+            </button>
+
+        </div>
+
+    </section>
+
 </div>
+```
 
 </main>
 
-
 <footer>
-© 2026 PanelMarket — Güvenli yazılım alışverişi
+    © 2026 PanelMarket — Güvenli yazılım alışverişi
 </footer>
-
 
 <script>
 
-/* =========================
+"use strict";
+
+const tokenKey = "panelmarket_token";
+
+let currentUser = null;
+
+
+/* =========================================================
    TOKEN
-========================= */
+========================================================= */
 
 function getToken(){
 
-return localStorage.getItem(
-"panelmarket_token"
-) || "";
+    try{
+
+        return String(
+            localStorage.getItem(tokenKey) ||
+            sessionStorage.getItem(tokenKey) ||
+            ""
+        ).trim();
+
+    }catch{
+
+        return "";
+
+    }
 
 }
 
 
-/* =========================
-   AUTH HEADERS
-========================= */
+/* =========================================================
+   API
+========================================================= */
 
-function authHeaders(extra = {}){
+async function api(url, options = {}){
 
-const token=getToken();
+    const token = getToken();
 
-return {
+    const headers = {
+        "Accept":"application/json",
+        ...(options.body ? {
+            "Content-Type":"application/json"
+        } : {}),
+        ...(options.headers || {})
+    };
 
-...extra,
+    if(token){
 
-...(token
-? {
-Authorization:
-"Bearer " + token
-}
-: {})
+        headers.Authorization =
+            "Bearer " + token;
 
-};
+    }
 
-}
-
-
-/* =========================
-   API FETCH
-========================= */
-
-async function apiFetch(url,options={}){
-
-const requestOptions={
-
-...options,
-
-credentials:"include",
-
-headers:authHeaders(
-options.headers || {}
-)
-
-};
-
-const res=
-await fetch(url,requestOptions);
-
-
-if(res.status===401){
-
-localStorage.removeItem(
-"panelmarket_token"
-);
-
-localStorage.removeItem(
-"panelmarket_user"
-);
-
-window.location.href=
-"/login.html?redirect=" +
-encodeURIComponent(
-"/hesabim.html"
-);
-
-throw new Error(
-"Oturum gerekli."
-);
-
-}
-
-return res;
+    return fetch(url,{
+        ...options,
+        headers,
+        credentials:"include",
+        cache:"no-store"
+    });
 
 }
 
 
-/* =========================
-   ACCOUNT
-========================= */
+/* =========================================================
+   MESAJ
+========================================================= */
+
+function showMessage(text,type){
+
+    const el =
+        document.getElementById("message");
+
+    if(!el) return;
+
+    el.textContent = text;
+
+    el.className =
+        "message show " + type;
+
+}
+
+
+/* =========================================================
+   HESAP KONTROLÜ
+========================================================= */
 
 async function loadAccount(){
 
-try{
+    try{
 
-const res=
-await apiFetch("/api/account");
+        const response =
+            await api(
+                "/api/auth/me?t=" +
+                Date.now()
+            );
 
-const data=
-await res.json();
+        let data = {};
 
-if(!res.ok){
+        try{
+            data = await response.json();
+        }catch{}
 
-throw new Error(
-data.error ||
-"Hesap bilgileri alınamadı."
-);
+        if(!response.ok){
 
-}
+            if(response.status === 401){
 
-renderAccount(data);
+                clearAuth();
 
-updateHeader(data);
+                window.location.replace(
+                    "/login.html"
+                );
 
-loadOrders();
-loadTransactions();
+                return;
 
-}catch(e){
+            }
 
-if(e.message==="Oturum gerekli."){
+            throw new Error(
+                data.error ||
+                "Hesap bilgileri alınamadı."
+            );
 
-return;
+        }
 
-}
+        currentUser =
+            data.user || data;
 
-document.getElementById(
-"pageContent"
-).innerHTML=
+        renderUser(currentUser);
 
-`
+        await loadAccountDetails();
 
-<div class="card error">
+        document.getElementById("loading")
+            .style.display = "none";
 
-${escapeHtml(
-e.message ||
-"Hesap bilgileri alınamadı."
-)}
+        document.getElementById("account")
+            .style.display = "grid";
 
-</div>
+    }catch(error){
 
-`;
+        console.error(
+            "ACCOUNT ERROR:",
+            error
+        );
 
-}
+        document.getElementById("loading")
+            .style.display = "none";
 
-}
+        showMessage(
+            error.message ||
+            "Hesap bilgileri alınamadı.",
+            "error"
+        );
 
-
-/* =========================
-   RENDER ACCOUNT
-========================= */
-
-function renderAccount(data){
-
-const name=
-data.name ||
-"PanelMarket Kullanıcısı";
-
-const email=
-data.email ||
-"";
-
-const balance=
-Number(data.balance || 0);
-
-const firstLetter=
-name.trim().charAt(0).toUpperCase()
-|| "P";
-
-
-document.getElementById(
-"pageContent"
-).innerHTML=
-
-`
-
-<div class="grid">
-
-<div>
-
-<div class="card">
-
-<div class="profile">
-
-<div class="avatar" id="avatar">
-
-${escapeHtml(firstLetter)}
-
-</div>
-
-<div>
-
-<div class="name" id="name">
-
-${escapeHtml(name)}
-
-</div>
-
-<div class="email" id="email">
-
-${escapeHtml(email)}
-
-</div>
-
-</div>
-
-</div>
-
-
-<div class="balance">
-
-<div class="balance-label">
-
-Mevcut Bakiye
-
-</div>
-
-<div
-class="balance-value"
-id="balance">
-
-₺${format(balance)}
-
-</div>
-
-</div>
-
-
-<div class="stats">
-
-<div class="stat">
-
-<div class="stat-label">
-Sipariş
-</div>
-
-<div
-class="stat-value"
-id="orders">
-0
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-label">
-Hesap Durumu
-</div>
-
-<div
-class="stat-value"
-style="font-size:15px">
-
-Aktif
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-
-<div class="card">
-
-<h2>
-Hesap İşlemleri
-</h2>
-
-<div class="menu">
-
-<a href="/siparislerim.html">
-📦 Siparişlerim
-</a>
-
-<a href="/index.html">
-🛍 Ürünleri İncele
-</a>
-
-<a href="/sepet.html">
-🛒 Sepetim
-</a>
-
-<a href="/odeme.html">
-💳 Bakiye / Ödeme
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-
-<div>
-
-<div class="card">
-
-<h2>
-Son İşlemler
-</h2>
-
-<div id="transactions">
-
-<div class="loading">
-İşlemler yükleniyor...
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-`;
+    }
 
 }
 
 
-/* =========================
-   ORDERS
-========================= */
+/* =========================================================
+   HESAP DETAYLARI
+========================================================= */
 
-async function loadOrders(){
+async function loadAccountDetails(){
 
-try{
+    try{
 
-const res=
-await apiFetch("/api/orders");
+        const response =
+            await api(
+                "/api/account?t=" +
+                Date.now()
+            );
 
-const data=
-await res.json();
+        if(!response.ok) return;
 
-if(!res.ok){
+        const data =
+            await response.json();
 
-throw new Error(
-data.error ||
-"Siparişler alınamadı."
-);
+        if(data.balance !== undefined){
 
-}
+            document.getElementById("balance")
+                .textContent =
+                formatMoney(data.balance);
 
-const orders=
-Array.isArray(data)
-? data
-: (data.orders || []);
+        }
 
+        if(data.orderCount !== undefined){
 
-const ordersElement=
-document.getElementById(
-"orders"
-);
+            document.getElementById("orderCount")
+                .textContent =
+                String(data.orderCount);
 
-if(ordersElement){
+        }
 
-ordersElement.textContent=
-orders.length;
+    }catch(error){
 
-}
+        console.warn(
+            "ACCOUNT DETAILS:",
+            error
+        );
 
-}catch(e){
-
-if(e.message==="Oturum gerekli."){
-
-return;
-
-}
-
-const ordersElement=
-document.getElementById(
-"orders"
-);
-
-if(ordersElement){
-
-ordersElement.textContent="0";
-
-}
-
-}
+    }
 
 }
 
 
-/* =========================
-   TRANSACTIONS
-========================= */
+/* =========================================================
+   KULLANICIYI GÖSTER
+========================================================= */
 
-async function loadTransactions(){
+function renderUser(user){
 
-const container=
-document.getElementById(
-"transactions"
-);
+    const name =
+        user?.name ||
+        "PanelMarket Kullanıcısı";
 
-if(!container) return;
+    const email =
+        user?.email ||
+        "";
 
-try{
+    document.getElementById("userName")
+        .textContent = name;
 
-const res=
-await apiFetch(
-"/api/account/transactions"
-);
+    document.getElementById("userEmail")
+        .textContent = email || "E-posta bilgisi yok";
 
-const data=
-await res.json();
+    document.getElementById("headerEmail")
+        .textContent = email || name;
 
-if(!res.ok){
+    const first =
+        String(name).trim().charAt(0).toUpperCase();
 
-throw new Error(
-data.error ||
-"İşlemler alınamadı."
-);
+    document.getElementById("avatar")
+        .textContent = first || "P";
 
-}
+    if(user?.balance !== undefined){
 
-const items=
-Array.isArray(data)
-? data
-: (data.transactions || []);
+        document.getElementById("balance")
+            .textContent =
+            formatMoney(user.balance);
 
-
-if(!items.length){
-
-container.innerHTML=
-`
-
-<div class="loading">
-Henüz işlem bulunmuyor.
-</div>
-
-`;
-
-return;
+    }
 
 }
 
 
-container.innerHTML=
+/* =========================================================
+   HESAP BİLGİLERİ
+========================================================= */
 
-items
-.slice(0,8)
-.map(item=>{
+function accountInfo(){
 
-const amount=
-Number(item.amount || 0);
+    if(!currentUser) return;
 
-const type=
-item.type || "credit";
+    const name =
+        currentUser.name ||
+        "Belirtilmemiş";
 
-return `
+    const email =
+        currentUser.email ||
+        "Belirtilmemiş";
 
-<div class="transaction">
-
-<span>
-
-${escapeHtml(
-item.note ||
-item.description ||
-"Hesap işlemi"
-)}
-
-</span>
-
-<strong
-class="${
-type==="debit"
-? "debit"
-: "credit"
-}">
-
-${
-type==="debit"
-? "-"
-: "+"
-}₺${format(
-Math.abs(amount)
-)}
-
-</strong>
-
-</div>
-
-`;
-
-})
-.join("");
-
-
-}catch(e){
-
-if(e.message==="Oturum gerekli."){
-
-return;
-
-}
-
-container.innerHTML=
-`
-
-<div class="loading">
-İşlem bilgileri alınamadı.
-</div>
-
-`;
-
-}
+    showMessage(
+        "Ad: " + name +
+        " | E-posta: " + email,
+        "success"
+    );
 
 }
 
 
-/* =========================
-   HEADER
-========================= */
+/* =========================================================
+   BAKİYE
+========================================================= */
 
-function updateHeader(user){
+function showBalance(){
 
-if(!user) return;
+    const value =
+        document.getElementById("balance")
+            .textContent;
 
-
-const loginButton=
-document.getElementById(
-"loginButton"
-);
-
-const registerButton=
-document.getElementById(
-"registerButton"
-);
-
-
-if(loginButton){
-
-loginButton.textContent=
-"HESABIM";
-
-loginButton.href=
-"/hesabim.html";
+    showMessage(
+        "Mevcut bakiyeniz: " + value,
+        "success"
+    );
 
 }
 
 
-if(registerButton){
+/* =========================================================
+   SİPARİŞLER
+========================================================= */
 
-registerButton.textContent=
-"ÇIKIŞ YAP";
+function goOrders(){
 
-registerButton.href="#";
-
-registerButton.onclick=
-async function(e){
-
-e.preventDefault();
-
-try{
-
-await apiFetch(
-"/api/logout",
-{
-method:"POST"
-}
-);
-
-}catch(err){}
-
-
-localStorage.removeItem(
-"panelmarket_token"
-);
-
-localStorage.removeItem(
-"panelmarket_user"
-);
-
-window.location.href=
-"/index.html";
-
-};
-
-}
+    window.location.href =
+        "/siparislerim.html";
 
 }
 
 
-/* =========================
-   FORMAT
-========================= */
+/* =========================================================
+   SİPARİŞ GEÇMİŞİ
+========================================================= */
 
-function format(n){
+function showHistory(){
 
-return Number(n || 0)
-.toLocaleString(
-"tr-TR",
-{
-minimumFractionDigits:2,
-maximumFractionDigits:2
-}
-);
+    window.location.href =
+        "/siparislerim.html";
 
 }
 
 
-/* =========================
-   SECURITY
-========================= */
+/* =========================================================
+   ŞİFRE DEĞİŞTİR
+========================================================= */
 
-function escapeHtml(str){
+function changePassword(){
 
-return String(str ?? "")
-.replace(
-/[&<>"']/g,
-m=>({
-
-"&":"&amp;",
-"<":"&lt;",
-">":"&gt;",
-'"':"&quot;",
-"'":"&#039;"
-
-}[m])
-
-);
+    showMessage(
+        "Şifre değiştirme bölümü hazır. Şifre değiştirme API'si etkinleştirildiğinde buradan çalışacaktır.",
+        "success"
+    );
 
 }
 
 
-/* =========================
-   START
-========================= */
+/* =========================================================
+   ANA SAYFA
+========================================================= */
+
+function goHome(){
+
+    window.location.href =
+        "/index.html";
+
+}
+
+
+/* =========================================================
+   ÇIKIŞ
+========================================================= */
+
+async function logout(){
+
+    try{
+
+        await api(
+            "/api/logout",
+            {
+                method:"POST"
+            }
+        );
+
+    }catch(error){
+
+        console.warn(
+            "LOGOUT ERROR:",
+            error
+        );
+
+    }
+
+    clearAuth();
+
+    window.location.replace(
+        "/login.html"
+    );
+
+}
+
+
+/* =========================================================
+   AUTH TEMİZLE
+========================================================= */
+
+function clearAuth(){
+
+    try{
+
+        localStorage.removeItem(
+            tokenKey
+        );
+
+        sessionStorage.removeItem(
+            tokenKey
+        );
+
+        localStorage.removeItem(
+            "panelmarket_user"
+        );
+
+        sessionStorage.removeItem(
+            "panelmarket_user"
+        );
+
+    }catch{}
+
+}
+
+
+/* =========================================================
+   PARA
+========================================================= */
+
+function formatMoney(value){
+
+    const number =
+        Number(value || 0);
+
+    return number.toLocaleString(
+        "tr-TR",
+        {
+            style:"currency",
+            currency:"TRY"
+        }
+    );
+
+}
+
+
+/* =========================================================
+   BAŞLAT
+========================================================= */
 
 loadAccount();
 
