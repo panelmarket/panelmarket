@@ -53,6 +53,63 @@ function createOrderNumber() { return "PM-" + new Date().getFullYear() + "-" + c
 function createLicenseKey() { return "PMK-" + crypto.randomBytes(12).toString("hex").toUpperCase(); }
 function createToken() { return crypto.randomBytes(32).toString("hex"); }
 
+const SESSION_SECRET =
+  process.env.SESSION_SECRET ||
+  process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+function createSecureToken(userId) {
+  const payload = Buffer.from(JSON.stringify({
+    userId: String(userId),
+    createdAt: Date.now()
+  })).toString("base64url");
+
+  const signature = crypto
+    .createHmac("sha256", SESSION_SECRET)
+    .update(payload)
+    .digest("base64url");
+
+  return `${payload}.${signature}`;
+}
+
+function verifySecureToken(token) {
+  try {
+    const parts = String(token || "").split(".");
+    if (parts.length !== 2) return null;
+
+    const [payload, signature] = parts;
+
+    const expected = crypto
+      .createHmac("sha256", SESSION_SECRET)
+      .update(payload)
+      .digest("base64url");
+
+    const a = Buffer.from(signature);
+    const b = Buffer.from(expected);
+
+    if (a.length !== b.length) return null;
+    if (!crypto.timingSafeEqual(a, b)) return null;
+
+    const decoded = JSON.parse(
+      Buffer.from(payload, "base64url").toString("utf8")
+    );
+
+    if (!decoded.userId) return null;
+
+    const maxAge = 30 * 24 * 60 * 60 * 1000;
+
+    if (
+      decoded.createdAt &&
+      Date.now() - Number(decoded.createdAt) > maxAge
+    ) {
+      return null;
+    }
+
+    return decoded;
+  } catch {
+    return null;
+  }
+}
+
 function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
   const hash = crypto.scryptSync(password, salt, 64).toString("hex");
   return { hash, salt };
