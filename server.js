@@ -1626,6 +1626,373 @@ app.post(
   }
 );
 
+// ============================================================
+// PANELMARKET ADMIN API
+// ============================================================
+
+async function requireAdmin(req, res, next) {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({
+        error: "Admin girişi gerekli"
+      });
+    }
+
+    const { data: adminUser, error } = await supabase
+      .from("users")
+      .select("id,name,email,balance,is_admin,created_at")
+      .eq("id", req.user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("ADMIN CHECK ERROR:", error);
+      return res.status(500).json({
+        error: "Admin kontrolü yapılamadı"
+      });
+    }
+
+    if (!adminUser || adminUser.is_admin !== true) {
+      return res.status(403).json({
+        error: "Admin yetkisi yok"
+      });
+    }
+
+    req.adminUser = adminUser;
+    next();
+  } catch (err) {
+    console.error("ADMIN AUTH ERROR:", err);
+    return res.status(500).json({
+      error: "Admin doğrulama hatası"
+    });
+  }
+}
+
+
+// Admin bilgisi
+app.get("/api/admin/me", requireAuth, requireAdmin, async (req, res) => {
+  res.json({
+    ok: true,
+    admin: req.adminUser
+  });
+});
+
+
+// Dashboard
+app.get("/api/admin/dashboard", requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const [usersResult, ordersResult, transactionsResult] =
+      await Promise.all([
+        supabase
+          .from("users")
+          .select("id,balance", { count: "exact" }),
+
+        supabase
+          .from("orders")
+          .select("id,amount,status,delivery_status,created_at", {
+            count: "exact"
+          }),
+
+        supabase
+          .from("transactions")
+          .select("amount,type")
+      ]);
+
+    if (usersResult.error) throw usersResult.error;
+    if (ordersResult.error) throw ordersResult.error;
+    if (transactionsResult.error) throw transactionsResult.error;
+
+    const users = usersResult.data || [];
+    const orders = ordersResult.data || [];
+    const transactions = transactionsResult.data || [];
+
+    const totalBalance = users.reduce(
+      (sum, user) => sum + Number(user.balance || 0),
+      0
+    );
+
+    const totalSales = orders.reduce(
+      (sum, order) => sum + Number(order.amount || 0),
+      0
+    );
+
+    res.json({
+      ok: true,
+      totalUsers: usersResult.count || users.length,
+      totalOrders: ordersResult.count || orders.length,
+      totalBalance,
+      totalSales
+    });
+  } catch (err) {
+    console.error("ADMIN DASHBOARD ERROR:", err);
+
+    res.status(500).json({
+      error: "Dashboard verileri alınamadı"
+    });
+  }
+});
+
+
+// Tüm kullanıcılar
+app.get("/api/admin/users", requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const search = String(req.query.search || "").trim();
+
+    let query = supabase
+      .from("users")
+      .select(
+        "id,name,email,balance,is_admin,created_at"
+      )
+      .order("created_at", { ascending: false });
+
+    if (search) {
+      query = query.or(
+        `name.ilike.%${search}%,email.ilike.%${search}%`
+      );
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    res.json({
+      ok: true,
+      users: data || []
+    });
+  } catch (err) {
+    console.error("ADMIN USERS ERROR:", err);
+
+    res.status(500).json({
+      error: "Kullanıcılar alınamadı"
+    });
+  }
+});
+
+
+// Tüm siparişler
+app.get("/api/admin/orders", requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("orders")
+      .select(`
+        id,
+        user_id,
+        order_number,
+        product_id,
+        product_name,
+        license_id,
+        license_name,
+        amount,
+        status,
+        delivery_status,
+        license_key,
+        created_at,
+        users:user_id (
+          name,
+          email
+        )
+      `)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    res.json({
+      ok: true,
+      orders: data || []
+    });
+  } catch (err) {
+    console.error("ADMIN ORDERS ERROR:", err);
+
+    res.status(500).json({
+      error: "Siparişler alınamadı"
+    });
+  }
+});
+
+
+// Bakiye değiştir
+app.post(
+  "/api/admin/users/:id/balance",
+  requireAuth,
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const amount = Number(req.body.amount);
+      const type = req.body.type;
+      const note = String(req.body.note || "Admin bakiye işlemi");
+
+      if (!Number.isFinite(amount) || amount <= 0) {
+        return res.status(400).json({
+          error: "Geçerli bir tutar girin"
+        });
+      }
+
+      if (!["credit", "debit"].includes(type)) {
+        return res.status(400).json({
+          error: "Geçersiz işlem tipi"
+        });
+      }
+
+      const { data: user, error: userError } = await supabase
+        .from("users")
+        .select("id,balance")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (userError) throw userError;
+
+      if (!user) {
+        return res.status(404).json({
+          error: "Kullanıcı bulunamadı"
+        });
+      }
+
+      const currentBalance = Number(user.balance || 0);
+
+      if (type === "debit" && currentBalance < amount) {
+        return res.status(400).json({
+          error: "Kullanıcının bakiyesi yetersiz"
+        });
+      }
+
+      const newBalance =
+        type === "credit"
+          ? currentBalance + amount
+          : currentBalance - amount;
+
+      const { data: updatedUser, error: updateError } =
+        await supabase
+          .from("users")
+          .update({
+            balance: Number(newBalance.toFixed(2))
+          })
+          .eq("id", userId)
+          .select("id,name,email,balance")
+          .single();
+
+      if (updateError) throw updateError;
+
+      const { error: transactionError } = await supabase
+        .from("transactions")
+        .insert({
+          user_id: userId,
+          type: type === "credit"
+            ? "admin_credit"
+            : "admin_debit",
+          amount: Number(amount.toFixed(2)),
+          note
+        });
+
+      if (transactionError) {
+        console.error(
+          "ADMIN TRANSACTION ERROR:",
+          transactionError
+        );
+      }
+
+      res.json({
+        ok: true,
+        user: updatedUser
+      });
+    } catch (err) {
+      console.error("ADMIN BALANCE ERROR:", err);
+
+      res.status(500).json({
+        error: "Bakiye işlemi başarısız"
+      });
+    }
+  }
+);
+
+
+// Sipariş durumunu değiştir
+app.patch(
+  "/api/admin/orders/:id",
+  requireAuth,
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const updates = {};
+
+      if (req.body.status !== undefined) {
+        updates.status = String(req.body.status);
+      }
+
+      if (req.body.delivery_status !== undefined) {
+        updates.delivery_status =
+          String(req.body.delivery_status);
+      }
+
+      if (Object.keys(updates).length === 0) {
+        return res.status(400).json({
+          error: "Güncellenecek alan yok"
+        });
+      }
+
+      const { data, error } = await supabase
+        .from("orders")
+        .update(updates)
+        .eq("id", req.params.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      res.json({
+        ok: true,
+        order: data
+      });
+    } catch (err) {
+      console.error("ADMIN ORDER UPDATE ERROR:", err);
+
+      res.status(500).json({
+        error: "Sipariş güncellenemedi"
+      });
+    }
+  }
+);
+
+
+// Tüm işlemler
+app.get(
+  "/api/admin/transactions",
+  requireAuth,
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from("transactions")
+        .select(`
+          id,
+          user_id,
+          type,
+          amount,
+          note,
+          created_at,
+          users:user_id (
+            name,
+            email
+          )
+        `)
+        .order("created_at", { ascending: false })
+        .limit(200);
+
+      if (error) throw error;
+
+      res.json({
+        ok: true,
+        transactions: data || []
+      });
+    } catch (err) {
+      console.error("ADMIN TRANSACTIONS ERROR:", err);
+
+      res.status(500).json({
+        error: "İşlemler alınamadı"
+      });
+    }
+  }
+);
+
 /* =========================================================
    HEALTH
 ========================================================= */
