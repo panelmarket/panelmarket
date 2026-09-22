@@ -1658,6 +1658,7 @@ app.post("/api/change-password", requireAuth, async (req, res) => {
       });
     }
 
+    /* ESKİ ŞİFREYİ KONTROL ET */
     if (!verifyPassword(oldPassword, req.user)) {
       return res.status(401).json({
         ok: false,
@@ -1666,6 +1667,7 @@ app.post("/api/change-password", requireAuth, async (req, res) => {
       });
     }
 
+    /* YENİ ŞİFRE KURALLARI */
     if (newPassword.length < 8) {
       return res.status(400).json({
         ok: false,
@@ -1690,7 +1692,8 @@ app.post("/api/change-password", requireAuth, async (req, res) => {
       });
     }
 
-    /* YENİ ŞİFREYİ LOGIN İLE AYNI SİSTEMLE HASHLE */
+    /* ÖNEMLİ:
+       LOGIN İLE AYNI ŞİFRE SİSTEMİ */
     const pw = hashPassword(newPassword);
 
     const {
@@ -1707,7 +1710,10 @@ app.post("/api/change-password", requireAuth, async (req, res) => {
       .single();
 
     if (error) {
-      console.error("CHANGE PASSWORD DATABASE ERROR:", error);
+      console.error(
+        "CHANGE PASSWORD DATABASE ERROR:",
+        error
+      );
 
       return res.status(500).json({
         ok: false,
@@ -1716,7 +1722,7 @@ app.post("/api/change-password", requireAuth, async (req, res) => {
       });
     }
 
-    /* Güvenlik için eski oturumları kapat */
+    /* TÜM ESKİ OTURUMLARI KAPAT */
     await supabase
       .from("sessions")
       .delete()
@@ -1732,7 +1738,10 @@ app.post("/api/change-password", requireAuth, async (req, res) => {
     });
 
   } catch (e) {
-    console.error("CHANGE PASSWORD ERROR:", e);
+    console.error(
+      "CHANGE PASSWORD ERROR:",
+      e
+    );
 
     return res.status(500).json({
       ok: false,
