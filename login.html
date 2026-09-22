@@ -803,13 +803,16 @@ async function(e){
                        { is_admin:true }
                     */
 
-                    const adminUser =
-                        adminData.user ||
-                        adminData;
+                   const adminUser =
+    adminData.user ||
+    adminData.admin ||
+    adminData;
 
-
-                    isAdmin =
-                        adminUser.is_admin === true;
+isAdmin =
+    adminData.is_admin === true ||
+    adminData.isAdmin === true ||
+    adminUser.is_admin === true ||
+    adminUser.isAdmin === true;
 
                 }
 
