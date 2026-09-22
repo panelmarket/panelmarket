@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ürün Teslimatı - PanelMarket</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,Arial,sans-serif;background:#070a0f;color:#f5f7fb}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit}
+
+header{
+position:sticky;top:0;z-index:1000;height:76px;
+background:rgba(7,10,15,.92);
+backdrop-filter:blur(18px);
+border-bottom:1px solid #1c2531
+}
+.header{
+width:min(1200px,94%);height:100%;margin:auto;
+display:flex;align-items:center;justify-content:space-between
+}
+.logo{display:flex;align-items:center;gap:11px;font-size:21px;font-weight:900}
+.logo-icon{
+width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+background:linear-gradient(135deg,#1677ff,#7347ff);
+box-shadow:0 8px 30px rgba(22,119,255,.25)
+}
+.nav{display:flex;gap:28px}
+.nav a{color:#8995a7;font-size:13px}
+.nav a:hover{color:#fff}
+.header-buttons{display:flex;gap:9px}
+.header-btn{padding:11px 16px;border-radius:9px;font-size:12px;font-weight:800}
+.login{border:1px solid #273241}
+.register{background:#1677ff}
+
+.container{
+width:min(900px,94%);
+margin:55px auto 100px
+}
+
+.card{
+background:#0d131b;
+border:1px solid #1c2633;
+border-radius:20px;
+padding:30px
+}
+
+.success-icon{
+width:75px;
+height:75px;
+margin:0 auto 20px;
+border-radius:24px;
+display:grid;
+place-items:center;
+font-size:34px;
+background:rgba(50,210,120,.1);
+border:1px solid rgba(50,210,120,.25);
+color:#72e6a2
+}
+
+.center{text-align:center}
+
+.center h1{
+font-size:34px;
+letter-spacing:-1.5px
+}
+.center p{
+margin-top:8px;
+color:#8995a7
+}
+
+.product{
+margin-top:30px;
+padding:22px;
+border-radius:14px;
+background:#090f16;
+border:1px solid #1d2937
+}
+
+.product-title{
+font-size:22px;
+font-weight:900
+}
+.product-category{
+margin-top:5px;
+color:#5eacff;
+font-size:12px;
+font-weight:800
+}
+
+.details{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:20px
+}
+
+.detail{
+padding:15px;
+background:#0d151e;
+border:1px solid #1d2937;
+border-radius:10px
+}
+.detail-label{
+font-size:10px;
+color:#718096;
+text-transform:uppercase
+}
+.detail-value{
+font-size:14px;
+font-weight:900;
+margin-top:5px;
+word-break:break-word
+}
+
+.key{
+margin-top:20px;
+padding:20px;
+border-radius:13px;
+background:
+radial-gradient(circle at 50% 0,rgba(22,119,255,.17),transparent 60%),
+#080e15;
+border:1px solid #263c59
+}
+.key-label{
+font-size:11px;
+color:#8995a7
+}
+.key-value{
+font-family:monospace;
+font-size:20px;
+font-weight:900;
+letter-spacing:1px;
+margin-top:8px;
+word-break:break-all;
+color:#fff
+}
+
+.buttons{
+display:flex;
+gap:10px;
+margin-top:22px
+}
+
+.btn{
+flex:1;
+border:0;
+cursor:pointer;
+padding:14px 20px;
+border-radius:10px;
+font-size:12px;
+font-weight:900;
+text-align:center
+}
+.primary{
+background:#1677ff;
+color:#fff
+}
+.primary:hover{background:#2a87ff}
+.secondary{
+background:#101820;
+border:1px solid #263546;
+color:#fff
+}
+
+.notice{
+margin-top:18px;
+padding:15px;
+border-radius:10px;
+background:rgba(22,119,255,.07);
+border:1px solid rgba(22,119,255,.18);
+color:#9eb0c5;
+font-size:12px;
+line-height:1.6
+}
+
+.loading{
+text-align:center;
+color:#8995a7;
+padding:50px
+}
+
+.error{
+text-align:center;
+padding:40px;
+color:#ff9999
+}
+
+footer{
+border-top:1px solid #1c2531;
+padding:30px 3%;
+text-align:center;color:#657184;font-size:12px
+}
+
+@media(max-width:600px){
+.nav{display:none}
+.card{padding:20px}
+.details{grid-template-columns:1fr}
+.buttons{flex-direction:column}
+.center h1{font-size:27px}
+.key-value{font-size:16px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="header">
+
+<a href="/index.html" class="logo">
+<span class="logo-icon">P</span>
+<span>PanelMarket</span>
+</a>
+
+<nav class="nav">
+<a href="/index.html">Ana Sayfa</a>
+<a href="/siparislerim.html">Siparişlerim</a>
+<a href="/hesabim.html">Hesabım</a>
+</nav>
+
+<div class="header-buttons">
+<a href="/login.html" class="header-btn login">GİRİŞ YAP</a>
+<a href="/register.html" class="header-btn register">KAYIT OL</a>
+</div>
+
+</div>
+</header>
+
+<main class="container">
+
+<div id="content">
+
+<div class="card loading">
+Sipariş bilgileri yükleniyor...
+</div>
+
+</div>
+
+</main>
+
+<footer>
+© 2026 PanelMarket — Güvenli yazılım alışverişi
+</footer>
+
+<script>
+
+const params=new URLSearchParams(location.search);
+const orderId=params.get("id");
+
+if(!orderId){
+
+document.getElementById("content").innerHTML=`
+<div class="card error">
+<h2>Sipariş bulunamadı</h2>
+<p style="margin-top:10px;color:#8995a7">
+Teslimat sayfasını bir sipariş üzerinden açmanız gerekiyor.
+</p>
+<br>
+<a href="/siparislerim.html" class="btn primary">
+SİPARİŞLERİME GİT
+</a>
+</div>`;
+
+}else{
+
+loadOrder();
+
+}
+
+async function loadOrder(){
+
+try{
+
+const res=await fetch(
+"/api/orders/"+encodeURIComponent(orderId)
+);
+
+const data=await res.json();
+
+if(!res.ok){
+throw new Error(data.error||"Sipariş bulunamadı.");
+}
+
+const order=data.order||data;
+
+const product=
+order.productName||
+order.product?.name||
+"Panel";
+
+const license=
+order.licenseName||
+order.license?.name||
+"1 Site";
+
+const orderNumber=
+order.orderNumber||
+order.id||
+"-";
+
+const licenseKey=
+order.licenseKey||
+order.license_key||
+"";
+
+document.getElementById("content").innerHTML=`
+
+<div class="card">
+
+<div class="center">
+
+<div class="success-icon">✓</div>
+
+<h1>Satın Alma Tamamlandı</h1>
+
+<p>
+Paneliniz başarıyla hesabınıza tanımlandı.
+</p>
+
+</div>
+
+<div class="product">
+
+<div class="product-title">
+${escapeHtml(product)}
+</div>
+
+<div class="product-category">
+PanelMarket Lisanslı Ürün
+</div>
+
+<div class="details">
+
+<div class="detail">
+<div class="detail-label">Sipariş No</div>
+<div class="detail-value">
+${escapeHtml(orderNumber)}
+</div>
+</div>
+
+<div class="detail">
+<div class="detail-label">Lisans</div>
+<div class="detail-value">
+${escapeHtml(license)}
+</div>
+</div>
+
+<div class="detail">
+<div class="detail-label">Durum</div>
+<div class="detail-value" style="color:#70e4a0">
+${escapeHtml(order.status||"Tamamlandı")}
+</div>
+</div>
+
+<div class="detail">
+<div class="detail-label">Tutar</div>
+<div class="detail-value">
+₺${format(order.amount??order.price??0)}
+</div>
+</div>
+
+</div>
+
+<div class="key">
+
+<div class="key-label">
+LİSANS ANAHTARI
+</div>
+
+<div class="key-value">
+${escapeHtml(licenseKey||"Lisans anahtarı oluşturulmadı")}
+</div>
+
+</div>
+
+<div class="buttons">
+
+<button
+class="btn primary"
+onclick="copyKey('${escapeJs(licenseKey)}')">
+LİSANS ANAHTARINI KOPYALA
+</button>
+
+<a
+href="/siparislerim.html"
+class="btn secondary">
+SİPARİŞLERİME GİT
+</a>
+
+</div>
+
+<div class="notice">
+
+<strong>Satın alınan paneli teslim alma:</strong><br><br>
+
+Bu siparişin lisans anahtarı hesabınıza tanımlanmıştır.
+Gerçek panel ZIP dosyasının indirilebilmesi için
+ilgili panel dosyasının sunucuya eklenmesi gerekir.
+Lisans anahtarı hazırdır ve siparişiniz hesabınızda kayıtlıdır.
+
+</div>
+
+</div>
+
+</div>
+`;
+
+}catch(e){
+
+document.getElementById("content").innerHTML=`
+<div class="card error">
+<h2>Sipariş yüklenemedi</h2>
+<p style="margin-top:10px">
+${escapeHtml(e.message)}
+</p>
+<br>
+<a href="/siparislerim.html" class="btn primary">
+SİPARİŞLERİME GİT
+</a>
+</div>`;
+
+}
+
+}
+
+function copyKey(key){
+
+if(!key){
+alert("Kopyalanacak lisans anahtarı bulunamadı.");
+return;
+}
+
+navigator.clipboard.writeText(key)
+.then(()=>{
+alert("Lisans anahtarı kopyalandı.");
+})
+.catch(()=>{
+alert("Kopyalama başarısız oldu.");
+});
+
+}
+
+function format(n){
+return Number(n).toLocaleString("tr-TR",{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+});
+}
+
+function escapeHtml(str){
+return String(str??"").replace(/[&<>"']/g,m=>({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#039;"
+}[m]));
+}
+
+function escapeJs(str){
+return String(str??"")
+.replace(/\\/g,"\\\\")
+.replace(/'/g,"\\'")
+.replace(/\n/g,"\\n")
+.replace(/\r/g,"\\r");
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sepet - PanelMarket</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    font-family:Inter,Arial,sans-serif;
+    background:#070a0f;
+    color:#f5f7fb;
+}
+a{text-decoration:none;color:inherit}
+button,input,select{font-family:inherit}
+
+header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    height:76px;
+    background:rgba(7,10,15,.92);
+    backdrop-filter:blur(18px);
+    border-bottom:1px solid #1c2531;
+}
+.header{
+    width:min(1200px,94%);
+    height:100%;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+.logo{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    font-size:21px;
+    font-weight:900;
+}
+.logo-icon{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,#1677ff,#7347ff);
+    box-shadow:0 8px 30px rgba(22,119,255,.25);
+}
+.nav{display:flex;gap:28px}
+.nav a{
+    color:#8995a7;
+    font-size:13px;
+}
+.nav a:hover{color:#fff}
+
+.header-buttons{
+    display:flex;
+    gap:9px;
+}
+.header-btn{
+    padding:11px 16px;
+    border-radius:9px;
+    font-size:12px;
+    font-weight:800;
+}
+.login{border:1px solid #273241}
+.register{background:#1677ff}
+
+.container{
+    width:min(1100px,94%);
+    margin:45px auto 90px;
+}
+
+.page-title{
+    margin-bottom:25px;
+}
+.page-title h1{
+    font-size:36px;
+    letter-spacing:-1.5px;
+}
+.page-title p{
+    margin-top:8px;
+    color:#8995a7;
+}
+
+.cart{
+    display:grid;
+    grid-template-columns:1fr 350px;
+    gap:20px;
+}
+
+.card{
+    background:#0d131b;
+    border:1px solid #1c2633;
+    border-radius:18px;
+    padding:25px;
+}
+
+.product{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.product-image{
+    width:115px;
+    height:95px;
+    border-radius:15px;
+    background:
+        radial-gradient(circle at 50% 45%,rgba(22,119,255,.3),transparent 60%),
+        #09101a;
+    border:1px solid #1d2b3b;
+    display:grid;
+    place-items:center;
+    font-size:40px;
+}
+
+.product-info{
+    flex:1;
+}
+
+.category{
+    color:#5eacff;
+    font-size:12px;
+    font-weight:800;
+    margin-bottom:7px;
+}
+.product-name{
+    font-size:21px;
+    font-weight:900;
+}
+.license{
+    margin-top:9px;
+    color:#8995a7;
+    font-size:13px;
+}
+
+.price{
+    text-align:right;
+}
+.price strong{
+    font-size:22px;
+}
+
+.empty{
+    text-align:center;
+    padding:55px 20px;
+}
+.empty-icon{
+    font-size:48px;
+    margin-bottom:15px;
+}
+.empty h2{
+    margin-bottom:8px;
+}
+.empty p{
+    color:#8995a7;
+    margin-bottom:22px;
+}
+
+.btn{
+    border:0;
+    cursor:pointer;
+    padding:14px 20px;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:900;
+}
+.primary{
+    background:#1677ff;
+    color:#fff;
+}
+.primary:hover{background:#2b87ff}
+
+.secondary{
+    background:#101720;
+    border:1px solid #263445;
+    color:#fff;
+}
+
+.summary h2{
+    font-size:20px;
+    margin-bottom:22px;
+}
+.row{
+    display:flex;
+    justify-content:space-between;
+    padding:13px 0;
+    color:#8995a7;
+    font-size:14px;
+    border-bottom:1px solid #18212c;
+}
+.row.total{
+    color:#fff;
+    border:0;
+    padding-top:20px;
+    font-size:17px;
+    font-weight:900;
+}
+.total strong{
+    color:#fff;
+    font-size:24px;
+}
+
+.actions{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:20px;
+}
+.actions .btn{text-align:center}
+
+.notice{
+    margin-top:18px;
+    padding:13px;
+    border-radius:10px;
+    background:rgba(22,119,255,.08);
+    border:1px solid rgba(22,119,255,.2);
+    color:#9bb8df;
+    font-size:12px;
+    line-height:1.5;
+}
+
+footer{
+    border-top:1px solid #1c2531;
+    padding:30px 3%;
+    text-align:center;
+    color:#657184;
+    font-size:12px;
+}
+
+@media(max-width:800px){
+    .nav{display:none}
+    .cart{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+    .product{align-items:flex-start}
+    .product-image{width:80px;height:75px}
+    .price strong{font-size:18px}
+    .card{padding:18px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="header">
+
+<a href="/index.html" class="logo">
+    <span class="logo-icon">P</span>
+    <span>PanelMarket</span>
+</a>
+
+<nav class="nav">
+    <a href="/index.html">Ana Sayfa</a>
+    <a href="/siparislerim.html">Siparişlerim</a>
+    <a href="/hesabim.html">Hesabım</a>
+</nav>
+
+<div class="header-buttons">
+    <a href="/login.html" class="header-btn login">GİRİŞ YAP</a>
+    <a href="/register.html" class="header-btn register">KAYIT OL</a>
+</div>
+
+</div>
+</header>
+
+<main class="container">
+
+<div class="page-title">
+    <h1>Sepetim</h1>
+    <p>Satın almak istediğiniz ürünü kontrol edin.</p>
+</div>
+
+<div id="content"></div>
+
+</main>
+
+<footer>
+    © 2026 PanelMarket — Güvenli yazılım alışverişi
+</footer>
+
+<script>
+const cart = JSON.parse(localStorage.getItem("panelmarket_cart") || "null");
+
+const content = document.getElementById("content");
+
+if(!cart){
+    content.innerHTML = `
+    <div class="card empty">
+        <div class="empty-icon">🛒</div>
+        <h2>Sepetiniz boş</h2>
+        <p>Satın almak için ürünlerden birini seçin.</p>
+        <a href="/index.html" class="btn primary">ÜRÜNLERE GİT</a>
+    </div>`;
+}else{
+
+    const price = Number(cart.price || 0);
+
+    content.innerHTML = `
+    <div class="cart">
+
+        <div class="card">
+
+            <div class="product">
+
+                <div class="product-image">▣</div>
+
+                <div class="product-info">
+                    <div class="category">PanelMarket Yazılım</div>
+                    <div class="product-name">${escapeHtml(cart.productName)}</div>
+                    <div class="license">
+                        Lisans: <strong>${escapeHtml(cart.licenseName || "1 Site")}</strong>
+                    </div>
+                </div>
+
+                <div class="price">
+                    <strong>₺${format(price)}</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card summary">
+
+            <h2>Sipariş Özeti</h2>
+
+            <div class="row">
+                <span>Ürün</span>
+                <span>₺${format(price)}</span>
+            </div>
+
+            <div class="row">
+                <span>Lisans</span>
+                <span>${escapeHtml(cart.licenseName || "1 Site")}</span>
+            </div>
+
+            <div class="row">
+                <span>Ödeme</span>
+                <span>Bakiye</span>
+            </div>
+
+            <div class="row total">
+                <span>Toplam</span>
+                <strong>₺${format(price)}</strong>
+            </div>
+
+            <div class="actions">
+                <a href="/odeme.html" class="btn primary">
+                    ÖDEMEYE GEÇ
+                </a>
+
+                <a href="/index.html" class="btn secondary">
+                    ALIŞVERİŞE DEVAM ET
+                </a>
+
+                <button class="btn secondary" onclick="clearCart()">
+                    SEPETİ TEMİZLE
+                </button>
+            </div>
+
+            <div class="notice">
+                Satın alma sırasında hesabınızdaki bakiye kontrol edilir.
+                Yeterli bakiye bulunmazsa ödeme sayfasından bakiye yükleyebilirsiniz.
+            </div>
+
+        </div>
+
+    </div>`;
+}
+
+function format(n){
+    return Number(n).toLocaleString("tr-TR",{
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+    });
+}
+
+function escapeHtml(str){
+    return String(str ?? "").replace(/[&<>"']/g,m=>({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+    }[m]));
+}
+
+function clearCart(){
+    localStorage.removeItem("panelmarket_cart");
+    location.reload();
+}
+</script>
+
+</body>
+</html>

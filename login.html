@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giriş Yap - PanelMarket</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    min-height:100vh;
+    font-family:Inter,Arial,sans-serif;
+    background:#070a0f;
+    color:#f5f7fb;
+    display:flex;
+    flex-direction:column;
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+button,
+input{
+    font-family:inherit;
+}
+
+header{
+    height:76px;
+    background:rgba(7,10,15,.92);
+    backdrop-filter:blur(18px);
+    border-bottom:1px solid #1c2531;
+}
+
+.header{
+    width:min(1200px,94%);
+    height:100%;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    font-size:21px;
+    font-weight:900;
+}
+
+.logo-icon{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,#1677ff,#7347ff);
+    box-shadow:0 8px 30px rgba(22,119,255,.25);
+}
+
+.nav{
+    display:flex;
+    gap:28px;
+}
+
+.nav a{
+    color:#8995a7;
+    font-size:13px;
+}
+
+.nav a:hover{
+    color:#fff;
+}
+
+.header-buttons{
+    display:flex;
+    gap:9px;
+}
+
+.header-btn{
+    padding:11px 16px;
+    border-radius:9px;
+    font-size:12px;
+    font-weight:800;
+}
+
+.register{
+    background:#1677ff;
+}
+
+.login-link{
+    border:1px solid #273241;
+}
+
+.main{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:55px 20px 75px;
+}
+
+.login-wrapper{
+    width:100%;
+    max-width:450px;
+}
+
+.login-card{
+    position:relative;
+    overflow:hidden;
+    background:
+        radial-gradient(
+            circle at 50% -20%,
+            rgba(22,119,255,.16),
+            transparent 42%
+        ),
+        #0d131b;
+    border:1px solid #1c2633;
+    border-radius:22px;
+    padding:35px;
+    box-shadow:0 25px 80px rgba(0,0,0,.28);
+}
+
+.login-card::before{
+    content:"";
+    position:absolute;
+    top:-100px;
+    left:50%;
+    transform:translateX(-50%);
+    width:250px;
+    height:180px;
+    background:rgba(115,71,255,.10);
+    filter:blur(55px);
+    pointer-events:none;
+}
+
+.login-logo{
+    width:58px;
+    height:58px;
+    margin:0 auto 20px;
+    border-radius:17px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,#1677ff,#7347ff);
+    box-shadow:0 12px 40px rgba(22,119,255,.25);
+    font-size:24px;
+    font-weight:900;
+}
+
+.login-title{
+    position:relative;
+    text-align:center;
+}
+
+.login-title h1{
+    font-size:30px;
+    letter-spacing:-1.2px;
+}
+
+.login-title p{
+    margin-top:8px;
+    color:#8995a7;
+    font-size:13px;
+    line-height:1.5;
+}
+
+.form{
+    margin-top:28px;
+}
+
+.form-group{
+    margin-bottom:17px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    color:#c7d0dc;
+    font-size:12px;
+    font-weight:800;
+}
+
+.input{
+    width:100%;
+    height:50px;
+    padding:0 15px;
+    border-radius:10px;
+    border:1px solid #253140;
+    outline:none;
+    background:#080d13;
+    color:#fff;
+    font-size:14px;
+    transition:.2s;
+}
+
+.input::placeholder{
+    color:#596678;
+}
+
+.input:focus{
+    border-color:#1677ff;
+    box-shadow:0 0 0 3px rgba(22,119,255,.08);
+}
+
+.password-box{
+    position:relative;
+}
+
+.password-box .input{
+    padding-right:75px;
+}
+
+.show-password{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    border:0;
+    background:transparent;
+    color:#718096;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:800;
+}
+
+.show-password:hover{
+    color:#fff;
+}
+
+.options{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:5px 0 20px;
+    font-size:12px;
+}
+
+.remember{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:#8995a7;
+    margin:0;
+}
+
+.remember input{
+    accent-color:#1677ff;
+}
+
+.forgot{
+    color:#5eacff;
+}
+
+.forgot:hover{
+    color:#fff;
+}
+
+.login-button{
+    width:100%;
+    height:50px;
+    border:0;
+    border-radius:10px;
+    background:#1677ff;
+    color:#fff;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:900;
+    transition:.2s;
+}
+
+.login-button:hover{
+    background:#2a87ff;
+    transform:translateY(-1px);
+}
+
+.login-button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+    transform:none;
+}
+
+.message{
+    display:none;
+    padding:13px;
+    border-radius:10px;
+    margin-bottom:17px;
+    font-size:12px;
+    line-height:1.5;
+}
+
+.message.error{
+    display:block;
+    color:#ff9b9b;
+    background:rgba(255,60,60,.08);
+    border:1px solid rgba(255,60,60,.25);
+}
+
+.message.success{
+    display:block;
+    color:#8ff0b4;
+    background:rgba(40,210,120,.08);
+    border:1px solid rgba(40,210,120,.25);
+}
+
+.register-area{
+    text-align:center;
+    margin-top:25px;
+    padding-top:23px;
+    border-top:1px solid #19222d;
+    color:#8995a7;
+    font-size:12px;
+}
+
+.register-area a{
+    color:#5eacff;
+    font-weight:900;
+}
+
+.register-area a:hover{
+    color:#fff;
+}
+
+.security{
+    margin-top:18px;
+    padding:13px;
+    border-radius:10px;
+    background:rgba(22,119,255,.06);
+    border:1px solid rgba(22,119,255,.14);
+    color:#7f90a5;
+    text-align:center;
+    font-size:11px;
+    line-height:1.5;
+}
+
+footer{
+    border-top:1px solid #1c2531;
+    padding:27px 3%;
+    text-align:center;
+    color:#657184;
+    font-size:12px;
+}
+
+@media(max-width:700px){
+
+    .nav{
+        display:none;
+    }
+
+    .header-buttons .login-link{
+        display:none;
+    }
+
+    .login-card{
+        padding:27px 20px;
+    }
+
+    .login-title h1{
+        font-size:27px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="header">
+
+<a href="/index.html" class="logo">
+    <span class="logo-icon">P</span>
+    <span>PanelMarket</span>
+</a>
+
+<nav class="nav">
+    <a href="/index.html">Ana Sayfa</a>
+    <a href="/siparislerim.html">Siparişlerim</a>
+    <a href="/hesabim.html">Hesabım</a>
+</nav>
+
+<div class="header-buttons">
+
+<a href="/login.html"
+   class="header-btn login-link">
+   GİRİŞ YAP
+</a>
+
+<a href="/register.html"
+   class="header-btn register">
+   KAYIT OL
+</a>
+
+</div>
+
+</div>
+
+</header>
+
+
+<main class="main">
+
+<div class="login-wrapper">
+
+<div class="login-card">
+
+<div class="login-logo">
+    P
+</div>
+
+<div class="login-title">
+
+<h1>Hoş Geldiniz</h1>
+
+<p>
+PanelMarket hesabınıza giriş yaparak
+ürünlerinize ve siparişlerinize ulaşın.
+</p>
+
+</div>
+
+
+<form class="form" id="loginForm">
+
+<div id="message" class="message"></div>
+
+
+<div class="form-group">
+
+<label for="email">
+E-POSTA
+</label>
+
+<input
+    id="email"
+    class="input"
+    type="email"
+    autocomplete="email"
+    placeholder="ornek@email.com"
+    required
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label for="password">
+ŞİFRE
+</label>
+
+<div class="password-box">
+
+<input
+    id="password"
+    class="input"
+    type="password"
+    autocomplete="current-password"
+    placeholder="Şifrenizi girin"
+    required
+>
+
+<button
+    type="button"
+    class="show-password"
+    id="showPassword">
+    GÖSTER
+</button>
+
+</div>
+
+</div>
+
+
+<div class="options">
+
+<label class="remember">
+
+<input
+    type="checkbox"
+    id="remember"
+>
+
+<span>Beni hatırla</span>
+
+</label>
+
+<a href="#" class="forgot" id="forgotPassword">
+Şifremi unuttum
+</a>
+
+</div>
+
+
+<button
+    type="submit"
+    class="login-button"
+    id="loginButton">
+
+GİRİŞ YAP
+
+</button>
+
+</form>
+
+
+<div class="register-area">
+
+Hesabınız yok mu?
+
+<a href="/register.html">
+Hemen kayıt olun
+</a>
+
+</div>
+
+
+<div class="security">
+🔒 Hesabınız güvenli bağlantı üzerinden korunmaktadır.
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+
+<footer>
+© 2026 PanelMarket — Güvenli yazılım alışverişi
+</footer>
+
+
+<script>
+
+/* =========================================================
+   PANELMARKET LOGIN
+========================================================= */
+
+const form =
+    document.getElementById("loginForm");
+
+const emailInput =
+    document.getElementById("email");
+
+const passwordInput =
+    document.getElementById("password");
+
+const button =
+    document.getElementById("loginButton");
+
+const message =
+    document.getElementById("message");
+
+const remember =
+    document.getElementById("remember");
+
+
+/* =========================================================
+   DAHA ÖNCE KAYDEDİLEN E-POSTA
+========================================================= */
+
+const savedEmail =
+    localStorage.getItem("panelmarket_saved_email");
+
+if(savedEmail){
+
+    emailInput.value = savedEmail;
+
+    remember.checked = true;
+}
+
+
+/* =========================================================
+   MESAJ
+========================================================= */
+
+function showMessage(text,type){
+
+    message.textContent = text;
+
+    message.className =
+        "message " + type;
+}
+
+
+/* =========================================================
+   ŞİFRE GÖSTER / GİZLE
+========================================================= */
+
+document
+.getElementById("showPassword")
+.addEventListener("click",function(){
+
+    if(passwordInput.type === "password"){
+
+        passwordInput.type = "text";
+
+        this.textContent = "GİZLE";
+
+    }else{
+
+        passwordInput.type = "password";
+
+        this.textContent = "GÖSTER";
+
+    }
+
+});
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+form.addEventListener(
+"submit",
+async function(e){
+
+    e.preventDefault();
+
+
+    const email =
+        emailInput.value.trim().toLowerCase();
+
+    const password =
+        passwordInput.value;
+
+
+    if(!email || !password){
+
+        showMessage(
+            "E-posta ve şifre alanlarını doldurun.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "GİRİŞ YAPILIYOR...";
+
+
+    try{
+
+        const response =
+            await fetch("/api/login",{
+
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                credentials:"include",
+
+                body:JSON.stringify({
+
+                    email:email,
+
+                    password:password
+
+                })
+
+            });
+
+
+        let data = {};
+
+        try{
+
+            data =
+                await response.json();
+
+        }catch(error){
+
+            data = {};
+
+        }
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.error ||
+                "E-posta veya şifre hatalı."
+            );
+
+        }
+
+
+        /* =================================================
+           TOKEN
+        ================================================= */
+
+        if(data.token){
+
+            localStorage.setItem(
+                "panelmarket_token",
+                data.token
+            );
+
+        }
+
+
+        /* =================================================
+           KULLANICI
+        ================================================= */
+
+        if(data.user){
+
+            localStorage.setItem(
+                "panelmarket_user",
+                JSON.stringify(data.user)
+            );
+
+        }
+
+
+        /* =================================================
+           BENİ HATIRLA
+        ================================================= */
+
+        if(remember.checked){
+
+            localStorage.setItem(
+                "panelmarket_saved_email",
+                email
+            );
+
+        }else{
+
+            localStorage.removeItem(
+                "panelmarket_saved_email"
+            );
+
+        }
+
+
+        /* =================================================
+           BAŞARILI
+        ================================================= */
+
+        showMessage(
+            "Giriş başarılı. Ana sayfaya yönlendiriliyorsunuz...",
+            "success"
+        );
+
+
+        setTimeout(function(){
+
+            window.location.href =
+                "/index.html";
+
+        },700);
+
+
+    }catch(error){
+
+        showMessage(
+            error.message ||
+            "Giriş yapılamadı.",
+            "error"
+        );
+
+
+        button.disabled = false;
+
+        button.textContent =
+            "GİRİŞ YAP";
+
+    }
+
+});
+
+
+/* =========================================================
+   ŞİFREMİ UNUTTUM
+========================================================= */
+
+document
+.getElementById("forgotPassword")
+.addEventListener(
+"click",
+function(e){
+
+    e.preventDefault();
+
+
+    const email =
+        emailInput.value.trim();
+
+
+    if(!email){
+
+        showMessage(
+            "Şifre sıfırlamak için önce e-posta adresinizi yazın.",
+            "error"
+        );
+
+        emailInput.focus();
+
+        return;
+
+    }
+
+
+    showMessage(
+        "Şifre sıfırlama sistemi henüz etkinleştirilmedi.",
+        "success"
+    );
+
+});
+
+
+</script>
+
+</body>
+</html>

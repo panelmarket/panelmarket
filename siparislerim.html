@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Siparişlerim - PanelMarket</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,Arial,sans-serif;background:#070a0f;color:#f5f7fb}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit}
+
+header{
+position:sticky;top:0;z-index:1000;height:76px;
+background:rgba(7,10,15,.92);
+backdrop-filter:blur(18px);
+border-bottom:1px solid #1c2531
+}
+
+.header{
+width:min(1200px,94%);height:100%;margin:auto;
+display:flex;align-items:center;justify-content:space-between
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:11px;
+font-size:21px;
+font-weight:900
+}
+
+.logo-icon{
+width:40px;
+height:40px;
+border-radius:12px;
+display:grid;
+place-items:center;
+background:linear-gradient(135deg,#1677ff,#7347ff);
+box-shadow:0 8px 30px rgba(22,119,255,.25)
+}
+
+.nav{
+display:flex;
+gap:28px
+}
+
+.nav a{
+color:#8995a7;
+font-size:13px
+}
+
+.nav a:hover{
+color:#fff
+}
+
+.header-buttons{
+display:flex;
+gap:9px
+}
+
+.header-btn{
+padding:11px 16px;
+border-radius:9px;
+font-size:12px;
+font-weight:800
+}
+
+.login{
+border:1px solid #273241
+}
+
+.register{
+background:#1677ff
+}
+
+.container{
+width:min(1100px,94%);
+margin:45px auto 90px
+}
+
+.title{
+margin-bottom:25px
+}
+
+.title h1{
+font-size:36px;
+letter-spacing:-1.5px
+}
+
+.title p{
+color:#8995a7;
+margin-top:8px
+}
+
+.card{
+background:#0d131b;
+border:1px solid #1c2633;
+border-radius:18px;
+padding:22px;
+margin-bottom:14px
+}
+
+.order{
+display:grid;
+grid-template-columns:1fr auto;
+gap:20px;
+align-items:center
+}
+
+.order-number{
+color:#5eacff;
+font-size:12px;
+font-weight:900;
+margin-bottom:7px
+}
+
+.product-name{
+font-size:20px;
+font-weight:900
+}
+
+.meta{
+margin-top:10px;
+display:flex;
+gap:9px;
+flex-wrap:wrap
+}
+
+.tag{
+padding:7px 10px;
+background:#101923;
+border:1px solid #1f2c3b;
+border-radius:8px;
+color:#8995a7;
+font-size:11px
+}
+
+.order-right{
+text-align:right
+}
+
+.price{
+font-size:21px;
+font-weight:900
+}
+
+.status{
+display:inline-block;
+margin-top:8px;
+padding:7px 11px;
+border-radius:8px;
+background:rgba(40,210,120,.1);
+border:1px solid rgba(40,210,120,.25);
+color:#73e6a3;
+font-size:11px;
+font-weight:900
+}
+
+.btn{
+display:inline-block;
+border:0;
+cursor:pointer;
+padding:12px 16px;
+border-radius:9px;
+background:#1677ff;
+color:#fff;
+font-size:12px;
+font-weight:900;
+margin-top:12px
+}
+
+.btn:hover{
+background:#2a87ff
+}
+
+.empty{
+text-align:center;
+padding:60px 20px
+}
+
+.empty-icon{
+font-size:50px;
+margin-bottom:15px
+}
+
+.empty p{
+color:#8995a7;
+margin:9px 0 20px
+}
+
+.loading{
+text-align:center;
+padding:50px;
+color:#8995a7
+}
+
+.error{
+padding:18px;
+background:rgba(255,60,60,.1);
+border:1px solid rgba(255,60,60,.3);
+border-radius:12px;
+color:#ff9b9b
+}
+
+.login-required{
+text-align:center;
+padding:55px 20px
+}
+
+.login-required-icon{
+font-size:48px;
+margin-bottom:15px
+}
+
+.login-required p{
+color:#8995a7;
+margin:10px 0 20px
+}
+
+footer{
+border-top:1px solid #1c2531;
+padding:30px 3%;
+text-align:center;
+color:#657184;
+font-size:12px
+}
+
+@media(max-width:800px){
+
+.nav{
+display:none
+}
+
+.order{
+grid-template-columns:1fr
+}
+
+.order-right{
+text-align:left
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="header">
+
+<a href="/index.html" class="logo">
+<span class="logo-icon">P</span>
+<span>PanelMarket</span>
+</a>
+
+<nav class="nav">
+<a href="/index.html">Ana Sayfa</a>
+<a href="/siparislerim.html">Siparişlerim</a>
+<a href="/hesabim.html">Hesabım</a>
+</nav>
+
+<div class="header-buttons">
+
+<a href="/login.html"
+class="header-btn login"
+id="loginButton">
+GİRİŞ YAP
+</a>
+
+<a href="/register.html"
+class="header-btn register"
+id="registerButton">
+KAYIT OL
+</a>
+
+</div>
+
+</div>
+</header>
+
+
+<main class="container">
+
+<div class="title">
+<h1>Siparişlerim</h1>
+<p>Satın aldığınız panelleri ve lisanslarınızı buradan yönetin.</p>
+</div>
+
+<div id="orders">
+<div class="card loading">
+Siparişler kontrol ediliyor...
+</div>
+</div>
+
+</main>
+
+
+<footer>
+© 2026 PanelMarket — Güvenli yazılım alışverişi
+</footer>
+
+
+<script>
+
+/* =========================
+   TOKEN
+========================= */
+
+function getToken(){
+
+return localStorage.getItem(
+"panelmarket_token"
+) || "";
+
+}
+
+
+/* =========================
+   AUTH HEADERS
+========================= */
+
+function authHeaders(extra = {}){
+
+const token=getToken();
+
+return {
+
+...extra,
+
+...(token
+? {
+Authorization:
+"Bearer " + token
+}
+: {})
+
+};
+
+}
+
+
+/* =========================
+   API
+========================= */
+
+async function apiFetch(url,options={}){
+
+const requestOptions={
+
+...options,
+
+credentials:"include",
+
+headers:authHeaders(
+options.headers || {}
+)
+
+};
+
+const res=
+await fetch(url,requestOptions);
+
+
+/*
+   401 = giriş yapılmamış
+*/
+
+if(res.status===401){
+
+localStorage.removeItem(
+"panelmarket_token"
+);
+
+localStorage.removeItem(
+"panelmarket_user"
+);
+
+window.location.href=
+"/login.html?redirect=" +
+encodeURIComponent(
+"/siparislerim.html"
+);
+
+throw new Error(
+"Oturum gerekli."
+);
+
+}
+
+return res;
+
+}
+
+
+/* =========================
+   LOAD ORDERS
+========================= */
+
+async function loadOrders(){
+
+const container=
+document.getElementById("orders");
+
+try{
+
+/*
+   ÖNCE OTURUMU KONTROL ET
+*/
+
+const meRes=
+await apiFetch("/api/auth/me");
+
+const meData=
+await meRes.json();
+
+if(!meRes.ok || !meData.user){
+
+window.location.href=
+"/login.html?redirect=" +
+encodeURIComponent(
+"/siparislerim.html"
+);
+
+return;
+
+}
+
+
+/*
+   SADECE OTURUM AÇAN KULLANICININ
+   SİPARİŞLERİ SUNUCUDAN GELİR
+*/
+
+const res=
+await apiFetch("/api/orders");
+
+const data=
+await res.json();
+
+if(!res.ok){
+
+throw new Error(
+data.error ||
+"Siparişler alınamadı."
+);
+
+}
+
+
+/*
+   Server hem:
+   {orders:[...]}
+   hem de [...]
+   döndürebilir.
+*/
+
+const orders=
+Array.isArray(data)
+? data
+: (data.orders || []);
+
+
+/*
+   Sipariş yok
+*/
+
+if(!orders.length){
+
+container.innerHTML=`
+
+<div class="card empty">
+
+<div class="empty-icon">
+📦
+</div>
+
+<h2>
+Henüz siparişiniz yok
+</h2>
+
+<p>
+Bu hesaptan satın aldığınız paneller burada görünecek.
+</p>
+
+<a
+href="/index.html"
+class="btn">
+ÜRÜNLERİ GÖR
+</a>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+/*
+   Siparişleri göster
+*/
+
+container.innerHTML=
+orders.map(order=>{
+
+const product=
+order.productName ||
+order.product?.name ||
+"Panel";
+
+const license=
+order.licenseName ||
+order.license?.name ||
+"1 Site";
+
+const price=
+Number(
+order.amount ??
+order.price ??
+0
+);
+
+const status=
+order.status ||
+"Tamamlandı";
+
+const orderId=
+order.id || "";
+
+return `
+
+<div class="card">
+
+<div class="order">
+
+<div>
+
+<div class="order-number">
+
+${escapeHtml(
+order.orderNumber ||
+order.id ||
+"SİPARİŞ"
+)}
+
+</div>
+
+<div class="product-name">
+
+${escapeHtml(product)}
+
+</div>
+
+<div class="meta">
+
+<span class="tag">
+
+${escapeHtml(license)}
+
+</span>
+
+<span class="tag">
+
+${
+order.createdAt
+? formatDate(order.createdAt)
+: "Yeni"
+}
+
+</span>
+
+<span class="tag">
+
+Lisans anahtarı hazır
+
+</span>
+
+</div>
+
+</div>
+
+
+<div class="order-right">
+
+<div class="price">
+
+₺${format(price)}
+
+</div>
+
+<div class="status">
+
+${escapeHtml(status)}
+
+</div>
+
+<br>
+
+<a
+class="btn"
+href="/teslimat.html?id=${encodeURIComponent(orderId)}">
+
+TESLİM AL
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}).join("");
+
+
+/*
+   Header'ı giriş yapan kullanıcıya göre değiştir
+*/
+
+updateHeader(meData.user);
+
+
+}catch(e){
+
+if(e.message==="Oturum gerekli."){
+
+return;
+
+}
+
+container.innerHTML=
+
+`
+
+<div class="card error">
+
+${escapeHtml(
+e.message ||
+"Siparişler yüklenemedi."
+)}
+
+</div>
+
+`;
+
+}
+
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+function updateHeader(user){
+
+if(!user) return;
+
+const loginButton=
+document.getElementById(
+"loginButton"
+);
+
+const registerButton=
+document.getElementById(
+"registerButton"
+);
+
+
+if(loginButton){
+
+loginButton.textContent=
+"HESABIM";
+
+loginButton.href=
+"/hesabim.html";
+
+}
+
+
+if(registerButton){
+
+registerButton.textContent=
+"ÇIKIŞ YAP";
+
+registerButton.href="#";
+
+registerButton.onclick=
+async function(e){
+
+e.preventDefault();
+
+try{
+
+await apiFetch(
+"/api/logout",
+{
+method:"POST"
+}
+);
+
+}catch(err){}
+
+localStorage.removeItem(
+"panelmarket_token"
+);
+
+localStorage.removeItem(
+"panelmarket_user"
+);
+
+window.location.href=
+"/index.html";
+
+};
+
+}
+
+}
+
+
+/* =========================
+   FORMAT
+========================= */
+
+function format(n){
+
+return Number(n || 0)
+.toLocaleString(
+"tr-TR",
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+);
+
+}
+
+
+/* =========================
+   DATE
+========================= */
+
+function formatDate(value){
+
+const d=
+new Date(value);
+
+if(
+isNaN(d.getTime())
+){
+
+return value;
+
+}
+
+return d.toLocaleDateString(
+"tr-TR",
+{
+day:"2-digit",
+month:"2-digit",
+year:"numeric"
+}
+);
+
+}
+
+
+/* =========================
+   SECURITY
+========================= */
+
+function escapeHtml(str){
+
+return String(str ?? "")
+.replace(
+/[&<>"']/g,
+m=>({
+
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#039;"
+
+}[m])
+
+);
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+loadOrders();
+
+</script>
+
+</body>
+</html>

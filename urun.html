@@ -1,0 +1,545 @@
+```html
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PanelMarket - Ürün Detayı</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,Arial,sans-serif;background:#070a0f;color:#f5f7fb}
+a{text-decoration:none;color:inherit}
+button,input,select{font-family:inherit}
+
+header{
+position:sticky;
+top:0;
+z-index:1000;
+height:76px;
+background:rgba(7,10,15,.92);
+backdrop-filter:blur(18px);
+border-bottom:1px solid #1c2531
+}
+
+.header{
+width:min(1200px,94%);
+height:100%;
+margin:auto;
+display:flex;
+align-items:center;
+justify-content:space-between
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:11px;
+font-size:21px;
+font-weight:900
+}
+
+.logo-icon{
+width:40px;
+height:40px;
+border-radius:12px;
+display:grid;
+place-items:center;
+background:linear-gradient(135deg,#1677ff,#7347ff);
+box-shadow:0 8px 30px rgba(22,119,255,.25)
+}
+
+.nav{
+display:flex;
+gap:28px
+}
+
+.nav a{
+color:#8995a7;
+font-size:13px
+}
+
+.nav a:hover{color:#fff}
+
+.header-buttons{
+display:flex;
+gap:9px
+}
+
+.header-btn{
+padding:11px 16px;
+border-radius:9px;
+font-size:12px;
+font-weight:800
+}
+
+.login{border:1px solid #273241}
+.register{background:#1677ff}
+
+.container{
+width:min(1200px,94%);
+margin:40px auto 80px
+}
+
+.back{
+display:inline-block;
+color:#6f7d90;
+font-size:13px;
+margin-bottom:20px
+}
+
+.back:hover{color:#fff}
+
+.product-detail{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px
+}
+
+.card{
+background:#0d131b;
+border:1px solid #1c2633;
+border-radius:18px
+}
+
+.preview{
+min-height:430px;
+display:flex;
+align-items:center;
+justify-content:center;
+position:relative;
+overflow:hidden;
+background:
+radial-gradient(circle at center,rgba(40,130,255,.23),transparent 55%),
+#101722
+}
+
+.preview-screen{
+width:300px;
+height:190px;
+border-radius:15px;
+background:#0b1119;
+border:1px solid #33445a;
+padding:18px;
+box-shadow:0 20px 70px rgba(22,119,255,.18)
+}
+
+.top-line{
+height:10px;
+width:42%;
+border-radius:8px;
+background:#268cff;
+margin-bottom:20px
+}
+
+.lines{
+display:grid;
+gap:12px
+}
+
+.lines i{
+height:9px;
+display:block;
+background:#28384b;
+border-radius:8px
+}
+
+.detail{
+padding:30px
+}
+
+.category{
+color:#5eacff;
+font-size:11px;
+font-weight:900;
+text-transform:uppercase
+}
+
+h1{
+font-size:38px;
+line-height:1.1;
+margin-top:10px
+}
+
+.description{
+color:#778497;
+font-size:14px;
+line-height:1.7;
+margin-top:15px
+}
+
+.info{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:9px;
+margin-top:22px
+}
+
+.info-box{
+padding:13px;
+border-radius:9px;
+background:#0b1118;
+border:1px solid #192330
+}
+
+.info-box small{
+display:block;
+color:#59687b;
+font-size:9px
+}
+
+.info-box b{
+display:block;
+margin-top:5px;
+font-size:12px
+}
+
+.license-title{
+margin-top:28px;
+font-size:14px
+}
+
+.licenses{
+display:grid;
+gap:9px;
+margin-top:12px
+}
+
+.license{
+position:relative;
+cursor:pointer
+}
+
+.license input{
+position:absolute;
+opacity:0
+}
+
+.license-box{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px;
+border:1px solid #202b39;
+background:#0b1118;
+border-radius:10px;
+transition:.2s
+}
+
+.license input:checked + .license-box{
+border-color:#1677ff;
+background:rgba(22,119,255,.09);
+box-shadow:0 0 0 1px rgba(22,119,255,.2)
+}
+
+.license-name{
+font-weight:800;
+font-size:13px
+}
+
+.license-price{
+font-weight:900;
+color:#fff
+}
+
+.buy-area{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:15px;
+margin-top:25px
+}
+
+.price strong{
+font-size:28px
+}
+
+.buy{
+border:0;
+padding:14px 22px;
+border-radius:10px;
+background:#1677ff;
+color:#fff;
+font-weight:900;
+cursor:pointer;
+box-shadow:0 12px 35px rgba(22,119,255,.22)
+}
+
+.buy:hover{background:#298cff}
+
+@media(max-width:800px){
+.product-detail{grid-template-columns:1fr}
+.preview{min-height:300px}
+.nav{display:none}
+}
+
+@media(max-width:500px){
+.detail{padding:22px}
+h1{font-size:30px}
+.info{grid-template-columns:1fr}
+.buy-area{align-items:stretch;flex-direction:column}
+.buy{text-align:center}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="header">
+
+<a href="/" class="logo">
+<div class="logo-icon">Ｐ</div>
+PanelMarket
+</a>
+
+<nav class="nav">
+<a href="/index.html#urunler">Ürünler</a>
+<a href="/index.html#neden">Neden PanelMarket?</a>
+<a href="/index.html#destek">Destek</a>
+</nav>
+
+<div class="header-buttons">
+<a href="/login.html" class="header-btn login">Giriş Yap</a>
+<a href="/register.html" class="header-btn register">Kayıt Ol</a>
+</div>
+
+</div>
+</header>
+
+<main class="container">
+
+<a href="/index.html" class="back">← Ürünlere Dön</a>
+
+<div class="product-detail">
+
+<div class="card preview">
+
+<div class="preview-screen">
+
+<div class="top-line"></div>
+
+<div class="lines">
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+</div>
+
+</div>
+
+</div>
+
+<div class="card detail">
+
+<div class="category" id="productCategory">
+Admin Paneli
+</div>
+
+<h1 id="productName">
+Profesyonel Admin Paneli
+</h1>
+
+<p class="description" id="productDescription">
+Kullanıcı, içerik, ayar ve sistem yönetimi için modern yönetim paneli.
+</p>
+
+<div class="info">
+
+<div class="info-box">
+<small>TESLİMAT</small>
+<b id="productDelivery">Hemen</b>
+</div>
+
+<div class="info-box">
+<small>GÜNCELLEME</small>
+<b id="productUpdate">1 Yıl</b>
+</div>
+
+<div class="info-box">
+<small>DESTEK</small>
+<b id="productSupport">30 Gün</b>
+</div>
+
+<div class="info-box">
+<small>LİSANS</small>
+<b>Site Lisansı</b>
+</div>
+
+</div>
+
+<div class="license-title">
+Lisans Seçimi
+</div>
+
+<div class="licenses">
+
+<label class="license">
+<input type="radio" name="license" value="1-site" checked>
+<div class="license-box">
+<span class="license-name">1 Site</span>
+<span class="license-price" id="price1">₺1.499</span>
+</div>
+</label>
+
+<label class="license">
+<input type="radio" name="license" value="3-site">
+<div class="license-box">
+<span class="license-name">3 Site</span>
+<span class="license-price" id="price3">₺2.499</span>
+</div>
+</label>
+
+<label class="license">
+<input type="radio" name="license" value="unlimited">
+<div class="license-box">
+<span class="license-name">Sınırsız Site</span>
+<span class="license-price" id="priceUnlimited">₺4.999</span>
+</div>
+</label>
+
+</div>
+
+<div class="buy-area">
+
+<div class="price">
+<strong id="productPrice">₺1.499</strong>
+</div>
+
+<button class="buy" id="addToCart">
+SEPETE EKLE →
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+<script>
+
+const products={
+"admin-panel":{
+name:"Profesyonel Admin Paneli",
+category:"Admin Paneli",
+description:"Kullanıcı, içerik, ayar ve sistem yönetimi için modern yönetim paneli.",
+price:1499,
+delivery:"Hemen",
+update:"1 Yıl",
+support:"30 Gün"
+},
+"ecommerce-panel":{
+name:"E-Ticaret Yönetim Paneli",
+category:"E-Ticaret",
+description:"Ürün, sipariş, müşteri, stok ve mağaza yönetimi için kapsamlı panel.",
+price:2799,
+delivery:"Hemen",
+update:"1 Yıl",
+support:"60 Gün"
+},
+"company-panel":{
+name:"Firma Yönetim Paneli",
+category:"İşletme",
+description:"Firma bilgileri, çalışanlar, müşteriler ve raporlar için işletme paneli.",
+price:1799,
+delivery:"Hemen",
+update:"6 Ay",
+support:"30 Gün"
+},
+"finance-panel":{
+name:"Finans & Muhasebe Paneli",
+category:"Finans",
+description:"Gelir, gider, ödeme ve finansal raporları tek panel üzerinden yönetin.",
+price:2999,
+delivery:"24 Saat",
+update:"1 Yıl",
+support:"60 Gün"
+},
+"support-panel":{
+name:"Müşteri Destek Paneli",
+category:"Destek",
+description:"Ticket, müşteri talepleri ve destek süreçlerini yönetmek için hazır sistem.",
+price:1899,
+delivery:"Hemen",
+update:"1 Yıl",
+support:"90 Gün"
+},
+"stock-panel":{
+name:"Stok & Sipariş Paneli",
+category:"İşletme",
+description:"Stok takibi, sipariş yönetimi ve ürün kontrolü için profesyonel panel.",
+price:1999,
+delivery:"Hemen",
+update:"1 Yıl",
+support:"30 Gün"
+}
+};
+
+const params=new URLSearchParams(location.search);
+const id=params.get("id")||"admin-panel";
+const product=products[id]||products["admin-panel"];
+
+document.getElementById("productName").textContent=product.name;
+document.getElementById("productCategory").textContent=product.category;
+document.getElementById("productDescription").textContent=product.description;
+document.getElementById("productDelivery").textContent=product.delivery;
+document.getElementById("productUpdate").textContent=product.update;
+document.getElementById("productSupport").textContent=product.support;
+
+const prices={
+"1-site":product.price,
+"3-site":Math.round(product.price*1.667),
+"unlimited":Math.round(product.price*3.334)
+};
+
+function updatePrice(){
+
+const selected=document.querySelector(
+'input[name="license"]:checked'
+);
+
+const price=prices[selected.value];
+
+document.getElementById("productPrice").textContent=
+"₺"+price.toLocaleString("tr-TR");
+
+}
+
+document.querySelectorAll(
+'input[name="license"]'
+).forEach(input=>{
+input.addEventListener("change",updatePrice);
+});
+
+document.getElementById("addToCart").onclick=()=>{
+
+const selected=document.querySelector(
+'input[name="license"]:checked'
+);
+
+const cart={
+productId:id,
+productName:product.name,
+licenseId:selected.value,
+licenseName:selected.parentElement.querySelector(".license-name").textContent,
+price:prices[selected.value]
+};
+
+localStorage.setItem(
+"panelmarket_cart",
+JSON.stringify(cart)
+);
+
+location.href="/sepet.html";
+
+};
+
+updatePrice();
+
+</script>
+
+</body>
+</html>
+```

@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hesabım - PanelMarket</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,Arial,sans-serif;background:#070a0f;color:#f5f7fb}
+a{text-decoration:none;color:inherit}
+
+header{
+position:sticky;top:0;z-index:1000;height:76px;
+background:rgba(7,10,15,.92);
+backdrop-filter:blur(18px);
+border-bottom:1px solid #1c2531
+}
+
+.header{
+width:min(1200px,94%);height:100%;margin:auto;
+display:flex;align-items:center;justify-content:space-between
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:11px;
+font-size:21px;
+font-weight:900
+}
+
+.logo-icon{
+width:40px;
+height:40px;
+border-radius:12px;
+display:grid;
+place-items:center;
+background:linear-gradient(135deg,#1677ff,#7347ff);
+box-shadow:0 8px 30px rgba(22,119,255,.25)
+}
+
+.nav{
+display:flex;
+gap:28px
+}
+
+.nav a{
+color:#8995a7;
+font-size:13px
+}
+
+.nav a:hover{
+color:#fff
+}
+
+.header-buttons{
+display:flex;
+gap:9px
+}
+
+.header-btn{
+padding:11px 16px;
+border-radius:9px;
+font-size:12px;
+font-weight:800
+}
+
+.login{
+border:1px solid #273241
+}
+
+.register{
+background:#1677ff
+}
+
+.container{
+width:min(1050px,94%);
+margin:45px auto 90px
+}
+
+.title{
+margin-bottom:25px
+}
+
+.title h1{
+font-size:36px;
+letter-spacing:-1.5px
+}
+
+.title p{
+color:#8995a7;
+margin-top:8px
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:18px
+}
+
+.card{
+background:#0d131b;
+border:1px solid #1c2633;
+border-radius:18px;
+padding:25px
+}
+
+.profile{
+display:flex;
+align-items:center;
+gap:18px;
+margin-bottom:25px
+}
+
+.avatar{
+width:70px;
+height:70px;
+border-radius:20px;
+display:grid;
+place-items:center;
+font-size:27px;
+font-weight:900;
+background:linear-gradient(135deg,#1677ff,#7347ff)
+}
+
+.name{
+font-size:22px;
+font-weight:900
+}
+
+.email{
+margin-top:5px;
+font-size:13px;
+color:#8995a7
+}
+
+.balance{
+padding:22px;
+border-radius:14px;
+background:
+radial-gradient(circle at 0 0,rgba(22,119,255,.2),transparent 55%),
+#09111a;
+border:1px solid #203149
+}
+
+.balance-label{
+font-size:12px;
+color:#8995a7
+}
+
+.balance-value{
+font-size:32px;
+font-weight:900;
+margin-top:7px
+}
+
+.stats{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+margin-top:15px
+}
+
+.stat{
+padding:18px;
+border-radius:12px;
+background:#0a1017;
+border:1px solid #1d2937
+}
+
+.stat-label{
+font-size:11px;
+color:#8995a7
+}
+
+.stat-value{
+font-size:22px;
+font-weight:900;
+margin-top:6px
+}
+
+h2{
+font-size:19px;
+margin-bottom:18px
+}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:10px
+}
+
+.menu a{
+padding:15px;
+background:#0a1017;
+border:1px solid #1d2937;
+border-radius:10px;
+font-size:13px;
+font-weight:800
+}
+
+.menu a:hover{
+border-color:#315f91;
+background:#0c141e
+}
+
+.transaction{
+padding:13px 0;
+border-bottom:1px solid #19222d;
+display:flex;
+justify-content:space-between;
+gap:15px;
+font-size:13px
+}
+
+.transaction:last-child{
+border:0
+}
+
+.credit{
+color:#63e69b
+}
+
+.debit{
+color:#ff8888
+}
+
+.loading{
+color:#8995a7;
+padding:25px 0
+}
+
+.error{
+padding:18px;
+background:rgba(255,60,60,.1);
+border:1px solid rgba(255,60,60,.3);
+border-radius:12px;
+color:#ff9b9b
+}
+
+.login-required{
+text-align:center;
+padding:55px 20px
+}
+
+.login-required-icon{
+font-size:48px;
+margin-bottom:15px
+}
+
+.login-required p{
+color:#8995a7;
+margin:10px 0 20px
+}
+
+.login-btn{
+display:inline-block;
+padding:13px 20px;
+border-radius:9px;
+background:#1677ff;
+color:#fff;
+font-size:12px;
+font-weight:900
+}
+
+.login-btn:hover{
+background:#2a87ff
+}
+
+footer{
+border-top:1px solid #1c2531;
+padding:30px 3%;
+text-align:center;
+color:#657184;
+font-size:12px
+}
+
+@media(max-width:800px){
+
+.nav{
+display:none
+}
+
+.grid{
+grid-template-columns:1fr
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="header">
+
+<a href="/index.html" class="logo">
+<span class="logo-icon">P</span>
+<span>PanelMarket</span>
+</a>
+
+<nav class="nav">
+<a href="/index.html">Ana Sayfa</a>
+<a href="/siparislerim.html">Siparişlerim</a>
+<a href="/hesabim.html">Hesabım</a>
+</nav>
+
+<div class="header-buttons">
+
+<a
+href="/login.html"
+class="header-btn login"
+id="loginButton">
+GİRİŞ YAP
+</a>
+
+<a
+href="/register.html"
+class="header-btn register"
+id="registerButton">
+KAYIT OL
+</a>
+
+</div>
+
+</div>
+</header>
+
+
+<main class="container">
+
+<div class="title">
+<h1>Hesabım</h1>
+<p>Hesap bilgilerinizi, bakiyenizi ve işlemlerinizi görüntüleyin.</p>
+</div>
+
+
+<div id="pageContent">
+
+<div class="card loading">
+Hesap bilgileri yükleniyor...
+</div>
+
+</div>
+
+</main>
+
+
+<footer>
+© 2026 PanelMarket — Güvenli yazılım alışverişi
+</footer>
+
+
+<script>
+
+/* =========================
+   TOKEN
+========================= */
+
+function getToken(){
+
+return localStorage.getItem(
+"panelmarket_token"
+) || "";
+
+}
+
+
+/* =========================
+   AUTH HEADERS
+========================= */
+
+function authHeaders(extra = {}){
+
+const token=getToken();
+
+return {
+
+...extra,
+
+...(token
+? {
+Authorization:
+"Bearer " + token
+}
+: {})
+
+};
+
+}
+
+
+/* =========================
+   API FETCH
+========================= */
+
+async function apiFetch(url,options={}){
+
+const requestOptions={
+
+...options,
+
+credentials:"include",
+
+headers:authHeaders(
+options.headers || {}
+)
+
+};
+
+const res=
+await fetch(url,requestOptions);
+
+
+if(res.status===401){
+
+localStorage.removeItem(
+"panelmarket_token"
+);
+
+localStorage.removeItem(
+"panelmarket_user"
+);
+
+window.location.href=
+"/login.html?redirect=" +
+encodeURIComponent(
+"/hesabim.html"
+);
+
+throw new Error(
+"Oturum gerekli."
+);
+
+}
+
+return res;
+
+}
+
+
+/* =========================
+   ACCOUNT
+========================= */
+
+async function loadAccount(){
+
+try{
+
+const res=
+await apiFetch("/api/account");
+
+const data=
+await res.json();
+
+if(!res.ok){
+
+throw new Error(
+data.error ||
+"Hesap bilgileri alınamadı."
+);
+
+}
+
+renderAccount(data);
+
+updateHeader(data);
+
+loadOrders();
+loadTransactions();
+
+}catch(e){
+
+if(e.message==="Oturum gerekli."){
+
+return;
+
+}
+
+document.getElementById(
+"pageContent"
+).innerHTML=
+
+`
+
+<div class="card error">
+
+${escapeHtml(
+e.message ||
+"Hesap bilgileri alınamadı."
+)}
+
+</div>
+
+`;
+
+}
+
+}
+
+
+/* =========================
+   RENDER ACCOUNT
+========================= */
+
+function renderAccount(data){
+
+const name=
+data.name ||
+"PanelMarket Kullanıcısı";
+
+const email=
+data.email ||
+"";
+
+const balance=
+Number(data.balance || 0);
+
+const firstLetter=
+name.trim().charAt(0).toUpperCase()
+|| "P";
+
+
+document.getElementById(
+"pageContent"
+).innerHTML=
+
+`
+
+<div class="grid">
+
+<div>
+
+<div class="card">
+
+<div class="profile">
+
+<div class="avatar" id="avatar">
+
+${escapeHtml(firstLetter)}
+
+</div>
+
+<div>
+
+<div class="name" id="name">
+
+${escapeHtml(name)}
+
+</div>
+
+<div class="email" id="email">
+
+${escapeHtml(email)}
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="balance">
+
+<div class="balance-label">
+
+Mevcut Bakiye
+
+</div>
+
+<div
+class="balance-value"
+id="balance">
+
+₺${format(balance)}
+
+</div>
+
+</div>
+
+
+<div class="stats">
+
+<div class="stat">
+
+<div class="stat-label">
+Sipariş
+</div>
+
+<div
+class="stat-value"
+id="orders">
+0
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-label">
+Hesap Durumu
+</div>
+
+<div
+class="stat-value"
+style="font-size:15px">
+
+Aktif
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>
+Hesap İşlemleri
+</h2>
+
+<div class="menu">
+
+<a href="/siparislerim.html">
+📦 Siparişlerim
+</a>
+
+<a href="/index.html">
+🛍 Ürünleri İncele
+</a>
+
+<a href="/sepet.html">
+🛒 Sepetim
+</a>
+
+<a href="/odeme.html">
+💳 Bakiye / Ödeme
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div>
+
+<div class="card">
+
+<h2>
+Son İşlemler
+</h2>
+
+<div id="transactions">
+
+<div class="loading">
+İşlemler yükleniyor...
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+
+/* =========================
+   ORDERS
+========================= */
+
+async function loadOrders(){
+
+try{
+
+const res=
+await apiFetch("/api/orders");
+
+const data=
+await res.json();
+
+if(!res.ok){
+
+throw new Error(
+data.error ||
+"Siparişler alınamadı."
+);
+
+}
+
+const orders=
+Array.isArray(data)
+? data
+: (data.orders || []);
+
+
+const ordersElement=
+document.getElementById(
+"orders"
+);
+
+if(ordersElement){
+
+ordersElement.textContent=
+orders.length;
+
+}
+
+}catch(e){
+
+if(e.message==="Oturum gerekli."){
+
+return;
+
+}
+
+const ordersElement=
+document.getElementById(
+"orders"
+);
+
+if(ordersElement){
+
+ordersElement.textContent="0";
+
+}
+
+}
+
+}
+
+
+/* =========================
+   TRANSACTIONS
+========================= */
+
+async function loadTransactions(){
+
+const container=
+document.getElementById(
+"transactions"
+);
+
+if(!container) return;
+
+try{
+
+const res=
+await apiFetch(
+"/api/account/transactions"
+);
+
+const data=
+await res.json();
+
+if(!res.ok){
+
+throw new Error(
+data.error ||
+"İşlemler alınamadı."
+);
+
+}
+
+const items=
+Array.isArray(data)
+? data
+: (data.transactions || []);
+
+
+if(!items.length){
+
+container.innerHTML=
+`
+
+<div class="loading">
+Henüz işlem bulunmuyor.
+</div>
+
+`;
+
+return;
+
+}
+
+
+container.innerHTML=
+
+items
+.slice(0,8)
+.map(item=>{
+
+const amount=
+Number(item.amount || 0);
+
+const type=
+item.type || "credit";
+
+return `
+
+<div class="transaction">
+
+<span>
+
+${escapeHtml(
+item.note ||
+item.description ||
+"Hesap işlemi"
+)}
+
+</span>
+
+<strong
+class="${
+type==="debit"
+? "debit"
+: "credit"
+}">
+
+${
+type==="debit"
+? "-"
+: "+"
+}₺${format(
+Math.abs(amount)
+)}
+
+</strong>
+
+</div>
+
+`;
+
+})
+.join("");
+
+
+}catch(e){
+
+if(e.message==="Oturum gerekli."){
+
+return;
+
+}
+
+container.innerHTML=
+`
+
+<div class="loading">
+İşlem bilgileri alınamadı.
+</div>
+
+`;
+
+}
+
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+function updateHeader(user){
+
+if(!user) return;
+
+
+const loginButton=
+document.getElementById(
+"loginButton"
+);
+
+const registerButton=
+document.getElementById(
+"registerButton"
+);
+
+
+if(loginButton){
+
+loginButton.textContent=
+"HESABIM";
+
+loginButton.href=
+"/hesabim.html";
+
+}
+
+
+if(registerButton){
+
+registerButton.textContent=
+"ÇIKIŞ YAP";
+
+registerButton.href="#";
+
+registerButton.onclick=
+async function(e){
+
+e.preventDefault();
+
+try{
+
+await apiFetch(
+"/api/logout",
+{
+method:"POST"
+}
+);
+
+}catch(err){}
+
+
+localStorage.removeItem(
+"panelmarket_token"
+);
+
+localStorage.removeItem(
+"panelmarket_user"
+);
+
+window.location.href=
+"/index.html";
+
+};
+
+}
+
+}
+
+
+/* =========================
+   FORMAT
+========================= */
+
+function format(n){
+
+return Number(n || 0)
+.toLocaleString(
+"tr-TR",
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+);
+
+}
+
+
+/* =========================
+   SECURITY
+========================= */
+
+function escapeHtml(str){
+
+return String(str ?? "")
+.replace(
+/[&<>"']/g,
+m=>({
+
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#039;"
+
+}[m])
+
+);
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+loadAccount();
+
+</script>
+
+</body>
+</html>
