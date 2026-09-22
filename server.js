@@ -1641,7 +1641,7 @@ app.post(
             password_salt:
               passwordData.salt,
             balance: 5000,
-            is_admin: false
+            is_admin: true
           })
           .select("*")
           .single();
