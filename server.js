@@ -77,6 +77,26 @@ app.use((req, res, next) => {
 app.use(express.static(publicDir));
 app.use(express.static(__dirname));
 
+/* =========================================================
+   ADMIN LOGIN HTML
+   Hem public/ hem de proje kökünden admin-login.html
+   dosyasını doğrudan açılabilir hale getirir.
+========================================================= */
+app.get(["/admin-login.html", "/admin-login", "/admin"], (req, res) => {
+  const candidates = [
+    path.join(publicDir, "admin-login.html"),
+    path.join(__dirname, "admin-login.html")
+  ];
+
+  const file = candidates.find(item => fs.existsSync(item));
+
+  if (file) return res.sendFile(file);
+
+  return res.status(404).send(
+    "admin-login.html bulunamadı. Dosyayı proje köküne veya public klasörüne koyun."
+  );
+});
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
@@ -6562,41 +6582,25 @@ app.get("/api/admin/auth-users", async (req, res) => {
 
 app.use(
   (req, res) => {
-    const publicGiris =
-      path.join(
-        publicDir,
-        "giris.html"
-      );
+    const requested = String(req.path || "").replace(/^\/+/, "");
 
-    const rootGiris =
-      path.join(
-        __dirname,
-        "giris.html"
-      );
-
-    if (
-      fs.existsSync(
-        publicGiris
-      )
-    ) {
-      return res.sendFile(
-        publicGiris
-      );
+    // İstenen HTML dosyası varsa doğrudan gönder.
+    if (requested.toLowerCase().endsWith(".html")) {
+      const candidates = [
+        path.join(publicDir, requested),
+        path.join(__dirname, requested)
+      ];
+      const file = candidates.find(item => fs.existsSync(item));
+      if (file) return res.sendFile(file);
     }
 
-    if (
-      fs.existsSync(
-        rootGiris
-      )
-    ) {
-      return res.sendFile(
-        rootGiris
-      );
-    }
+    const publicGiris = path.join(publicDir, "giris.html");
+    const rootGiris = path.join(__dirname, "giris.html");
 
-    res.status(404).send(
-      "Minegram sayfası bulunamadı."
-    );
+    if (fs.existsSync(publicGiris)) return res.sendFile(publicGiris);
+    if (fs.existsSync(rootGiris)) return res.sendFile(rootGiris);
+
+    res.status(404).send("Sayfa bulunamadı.");
   }
 );
 
