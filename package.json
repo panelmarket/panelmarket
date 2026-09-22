@@ -1,1 +1,13 @@
-{"name":"panelmarket","version":"2.0.0","private":true,"type":"module","scripts":{"start":"node server.js"},"dependencies":{"express":"^4.21.2"}}
+{
+  "name": "panelmarket",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.4",
+    "express": "^4.21.2"
+  }
+}
