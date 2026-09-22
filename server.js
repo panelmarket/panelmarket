@@ -53,21 +53,11 @@ function createOrderNumber() { return "PM-" + new Date().getFullYear() + "-" + c
 function createLicenseKey() { return "PMK-" + crypto.randomBytes(12).toString("hex").toUpperCase(); }
 function createToken() { return crypto.randomBytes(32).toString("hex"); }
 
-const SESSION_SECRET =
-  process.env.SESSION_SECRET ||
-  process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SESSION_SECRET = process.env.SESSION_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 function createSecureToken(userId) {
-  const payload = Buffer.from(JSON.stringify({
-    userId: String(userId),
-    createdAt: Date.now()
-  })).toString("base64url");
-
-  const signature = crypto
-    .createHmac("sha256", SESSION_SECRET)
-    .update(payload)
-    .digest("base64url");
-
+  const payload = Buffer.from(JSON.stringify({ userId: String(userId), createdAt: Date.now() })).toString("base64url");
+  const signature = crypto.createHmac("sha256", SESSION_SECRET).update(payload).digest("base64url");
   return `${payload}.${signature}`;
 }
 
@@ -75,39 +65,16 @@ function verifySecureToken(token) {
   try {
     const parts = String(token || "").split(".");
     if (parts.length !== 2) return null;
-
     const [payload, signature] = parts;
-
-    const expected = crypto
-      .createHmac("sha256", SESSION_SECRET)
-      .update(payload)
-      .digest("base64url");
-
+    const expected = crypto.createHmac("sha256", SESSION_SECRET).update(payload).digest("base64url");
     const a = Buffer.from(signature);
     const b = Buffer.from(expected);
-
-    if (a.length !== b.length) return null;
-    if (!crypto.timingSafeEqual(a, b)) return null;
-
-    const decoded = JSON.parse(
-      Buffer.from(payload, "base64url").toString("utf8")
-    );
-
+    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return null;
+    const decoded = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
     if (!decoded.userId) return null;
-
-    const maxAge = 30 * 24 * 60 * 60 * 1000;
-
-    if (
-      decoded.createdAt &&
-      Date.now() - Number(decoded.createdAt) > maxAge
-    ) {
-      return null;
-    }
-
+    if (decoded.createdAt && Date.now() - Number(decoded.createdAt) > 30 * 24 * 60 * 60 * 1000) return null;
     return decoded;
-  } catch {
-    return null;
-  }
+  } catch { return null; }
 }
 
 function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
@@ -173,43 +140,23 @@ async function findUserById(id) {
 
 async function getSessionFromRequest(req) {
   const token = getTokenFromRequest(req);
-
-  if (!token) {
-    return null;
-  }
-
+  if (!token) return null;
   try {
     const decoded = verifySecureToken(token);
-
-    if (!decoded || !decoded.userId) {
-      console.error("SESSION TOKEN GEÇERSİZ");
-      return null;
-    }
-
+    if (!decoded?.userId) return null;
     const user = await findUserById(decoded.userId);
-
-    if (!user) {
-      console.error("SESSION USER BULUNAMADI:", decoded.userId);
-      return null;
-    }
-
+    if (!user) return null;
     return {
       token,
-      session: {
-        token,
-        user_id: user.id,
-        created_at: new Date(
-          decoded.createdAt || Date.now()
-        ).toISOString()
-      },
+      session: { token, user_id: user.id, created_at: new Date(decoded.createdAt || Date.now()).toISOString() },
       user
     };
-
   } catch (error) {
     console.error("SESSION CHECK ERROR:", error);
     return null;
   }
 }
+
 async function getCurrentUser(req) {
   const auth = await getSessionFromRequest(req);
   return auth ? { user: auth.user, token: auth.token } : null;
@@ -268,9 +215,7 @@ app.post("/api/register", async (req,res) => {
     const passwordData = hashPassword(password);
     const { data:user, error } = await supabase.from("users").insert({ name,email,password_hash:passwordData.hash,password_salt:passwordData.salt,balance:0,is_admin:false }).select("*").single();
     if (error) { if (error.code === "23505") return res.status(409).json({ error:"Bu e-posta adresi zaten kayıtlı." }); throw error; }
-    const token = createToken();
-    const { error:sessionError } = await supabase.from("sessions").insert({ token,user_id:user.id });
-    if (sessionError) throw sessionError;
+    const token = createSecureToken(user.id);
     setSessionCookie(res, token);
     res.status(201).json({ ok:true, success:true, authenticated:true, token, user:publicUser(user) });
   } catch (error) {
@@ -282,57 +227,22 @@ app.post("/api/register", async (req,res) => {
 async function loginUser(user, password, res) {
   try {
     if (!verifyPassword(password, user)) {
-      return res.status(401).json({
-        ok: false,
-        success: false,
-        authenticated: false,
-        error: "E-posta veya şifre hatalı."
-      });
+      return res.status(401).json({ ok:false, success:false, authenticated:false, error:"E-posta veya şifre hatalı." });
     }
-
     const token = createSecureToken(user.id);
-
     setSessionCookie(res, token);
-
-    console.log(
-      "LOGIN BAŞARILI:",
-      user.email,
-      "ADMIN:",
-      user.is_admin === true
-    );
-
+    console.log("LOGIN BAŞARILI:", user.email, "ADMIN:", user.is_admin === true);
     return res.status(200).json({
-      ok: true,
-      success: true,
-      authenticated: true,
-      token,
-      is_admin: user.is_admin === true,
-      isAdmin: user.is_admin === true,
-      user: publicUser(user)
+      ok:true, success:true, authenticated:true, token,
+      is_admin:user.is_admin === true, isAdmin:user.is_admin === true,
+      user:publicUser(user)
     });
-
   } catch (error) {
-  console.error("=================================");
-  console.error("ADMIN LOGIN ERROR");
-  console.error("MESSAGE:", error?.message);
-  console.error("CODE:", error?.code);
-  console.error("DETAILS:", error?.details);
-  console.error("HINT:", error?.hint);
-  console.error("ERROR:", error);
-  console.error("=================================");
-
-  return res.status(500).json({
-    ok: false,
-    success: false,
-    authenticated: false,
-    error: "Giriş sırasında bir hata oluştu.",
-    detail: error?.message || "Bilinmeyen sunucu hatası",
-    code: error?.code || null,
-    details: error?.details || null,
-    hint: error?.hint || null
-  });
+    console.error("LOGIN USER ERROR:", error);
+    return res.status(500).json({ ok:false, success:false, authenticated:false, error:"Giriş sırasında bir hata oluştu.", detail:error?.message || null });
+  }
 }
-  
+
 app.post("/api/login", async (req,res) => {
   try {
     const email=String(req.body.email||"").trim().toLowerCase();
@@ -360,57 +270,48 @@ app.post("/api/login", async (req,res) => {
 
 /* ADMIN LOGIN - SADECE ADMIN HESABI */
 app.post("/api/admin/login", async (req, res) => {
-  console.log("=================================");
-  console.log("ADMIN LOGIN İSTEĞİ GELDİ");
-  console.log("EMAIL:", String(req.body?.email || "").trim().toLowerCase());
-  console.log("PASSWORD GELDİ:", !!req.body?.password);
-  console.log("=================================");
-  
-  try{
-    const email=String(req.body.email||"").trim().toLowerCase();
-    const password=String(req.body.password||"");
-    if(!email||!password)return res.status(400).json({ok:false,success:false,error:"Admin e-posta ve şifre zorunludur."});
-    let user=await findUserByEmail(email);
-    if(!user&&email==="demo@panelmarket.com"&&password==="12345678"){
-      const pw=hashPassword(password);
-      const {data:demo,error}=await supabase.from("users").insert({name:"Demo Admin",email,password_hash:pw.hash,password_salt:pw.salt,balance:5000,is_admin:true}).select("*").single();
-      if(error)throw error; user=demo;
+  try {
+    const email = String(req.body?.email || "").trim().toLowerCase();
+    const password = String(req.body?.password || "");
+    console.log("ADMIN LOGIN İSTEĞİ:", email, "PASSWORD:", !!password);
+
+    if (!email || !password) {
+      return res.status(400).json({ ok:false, success:false, error:"Admin e-posta ve şifre zorunludur." });
     }
-    if(user&&email==="demo@panelmarket.com"&&password==="12345678"&&!verifyPassword(password,user)){
-      const pw=hashPassword(password);
-      const {data:updated,error}=await supabase.from("users").update({password_hash:pw.hash,password_salt:pw.salt,is_admin:true}).eq("id",user.id).select("*").single();
-      if(error)throw error; user=updated;
+
+    let user = await findUserByEmail(email);
+
+    if (email === "demo@panelmarket.com" && password === "12345678") {
+      const passwordData = hashPassword(password);
+      if (!user) {
+        const { data, error } = await supabase.from("users").insert({
+          name:"Demo Admin", email, password_hash:passwordData.hash, password_salt:passwordData.salt, balance:5000, is_admin:true
+        }).select("*").single();
+        if (error) throw error;
+        user = data;
+      } else {
+        const { data, error } = await supabase.from("users").update({
+          password_hash:passwordData.hash, password_salt:passwordData.salt, is_admin:true
+        }).eq("id", user.id).select("*").single();
+        if (error) throw error;
+        user = data;
+      }
     }
-    if(!user||!verifyPassword(password,user))return res.status(401).json({ok:false,success:false,authenticated:false,error:"E-posta veya şifre hatalı."});
-    if(user.is_admin!==true)return res.status(403).json({ok:false,success:false,authenticated:true,is_admin:false,isAdmin:false,error:"Bu hesap admin yetkisine sahip değil."});
-    return await loginUser(user,password,res);
-  }catch(error){console.error("ADMIN LOGIN ERROR:",error);return res.status(500).json({ok:false,success:false,error:"Admin girişi sırasında sunucu hatası oluştu."});}
+
+    if (!user) return res.status(401).json({ ok:false, success:false, authenticated:false, error:"E-posta veya şifre hatalı." });
+    if (!verifyPassword(password, user)) return res.status(401).json({ ok:false, success:false, authenticated:false, error:"E-posta veya şifre hatalı." });
+    if (user.is_admin !== true) return res.status(403).json({ ok:false, success:false, authenticated:true, is_admin:false, isAdmin:false, error:"Bu hesap admin yetkisine sahip değil." });
+
+    return await loginUser(user, password, res);
+  } catch (error) {
+    console.error("ADMIN LOGIN ERROR:", error);
+    return res.status(500).json({ ok:false, success:false, authenticated:false, error:"Giriş sırasında sunucu hatası oluştu.", detail:error?.message || "Bilinmeyen hata", code:error?.code || null });
+  }
 });
 
 app.post("/api/logout", async (req, res) => {
-  try {
-    // Artık sessions tablosuna ihtiyaç yok.
-    // Güvenli token sadece cookie'den temizleniyor.
-
-    clearSessionCookie(res);
-
-    return res.status(200).json({
-      ok: true,
-      success: true,
-      authenticated: false
-    });
-
-  } catch (error) {
-    console.error("LOGOUT ERROR:", error);
-
-    clearSessionCookie(res);
-
-    return res.status(500).json({
-      ok: false,
-      success: false,
-      error: "Çıkış yapılamadı."
-    });
-  }
+  clearSessionCookie(res);
+  return res.status(200).json({ ok:true, success:true, authenticated:false });
 });
 
 app.get("/api/auth/me", requireAuth, async (req,res) => res.json({ authenticated:true, user:publicUser(req.user) }));
