@@ -1647,14 +1647,8 @@ app.post("/api/logout",async(req,res)=>{try{const token=getTokenFromRequest(req)
 
 app.post("/api/change-password", requireAuth, async (req, res) => {
   try {
-
-    const oldPassword = String(
-      req.body.oldPassword || ""
-    );
-
-    const newPassword = String(
-      req.body.newPassword || ""
-    );
+    const oldPassword = String(req.body.oldPassword || "");
+    const newPassword = String(req.body.newPassword || "");
 
     if (!oldPassword || !newPassword) {
       return res.status(400).json({
@@ -1664,122 +1658,87 @@ app.post("/api/change-password", requireAuth, async (req, res) => {
       });
     }
 
-    if (newPassword.length < 6) {
-      return res.status(400).json({
-        ok: false,
-        success: false,
-        error: "Yeni şifre en az 6 karakter olmalıdır."
-      });
-    }
-
-    if (oldPassword === newPassword) {
-      return res.status(400).json({
-        ok: false,
-        success: false,
-        error: "Yeni şifre mevcut şifreyle aynı olamaz."
-      });
-    }
-
-
-    /* Mevcut şifreyi kontrol et */
-
     if (!verifyPassword(oldPassword, req.user)) {
       return res.status(401).json({
         ok: false,
         success: false,
-        error: "Mevcut şifreniz hatalı."
+        error: "Mevcut şifre hatalı."
       });
     }
 
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        ok: false,
+        success: false,
+        error: "Yeni şifre en az 8 karakter olmalıdır."
+      });
+    }
 
-    /* Yeni şifre için hash oluştur */
+    if (!/[A-Za-z]/.test(newPassword)) {
+      return res.status(400).json({
+        ok: false,
+        success: false,
+        error: "Yeni şifre en az bir harf içermelidir."
+      });
+    }
 
-    const newSalt = crypto.randomBytes(16).toString("hex");
+    if (!/[0-9]/.test(newPassword)) {
+      return res.status(400).json({
+        ok: false,
+        success: false,
+        error: "Yeni şifre en az bir rakam içermelidir."
+      });
+    }
 
-    const newHash = crypto
-      .pbkdf2Sync(
-        newPassword,
-        newSalt,
-        100000,
-        64,
-        "sha512"
-      )
-      .toString("hex");
+    /* YENİ ŞİFREYİ LOGIN İLE AYNI SİSTEMLE HASHLE */
+    const pw = hashPassword(newPassword);
 
-
-    /* Veritabanındaki şifreyi güncelle */
-
-    const { data, error } = await supabase
+    const {
+      data,
+      error
+    } = await supabase
       .from("users")
       .update({
-        password_hash: newHash,
-        password_salt: newSalt
+        password_hash: pw.hash,
+        password_salt: pw.salt
       })
       .eq("id", req.user.id)
       .select("id,email")
       .single();
 
-
     if (error) {
-      console.error(
-        "CHANGE PASSWORD DB ERROR:",
-        error
-      );
+      console.error("CHANGE PASSWORD DATABASE ERROR:", error);
 
       return res.status(500).json({
         ok: false,
         success: false,
-        error: "Şifre veritabanında güncellenemedi.",
-        databaseError: error.message
+        error: "Şifre veritabanında güncellenemedi."
       });
     }
 
-
-    if (!data) {
-      return res.status(404).json({
-        ok: false,
-        success: false,
-        error: "Kullanıcı bulunamadı."
-      });
-    }
-
-
-    /*
-      Güvenlik için mevcut oturumları kapat.
-      Kullanıcı yeni şifreyle tekrar giriş yapar.
-    */
-
+    /* Güvenlik için eski oturumları kapat */
     await supabase
       .from("sessions")
       .delete()
       .eq("user_id", req.user.id);
 
-
     clearSessionCookie(res);
 
-
-    return res.status(200).json({
+    return res.json({
       ok: true,
       success: true,
-      passwordChanged: true,
-      message: "Şifreniz başarıyla değiştirildi."
+      message: "Şifreniz başarıyla değiştirildi.",
+      user: data
     });
 
-
   } catch (e) {
-
-    console.error(
-      "CHANGE PASSWORD ERROR:",
-      e
-    );
+    console.error("CHANGE PASSWORD ERROR:", e);
 
     return res.status(500).json({
       ok: false,
       success: false,
-      error: "Şifre değiştirme sırasında bir hata oluştu.",
-      databaseError: e?.message || null
+      error: "Şifre değiştirilemedi."
     });
-
   }
 });
 
