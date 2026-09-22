@@ -459,48 +459,33 @@ app.delete("/api/admin/products/:id",requireAuth,requireAdmin,async(req,res)=>{t
 app.get("/api/session/status",async(req,res)=>{try{const token=getTokenFromRequest(req);if(!token)return res.json({ok:true,tokenPresent:false,authenticated:false});const auth=await getSessionFromRequest(req);res.json({ok:true,tokenPresent:true,tokenLength:token.length,authenticated:!!auth,user:auth?publicUser(auth.user):null,is_admin:auth?.user?.is_admin===true,isAdmin:auth?.user?.is_admin===true});}catch(e){res.status(500).json({ok:false,error:e.message});}});
 app.get("/health",async(req,res)=>{try{const {error}=await supabase.from("users").select("id").limit(1);if(error)return res.status(500).json({ok:false,service:"PanelMarket",database:"Supabase bağlantı hatası",error:error.message});res.json({ok:true,service:"PanelMarket",database:"Supabase bağlı"});}catch(e){res.status(500).json({ok:false,service:"PanelMarket",database:"Supabase bağlantı hatası"});}});
 
-app.get("/api/debug/admin-user", async (req, res) => {
+app.get("/api/debug/supabase-info", async (req, res) => {
   try {
-    const adminId =
-      "36002d6d-f4d4-4c4a-a03f-56076c6bf6eb";
-
     const { data, error } = await supabase
       .from("users")
-      .select("id,email,is_admin,balance")
-      .eq("id", adminId)
-      .maybeSingle();
-
-    console.log("DEBUG ADMIN USER:", {
-      data,
-      error: error
-        ? {
-            code: error.code,
-            message: error.message,
-            details: error.details,
-            hint: error.hint
-          }
-        : null
-    });
+      .select("id,email,is_admin")
+      .limit(10);
 
     if (error) {
       return res.status(500).json({
         ok: false,
         error: error.message,
-        code: error.code,
-        details: error.details,
-        hint: error.hint
+        code: error.code
       });
     }
 
     return res.json({
       ok: true,
-      found: !!data,
-      user: data || null
+      supabaseHost: new URL(SUPABASE_URL).hostname,
+      userCountReturned: data?.length || 0,
+      users: (data || []).map(u => ({
+        id: u.id,
+        email: u.email,
+        is_admin: u.is_admin
+      }))
     });
 
   } catch (e) {
-    console.error("DEBUG ADMIN ERROR:", e);
-
     return res.status(500).json({
       ok: false,
       error: e.message
