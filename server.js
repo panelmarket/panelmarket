@@ -910,29 +910,25 @@ app.get(
   requireAuth,
   requireAdmin,
   async (req, res) => {
+    const adminUser = {
+      id: req.adminUser.id,
+      name: req.adminUser.name,
+      email: req.adminUser.email,
+      balance: money(req.adminUser.balance),
+
+      is_admin: true,
+      isAdmin: true
+    };
+
     return res.json({
       ok: true,
       authenticated: true,
+
+      is_admin: true,
       isAdmin: true,
-      admin: {
-        id:
-          req.adminUser.id,
 
-        name:
-          req.adminUser.name,
-
-        email:
-          req.adminUser.email,
-
-        balance:
-          money(
-            req.adminUser.balance
-          ),
-
-        is_admin: true,
-
-        isAdmin: true
-      }
+      user: adminUser,
+      admin: adminUser
     });
   }
 );
