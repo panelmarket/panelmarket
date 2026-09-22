@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PanelMarket Admin</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:#070a0f;
+  color:#f5f7fb;
+  font-family:Inter,Arial,sans-serif;
+}
+
+button,input,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
+/* LOGIN */
+
+.admin-login{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.login-box{
+  width:100%;
+  max-width:430px;
+  background:#0d131b;
+  border:1px solid #1d2734;
+  border-radius:20px;
+  padding:35px;
+  box-shadow:0 30px 80px rgba(0,0,0,.4);
+}
+
+.logo{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:20px;
+  background:linear-gradient(135deg,#1677ff,#7347ff);
+  box-shadow:0 10px 30px rgba(22,119,255,.3);
+  margin-bottom:22px;
+}
+
+.login-box h1{
+  margin:0 0 8px;
+  font-size:30px;
+}
+
+.login-box p{
+  color:#8995a7;
+  margin:0 0 25px;
+}
+
+.field{
+  margin-bottom:15px;
+}
+
+.field label{
+  display:block;
+  margin-bottom:7px;
+  color:#aeb8c8;
+  font-size:14px;
+}
+
+.field input,
+.field select{
+  width:100%;
+  height:48px;
+  border:1px solid #202b39;
+  border-radius:10px;
+  background:#080d13;
+  color:#fff;
+  padding:0 14px;
+  outline:none;
+}
+
+.field input:focus,
+.field select:focus{
+  border-color:#1677ff;
+}
+
+.primary{
+  width:100%;
+  height:48px;
+  border:0;
+  border-radius:10px;
+  background:#1677ff;
+  color:#fff;
+  font-weight:800;
+}
+
+.error{
+  color:#ff6b6b;
+  font-size:14px;
+  margin-top:12px;
+}
+
+/* APP */
+
+.app{
+  min-height:100vh;
+  display:flex;
+}
+
+.sidebar{
+  width:245px;
+  min-height:100vh;
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  background:#0a0f16;
+  border-right:1px solid #1b2531;
+  padding:25px 15px;
+  z-index:20;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:0 10px 25px;
+  border-bottom:1px solid #1b2531;
+  margin-bottom:20px;
+}
+
+.brand-icon{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  background:linear-gradient(135deg,#1677ff,#7347ff);
+}
+
+.brand strong{
+  display:block;
+}
+
+.brand span{
+  color:#697689;
+  font-size:12px;
+}
+
+.nav{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.nav button{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:#8995a7;
+  padding:13px 14px;
+  border-radius:10px;
+  text-align:left;
+}
+
+.nav button:hover,
+.nav button.active{
+  background:#121b26;
+  color:#fff;
+}
+
+.logout{
+  position:absolute;
+  left:15px;
+  right:15px;
+  bottom:20px;
+  border:1px solid #263342;
+  background:transparent;
+  color:#aeb8c8;
+  border-radius:10px;
+  padding:12px;
+}
+
+.main{
+  margin-left:245px;
+  width:calc(100% - 245px);
+  padding:30px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+}
+
+.topbar h1{
+  margin:0;
+  font-size:30px;
+}
+
+.topbar p{
+  margin:5px 0 0;
+  color:#788699;
+}
+
+.admin-user{
+  background:#0d131b;
+  border:1px solid #1d2734;
+  padding:10px 15px;
+  border-radius:10px;
+  color:#aeb8c8;
+}
+
+/* STATS */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.stat{
+  background:#0d131b;
+  border:1px solid #1c2633;
+  border-radius:15px;
+  padding:20px;
+}
+
+.stat span{
+  color:#7f8b9d;
+  font-size:13px;
+}
+
+.stat strong{
+  display:block;
+  font-size:27px;
+  margin-top:8px;
+}
+
+/* SECTIONS */
+
+.panel{
+  background:#0d131b;
+  border:1px solid #1c2633;
+  border-radius:15px;
+  padding:20px;
+  margin-bottom:20px;
+}
+
+.panel-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:18px;
+}
+
+.panel-head h2{
+  margin:0;
+  font-size:20px;
+}
+
+.search{
+  height:42px;
+  width:300px;
+  max-width:100%;
+  background:#080d13;
+  border:1px solid #202b39;
+  border-radius:9px;
+  color:#fff;
+  padding:0 12px;
+  outline:none;
+}
+
+.table-wrap{
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:800px;
+}
+
+th{
+  color:#778497;
+  font-size:12px;
+  text-align:left;
+  padding:12px;
+  border-bottom:1px solid #202a37;
+}
+
+td{
+  padding:14px 12px;
+  border-bottom:1px solid #17202b;
+  color:#d8dee8;
+  font-size:14px;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+  background:#14243b;
+  color:#62adff;
+}
+
+.green{
+  background:#102b20;
+  color:#55d998;
+}
+
+.red{
+  background:#32191d;
+  color:#ff737d;
+}
+
+.action{
+  border:1px solid #2b3a4c;
+  background:#111923;
+  color:#fff;
+  padding:7px 10px;
+  border-radius:7px;
+  font-size:12px;
+}
+
+.action.blue{
+  background:#1677ff;
+  border-color:#1677ff;
+}
+
+/* BALANCE */
+
+.balance-form{
+  display:grid;
+  grid-template-columns:1fr 160px 1fr 130px;
+  gap:10px;
+}
+
+.balance-form input,
+.balance-form select{
+  height:44px;
+  background:#080d13;
+  border:1px solid #202b39;
+  color:#fff;
+  border-radius:8px;
+  padding:0 10px;
+}
+
+/* PAGE */
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+.empty{
+  text-align:center;
+  color:#788699;
+  padding:35px;
+}
+
+@media(max-width:1000px){
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .balance-form{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:700px){
+  .sidebar{
+    width:70px;
+    padding:15px 8px;
+  }
+
+  .brand strong,
+  .brand span,
+  .nav button span{
+    display:none;
+  }
+
+  .brand{
+    justify-content:center;
+    padding:0 0 20px;
+  }
+
+  .nav button{
+    text-align:center;
+    font-size:18px;
+  }
+
+  .logout{
+    font-size:0;
+  }
+
+  .logout:after{
+    content:"↪";
+    font-size:18px;
+  }
+
+  .main{
+    margin-left:70px;
+    width:calc(100% - 70px);
+    padding:18px;
+  }
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .topbar{
+    align-items:flex-start;
+    gap:10px;
+  }
+
+  .admin-user{
+    display:none;
+  }
+
+  .balance-form{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div id="loginScreen" class="admin-login">
+
+  <div class="login-box">
+
+    <div class="logo">PM</div>
+
+    <h1>PanelMarket Admin</h1>
+
+    <p>Yönetim paneline giriş</p>
+
+    <div class="field">
+      <label>E-posta</label>
+      <input id="loginEmail" type="email"
+             placeholder="admin@panelmarket.com">
+    </div>
+
+    <div class="field">
+      <label>Şifre</label>
+      <input id="loginPassword" type="password"
+             placeholder="Şifreniz">
+    </div>
+
+    <button class="primary" id="loginBtn">
+      ADMİN GİRİŞİ
+    </button>
+
+    <div id="loginError" class="error"></div>
+
+  </div>
+
+</div>
+
+
+<!-- ADMIN APP -->
+
+<div id="adminApp" class="app hidden">
+
+  <aside class="sidebar">
+
+    <div class="brand">
+      <div class="brand-icon">PM</div>
+
+      <div>
+        <strong>PanelMarket</strong>
+        <span>Admin Panel</span>
+      </div>
+    </div>
+
+    <nav class="nav">
+
+      <button class="active" data-page="dashboard">
+        📊 <span>Dashboard</span>
+      </button>
+
+      <button data-page="users">
+        👥 <span>Kullanıcılar</span>
+      </button>
+
+      <button data-page="orders">
+        🛒 <span>Siparişler</span>
+      </button>
+
+      <button data-page="transactions">
+        💳 <span>İşlemler</span>
+      </button>
+
+      <button data-page="balance">
+        💰 <span>Bakiye Yönetimi</span>
+      </button>
+
+    </nav>
+
+    <button class="logout" id="logoutBtn">
+      ÇIKIŞ YAP
+    </button>
+
+  </aside>
+
+
+  <main class="main">
+
+    <div class="topbar">
+
+      <div>
+        <h1 id="pageTitle">Dashboard</h1>
+        <p>PanelMarket yönetim merkezi</p>
+      </div>
+
+      <div class="admin-user" id="adminUser">
+        Admin
+      </div>
+
+    </div>
+
+
+    <!-- DASHBOARD -->
+
+    <section id="dashboard" class="page active">
+
+      <div class="stats">
+
+        <div class="stat">
+          <span>TOPLAM KULLANICI</span>
+          <strong id="totalUsers">0</strong>
+        </div>
+
+        <div class="stat">
+          <span>TOPLAM SİPARİŞ</span>
+          <strong id="totalOrders">0</strong>
+        </div>
+
+        <div class="stat">
+          <span>SİSTEM BAKİYESİ</span>
+          <strong id="totalBalance">₺0,00</strong>
+        </div>
+
+        <div class="stat">
+          <span>TOPLAM SATIŞ</span>
+          <strong id="totalSales">₺0,00</strong>
+        </div>
+
+      </div>
+
+      <div class="panel">
+
+        <div class="panel-head">
+          <h2>Admin Bilgileri</h2>
+        </div>
+
+        <p style="color:#8995a7">
+          Bu panel Supabase üzerindeki gerçek kullanıcı,
+          sipariş ve bakiye verilerini yönetir.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- USERS -->
+
+    <section id="users" class="page">
+
+      <div class="panel">
+
+        <div class="panel-head">
+
+          <h2>Kullanıcılar</h2>
+
+          <input
+            id="userSearch"
+            class="search"
+            placeholder="İsim veya e-posta ara..."
+          >
+
+        </div>
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Kullanıcı</th>
+                <th>E-posta</th>
+                <th>Bakiye</th>
+                <th>Yetki</th>
+                <th>Kayıt</th>
+                <th>İşlem</th>
+              </tr>
+            </thead>
+
+            <tbody id="usersTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ORDERS -->
+
+    <section id="orders" class="page">
+
+      <div class="panel">
+
+        <div class="panel-head">
+          <h2>Tüm Siparişler</h2>
+        </div>
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Sipariş</th>
+                <th>Kullanıcı</th>
+                <th>Ürün</th>
+                <th>Lisans</th>
+                <th>Tutar</th>
+                <th>Durum</th>
+                <th>Teslimat</th>
+              </tr>
+            </thead>
+
+            <tbody id="ordersTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- TRANSACTIONS -->
+
+    <section id="transactions" class="page">
+
+      <div class="panel">
+
+        <div class="panel-head">
+          <h2>Bakiye İşlemleri</h2>
+        </div>
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Kullanıcı</th>
+                <th>E-posta</th>
+                <th>İşlem</th>
+                <th>Tutar</th>
+                <th>Açıklama</th>
+                <th>Tarih</th>
+              </tr>
+            </thead>
+
+            <tbody id="transactionsTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- BALANCE -->
+
+    <section id="balance" class="page">
+
+      <div class="panel">
+
+        <div class="panel-head">
+          <h2>Bakiye Yönetimi</h2>
+        </div>
+
+        <div class="balance-form">
+
+          <input
+            id="balanceUserId"
+            placeholder="Kullanıcı UID"
+          >
+
+          <select id="balanceType">
+            <option value="credit">Bakiye Ekle</option>
+            <option value="debit">Bakiye Çıkar</option>
+          </select>
+
+          <input
+            id="balanceAmount"
+            type="number"
+            min="0.01"
+            step="0.01"
+            placeholder="Tutar"
+          >
+
+          <button
+            class="primary"
+            id="balanceBtn"
+          >
+            UYGULA
+          </button>
+
+        </div>
+
+        <input
+          id="balanceNote"
+          style="
+            width:100%;
+            margin-top:10px;
+            height:44px;
+            background:#080d13;
+            border:1px solid #202b39;
+            color:#fff;
+            border-radius:8px;
+            padding:0 10px;
+          "
+          placeholder="İşlem açıklaması"
+        >
+
+        <div id="balanceMessage"
+             style="margin-top:12px;color:#55d998">
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<script>
+
+const tokenKey = "panelmarket_token";
+
+function getToken(){
+  return localStorage.getItem(tokenKey) || "";
+}
+
+async function api(url, options = {}){
+
+  const headers = {
+    "Content-Type":"application/json",
+    ...(options.headers || {})
+  };
+
+  const token = getToken();
+
+  if(token){
+    headers.Authorization = "Bearer " + token;
+  }
+
+  const response = await fetch(url,{
+    ...options,
+    headers,
+    credentials:"include"
+  });
+
+  let data = {};
+
+  try{
+    data = await response.json();
+  }catch{}
+
+  if(!response.ok){
+
+    if(response.status === 401){
+
+      location.href =
+        "/login.html?redirect=/admin.html";
+
+      throw new Error("Giriş gerekli");
+    }
+
+    if(response.status === 403){
+
+      throw new Error(
+        data.error || "Admin yetkiniz yok"
+      );
+    }
+
+    throw new Error(
+      data.error || "İşlem başarısız"
+    );
+  }
+
+  return data;
+}
+
+
+/* LOGIN */
+
+document.getElementById("loginBtn")
+.addEventListener("click", async ()=>{
+
+  const email =
+    document.getElementById("loginEmail").value.trim();
+
+  const password =
+    document.getElementById("loginPassword").value;
+
+  const error =
+    document.getElementById("loginError");
+
+  error.textContent = "";
+
+  if(!email || !password){
+
+    error.textContent =
+      "E-posta ve şifre gerekli.";
+
+    return;
+  }
+
+  try{
+
+    const response = await fetch("/api/login",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      credentials:"include",
+      body:JSON.stringify({
+        email,
+        password
+      })
+    });
+
+    const data = await response.json();
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error || "Giriş başarısız"
+      );
+    }
+
+    if(data.token){
+      localStorage.setItem(
+        tokenKey,
+        data.token
+      );
+    }
+
+    await checkAdmin();
+
+  }catch(err){
+
+    error.textContent =
+      err.message || "Giriş başarısız.";
+  }
+
+});
+
+
+/* ENTER */
+
+document.getElementById("loginPassword")
+.addEventListener("keydown", e=>{
+  if(e.key === "Enter"){
+    document.getElementById("loginBtn").click();
+  }
+});
+
+
+/* ADMIN CHECK */
+
+async function checkAdmin(){
+
+  try{
+
+    const data =
+      await api("/api/admin/me");
+
+    document.getElementById("loginScreen")
+      .classList.add("hidden");
+
+    document.getElementById("adminApp")
+      .classList.remove("hidden");
+
+    document.getElementById("adminUser")
+      .textContent =
+      data.admin.name ||
+      data.admin.email;
+
+    await loadDashboard();
+
+  }catch(err){
+
+    document.getElementById("loginError")
+      .textContent =
+      err.message;
+
+  }
+
+}
+
+
+/* DASHBOARD */
+
+async function loadDashboard(){
+
+  try{
+
+    const data =
+      await api("/api/admin/dashboard");
+
+    document.getElementById("totalUsers")
+      .textContent =
+      data.totalUsers;
+
+    document.getElementById("totalOrders")
+      .textContent =
+      data.totalOrders;
+
+    document.getElementById("totalBalance")
+      .textContent =
+      money(data.totalBalance);
+
+    document.getElementById("totalSales")
+      .textContent =
+      money(data.totalSales);
+
+  }catch(err){
+
+    alert(err.message);
+  }
+}
+
+
+/* USERS */
+
+async function loadUsers(){
+
+  const search =
+    document.getElementById("userSearch")
+      .value.trim();
+
+  const data =
+    await api(
+      "/api/admin/users?search=" +
+      encodeURIComponent(search)
+    );
+
+  const tbody =
+    document.getElementById("usersTable");
+
+  tbody.innerHTML = "";
+
+  if(!data.users.length){
+
+    tbody.innerHTML =
+      `<tr>
+        <td colspan="6" class="empty">
+          Kullanıcı bulunamadı
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+  data.users.forEach(user=>{
+
+    const tr =
+      document.createElement("tr");
+
+    tr.innerHTML = `
+
+      <td>
+        <strong>${escapeHtml(user.name)}</strong>
+        <div style="color:#657387;font-size:11px">
+          ${user.id}
+        </div>
+      </td>
+
+      <td>${escapeHtml(user.email)}</td>
+
+      <td>
+        <strong>${money(user.balance)}</strong>
+      </td>
+
+      <td>
+        ${
+          user.is_admin
+          ? '<span class="badge">ADMIN</span>'
+          : '<span class="badge green">KULLANICI</span>'
+        }
+      </td>
+
+      <td>
+        ${formatDate(user.created_at)}
+      </td>
+
+      <td>
+        <button
+          class="action blue"
+          onclick="selectBalanceUser('${user.id}')">
+          BAKİYE
+        </button>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+
+  });
+
+}
+
+
+/* USER SEARCH */
+
+document.getElementById("userSearch")
+.addEventListener("input", ()=>{
+  loadUsers().catch(console.error);
+});
+
+
+/* ORDERS */
+
+async function loadOrders(){
+
+  const data =
+    await api("/api/admin/orders");
+
+  const tbody =
+    document.getElementById("ordersTable");
+
+  tbody.innerHTML = "";
+
+  if(!data.orders.length){
+
+    tbody.innerHTML =
+      `<tr>
+        <td colspan="7" class="empty">
+          Sipariş bulunamadı
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+  data.orders.forEach(order=>{
+
+    const user = order.users || {};
+
+    const tr =
+      document.createElement("tr");
+
+    tr.innerHTML = `
+
+      <td>
+        <strong>${escapeHtml(order.order_number)}</strong>
+        <div style="color:#657387;font-size:11px">
+          ${formatDate(order.created_at)}
+        </div>
+      </td>
+
+      <td>
+        ${escapeHtml(user.name || "-")}
+        <div style="color:#657387;font-size:11px">
+          ${escapeHtml(user.email || "-")}
+        </div>
+      </td>
+
+      <td>${escapeHtml(order.product_name)}</td>
+
+      <td>${escapeHtml(order.license_name)}</td>
+
+      <td>${money(order.amount)}</td>
+
+      <td>
+        <span class="badge">
+          ${escapeHtml(order.status)}
+        </span>
+      </td>
+
+      <td>
+        <select
+          onchange="updateDelivery('${order.id}',this.value)"
+          style="
+            background:#080d13;
+            color:#fff;
+            border:1px solid #263342;
+            border-radius:7px;
+            padding:6px;
+          "
+        >
+
+          <option
+            ${order.delivery_status === "Teslim Edilebilir" ? "selected":""}>
+            Teslim Edilebilir
+          </option>
+
+          <option
+            ${order.delivery_status === "Teslim Edildi" ? "selected":""}>
+            Teslim Edildi
+          </option>
+
+          <option
+            ${order.delivery_status === "İptal" ? "selected":""}>
+            İptal
+          </option>
+
+        </select>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+
+  });
+
+}
+
+
+async function updateDelivery(id,value){
+
+  try{
+
+    await api("/api/admin/orders/"+id,{
+      method:"PATCH",
+      body:JSON.stringify({
+        delivery_status:value
+      })
+    });
+
+    alert("Sipariş durumu güncellendi.");
+
+  }catch(err){
+
+    alert(err.message);
+
+    loadOrders();
+  }
+
+}
+
+
+/* TRANSACTIONS */
+
+async function loadTransactions(){
+
+  const data =
+    await api("/api/admin/transactions");
+
+  const tbody =
+    document.getElementById("transactionsTable");
+
+  tbody.innerHTML = "";
+
+  if(!data.transactions.length){
+
+    tbody.innerHTML =
+      `<tr>
+        <td colspan="6" class="empty">
+          İşlem bulunamadı
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+  data.transactions.forEach(item=>{
+
+    const user =
+      item.users || {};
+
+    const credit =
+      item.type.includes("credit");
+
+    const tr =
+      document.createElement("tr");
+
+    tr.innerHTML = `
+
+      <td>${escapeHtml(user.name || "-")}</td>
+
+      <td>${escapeHtml(user.email || "-")}</td>
+
+      <td>
+        <span class="badge ${credit ? "green":"red"}">
+          ${credit ? "GİRİŞ":"ÇIKIŞ"}
+        </span>
+      </td>
+
+      <td>${money(item.amount)}</td>
+
+      <td>${escapeHtml(item.note || "-")}</td>
+
+      <td>${formatDate(item.created_at)}</td>
+
+    `;
+
+    tbody.appendChild(tr);
+
+  });
+
+}
+
+
+/* BALANCE */
+
+function selectBalanceUser(id){
+
+  document.getElementById("balanceUserId")
+    .value = id;
+
+  showPage("balance");
+}
+
+
+document.getElementById("balanceBtn")
+.addEventListener("click", async ()=>{
+
+  const userId =
+    document.getElementById("balanceUserId")
+      .value.trim();
+
+  const amount =
+    Number(
+      document.getElementById("balanceAmount")
+        .value
+    );
+
+  const type =
+    document.getElementById("balanceType")
+      .value;
+
+  const note =
+    document.getElementById("balanceNote")
+      .value.trim();
+
+  const message =
+    document.getElementById("balanceMessage");
+
+  message.textContent = "";
+
+  if(!userId){
+
+    message.style.color="#ff737d";
+    message.textContent =
+      "Kullanıcı UID girin.";
+
+    return;
+  }
+
+  if(!Number.isFinite(amount) || amount <= 0){
+
+    message.style.color="#ff737d";
+    message.textContent =
+      "Geçerli bir tutar girin.";
+
+    return;
+  }
+
+  try{
+
+    const data =
+      await api(
+        "/api/admin/users/" +
+        encodeURIComponent(userId) +
+        "/balance",
+        {
+          method:"POST",
+          body:JSON.stringify({
+            amount,
+            type,
+            note
+          })
+        }
+      );
+
+    message.style.color="#55d998";
+
+    message.textContent =
+      "İşlem başarılı. Yeni bakiye: " +
+      money(data.user.balance);
+
+    document.getElementById("balanceAmount")
+      .value = "";
+
+    await loadDashboard();
+
+  }catch(err){
+
+    message.style.color="#ff737d";
+    message.textContent =
+      err.message;
+  }
+
+});
+
+
+/* NAVIGATION */
+
+document.querySelectorAll(".nav button")
+.forEach(button=>{
+
+  button.addEventListener("click", async ()=>{
+
+    const page =
+      button.dataset.page;
+
+    showPage(page);
+
+    try{
+
+      if(page === "dashboard")
+        await loadDashboard();
+
+      if(page === "users")
+        await loadUsers();
+
+      if(page === "orders")
+        await loadOrders();
+
+      if(page === "transactions")
+        await loadTransactions();
+
+    }catch(err){
+
+      alert(err.message);
+    }
+
+  });
+
+});
+
+
+function showPage(page){
+
+  document.querySelectorAll(".page")
+    .forEach(item=>{
+      item.classList.remove("active");
+    });
+
+  document.getElementById(page)
+    ?.classList.add("active");
+
+  document.querySelectorAll(".nav button")
+    .forEach(button=>{
+      button.classList.toggle(
+        "active",
+        button.dataset.page === page
+      );
+    });
+
+  const titles = {
+    dashboard:"Dashboard",
+    users:"Kullanıcılar",
+    orders:"Siparişler",
+    transactions:"İşlemler",
+    balance:"Bakiye Yönetimi"
+  };
+
+  document.getElementById("pageTitle")
+    .textContent =
+    titles[page] || "Panel";
+}
+
+
+/* LOGOUT */
+
+document.getElementById("logoutBtn")
+.addEventListener("click", async ()=>{
+
+  try{
+    await fetch("/api/logout",{
+      method:"POST",
+      credentials:"include",
+      headers:{
+        Authorization:
+          "Bearer " + getToken()
+      }
+    });
+  }catch{}
+
+  localStorage.removeItem(tokenKey);
+  localStorage.removeItem("panelmarket_user");
+
+  location.href="/login.html";
+});
+
+
+/* HELPERS */
+
+function money(value){
+
+  return new Intl.NumberFormat("tr-TR",{
+    style:"currency",
+    currency:"TRY"
+  }).format(Number(value || 0));
+}
+
+
+function formatDate(value){
+
+  if(!value) return "-";
+
+  return new Date(value)
+    .toLocaleString("tr-TR");
+}
+
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+
+/* START */
+
+checkAdmin();
+
+</script>
+
+</body>
+</html>
