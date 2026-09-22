@@ -465,9 +465,9 @@ required
 >
 
 <button
- type="button"
- class="show-password"
- id="showPassword">
+type="button"
+class="show-password"
+id="showPassword">
 GÖSTER </button>
 
 </div>
@@ -495,9 +495,9 @@ id="remember"
 </div>
 
 <button
- type="submit"
- class="login-button"
- id="loginButton">
+type="submit"
+class="login-button"
+id="loginButton">
 
 GİRİŞ YAP
 
@@ -531,6 +531,8 @@ Hemen kayıt olun
 
 <script>
 
+"use strict";
+
 const form =
     document.getElementById("loginForm");
 
@@ -549,6 +551,9 @@ const message =
 const remember =
     document.getElementById("remember");
 
+const tokenKey =
+    "panelmarket_token";
+
 
 /* =========================================================
    KAYITLI E-POSTA
@@ -559,20 +564,23 @@ const savedEmail =
 
 if(savedEmail){
 
-    emailInput.value = savedEmail;
+    emailInput.value =
+        savedEmail;
 
-    remember.checked = true;
+    remember.checked =
+        true;
 
 }
 
 
 /* =========================================================
-   MESAJ GÖSTER
+   MESAJ
 ========================================================= */
 
 function showMessage(text,type){
 
-    message.textContent = text;
+    message.textContent =
+        text;
 
     message.className =
         "message " + type;
@@ -586,19 +594,25 @@ function showMessage(text,type){
 
 document
 .getElementById("showPassword")
-.addEventListener("click",function(){
+.addEventListener(
+"click",
+function(){
 
     if(passwordInput.type === "password"){
 
-        passwordInput.type = "text";
+        passwordInput.type =
+            "text";
 
-        this.textContent = "GİZLE";
+        this.textContent =
+            "GİZLE";
 
     }else{
 
-        passwordInput.type = "password";
+        passwordInput.type =
+            "password";
 
-        this.textContent = "GÖSTER";
+        this.textContent =
+            "GÖSTER";
 
     }
 
@@ -615,13 +629,13 @@ async function(e){
 
     e.preventDefault();
 
-
     const email =
-        emailInput.value.trim().toLowerCase();
+        emailInput.value
+        .trim()
+        .toLowerCase();
 
     const password =
         passwordInput.value;
-
 
     if(!email || !password){
 
@@ -634,8 +648,8 @@ async function(e){
 
     }
 
-
-    button.disabled = true;
+    button.disabled =
+        true;
 
     button.textContent =
         "GİRİŞ YAPILIYOR...";
@@ -644,34 +658,72 @@ async function(e){
     try{
 
         /* =================================================
-           NORMAL KULLANICI LOGIN
+           ESKİ TOKEN TEMİZLE
+           
+           Yeni giriş ile eski hesabın oturumu
+           birbirine karışmasın.
+        ================================================= */
+
+        try{
+
+            localStorage.removeItem(
+                tokenKey
+            );
+
+            sessionStorage.removeItem(
+                tokenKey
+            );
+
+            localStorage.removeItem(
+                "panelmarket_user"
+            );
+
+            sessionStorage.removeItem(
+                "panelmarket_user"
+            );
+
+        }catch(error){
+
+            console.warn(
+                "OLD AUTH CLEAR:",
+                error
+            );
+
+        }
+
+
+        /* =================================================
+           LOGIN API
         ================================================= */
 
         const response =
-            await fetch("/api/login",{
+            await fetch(
+                "/api/login",
+                {
+                    method:"POST",
 
-                method:"POST",
+                    headers:{
+                        "Content-Type":
+                            "application/json",
 
-                headers:{
-                    "Content-Type":
-                        "application/json",
-                    "Accept":
-                        "application/json"
-                },
+                        "Accept":
+                            "application/json"
+                    },
 
-                credentials:"include",
+                    credentials:"include",
 
-                cache:"no-store",
+                    cache:"no-store",
 
-                body:JSON.stringify({
+                    body:JSON.stringify({
 
-                    email:email,
+                        email:email,
 
-                    password:password
+                        password:password
 
-                })
+                    })
 
-            });
+                }
+            );
 
 
         let data = {};
@@ -706,7 +758,7 @@ async function(e){
         if(data.token){
 
             localStorage.setItem(
-                "panelmarket_token",
+                tokenKey,
                 data.token
             );
 
@@ -714,7 +766,7 @@ async function(e){
 
 
         /* =================================================
-           KULLANICI BİLGİSİNİ KAYDET
+           KULLANICI BİLGİLERİ
         ================================================= */
 
         if(data.user){
@@ -750,11 +802,9 @@ async function(e){
         /* =================================================
            ADMIN KONTROLÜ
            
-           Burada /api/admin/me çağrılmıyor.
-           Normal kullanıcı admin değilse hata vermeyecek.
+           SADECE LOGIN API'DEN GELEN BİLGİ KULLANILIYOR.
            
-           Login API'sinden gelen is_admin bilgisi varsa
-           sadece yönlendirme amacıyla kullanılır.
+           Normal kullanıcı admin kontrolüne sokulmuyor.
         ================================================= */
 
         const isAdmin =
@@ -765,7 +815,7 @@ async function(e){
 
 
         /* =================================================
-           YÖNLENDİRME
+           ADMIN
         ================================================= */
 
         if(isAdmin){
@@ -775,30 +825,44 @@ async function(e){
                 "success"
             );
 
-            setTimeout(function(){
+            setTimeout(
+                function(){
 
-                window.location.replace(
-                    "/admin.html"
-                );
+                    window.location.replace(
+                        "/admin.html"
+                    );
 
-            },500);
-
-        }else{
-
-            showMessage(
-                "Giriş başarılı. Ana sayfaya yönlendiriliyorsunuz...",
-                "success"
+                },
+                500
             );
 
-            setTimeout(function(){
-
-                window.location.replace(
-                    "/index.html"
-                );
-
-            },500);
+            return;
 
         }
+
+
+        /* =================================================
+           NORMAL KULLANICI
+           
+           ARTIK INDEX.HTML DEĞİL,
+           HESABIM.HTML AÇILIYOR.
+        ================================================= */
+
+        showMessage(
+            "Giriş başarılı. Hesabınız açılıyor...",
+            "success"
+        );
+
+        setTimeout(
+            function(){
+
+                window.location.replace(
+                    "/hesabim.html"
+                );
+
+            },
+            500
+        );
 
 
     }catch(error){
@@ -808,15 +872,14 @@ async function(e){
             error
         );
 
-
         showMessage(
             error.message ||
             "Giriş yapılamadı.",
             "error"
         );
 
-
-        button.disabled = false;
+        button.disabled =
+            false;
 
         button.textContent =
             "GİRİŞ YAP";
@@ -838,10 +901,8 @@ function(e){
 
     e.preventDefault();
 
-
     const email =
         emailInput.value.trim();
-
 
     if(!email){
 
@@ -856,14 +917,12 @@ function(e){
 
     }
 
-
     showMessage(
         "Şifre sıfırlama sistemi henüz etkinleştirilmedi.",
         "success"
     );
 
 });
-
 
 </script>
 
