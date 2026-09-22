@@ -787,34 +787,63 @@ async function(e){
                     );
 
 
-                if(adminResponse.ok){
+               if(adminResponse.ok){
 
-                    const adminData =
-                        await adminResponse.json();
+    const adminData =
+        await adminResponse.json();
 
-                    /*
-                       /api/admin/me
-                       şu yapılardan birini döndürebilir:
+    console.log("ADMIN ME CEVABI:", adminData);
 
-                       { user:{ is_admin:true } }
+    const adminUser =
+        adminData.user ||
+        adminData.admin ||
+        adminData;
 
-                       veya
+    isAdmin =
+        adminData.is_admin === true ||
+        adminData.isAdmin === true ||
+        adminUser.is_admin === true ||
+        adminUser.isAdmin === true;
 
-                       { is_admin:true }
-                    */
+}else{
 
-                   const adminUser =
-    adminData.user ||
-    adminData.admin ||
-    adminData;
+    let adminError = {};
 
-isAdmin =
-    adminData.is_admin === true ||
-    adminData.isAdmin === true ||
-    adminUser.is_admin === true ||
-    adminUser.isAdmin === true;
+    try{
+        adminError =
+            await adminResponse.json();
+    }catch(e){}
 
-                }
+    console.error(
+        "ADMIN ME HATASI:",
+        adminResponse.status,
+        adminError
+    );
+
+    if(adminResponse.status === 403){
+
+        showMessage(
+            "Bu hesap admin olarak tanımlanmamış.",
+            "error"
+        );
+
+        button.disabled = false;
+        button.textContent = "GİRİŞ YAP";
+
+        return;
+
+    }
+
+    if(adminResponse.status === 401){
+
+        console.error(
+            "Token geçersiz veya oturum bulunamadı."
+        );
+
+    }
+
+    isAdmin = false;
+}
 
             }catch(adminError){
 
