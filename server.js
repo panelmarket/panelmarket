@@ -227,95 +227,23 @@ app.post("/api/admin/login", async (req, res) => {
       });
     }
 
-    let user = null;
-
     /*
-     * Demo admin hesabı:
-     * demo@panelmarket.com
-     * 12345678
+     * Kullanıcıyı sadece mevcut kayıttan bul.
+     * LOGIN sırasında users INSERT yapılmaz.
      */
-    if (email === "demo@panelmarket.com") {
+    const user = await findUserByEmail(email);
 
-      /*
-       * Önce mevcut kullanıcıyı ID üzerinden bul.
-       * Böylece duplicate email oluşturulmaz.
-       */
-      user = await findUserById(
-        "36002d6d-f4d4-4c4a-a03f-56076c6bf6eb"
-      );
-
-      /*
-       * ID ile bulunamazsa email üzerinden ara.
-       */
-      if (!user) {
-        user = await findUserByEmail(email);
-      }
-
-      /*
-       * Hiç yoksa oluştur.
-       */
-      if (!user) {
-        const pw = hashPassword("12345678");
-
-        const { data: created, error } =
-          await supabase
-            .from("users")
-            .insert({
-              id: "36002d6d-f4d4-4c4a-a03f-56076c6bf6eb",
-              name: "PanelMarket Admin",
-              email: "demo@panelmarket.com",
-              password_hash: pw.hash,
-              password_salt: pw.salt,
-              balance: 5000,
-              is_admin: true
-            })
-            .select("*")
-            .single();
-
-        if (error) throw error;
-
-        user = created;
-      }
-
-      /*
-       * Demo hesabının admin olduğundan emin ol.
-       */
-      if (user.is_admin !== true) {
-        const { data: updated, error } =
-          await supabase
-            .from("users")
-            .update({
-              is_admin: true
-            })
-            .eq("id", user.id)
-            .select("*")
-            .single();
-
-        if (error) throw error;
-
-        user = updated;
-      }
-    } else {
-      /*
-       * Normal admin hesabı
-       */
-      user = await findUserByEmail(email);
-    }
-
-    /*
-     * Kullanıcı bulunamadı.
-     */
     if (!user) {
       return res.status(401).json({
         ok: false,
         success: false,
         authenticated: false,
-        error: "E-posta veya şifre hatalı."
+        error: "Kullanıcı bulunamadı."
       });
     }
 
     /*
-     * Admin kontrolü.
+     * Admin kontrolü
      */
     if (user.is_admin !== true) {
       return res.status(403).json({
@@ -329,7 +257,7 @@ app.post("/api/admin/login", async (req, res) => {
     }
 
     /*
-     * Şifre kontrolü.
+     * Şifre kontrolü
      */
     if (!verifyPassword(password, user)) {
       return res.status(401).json({
@@ -341,7 +269,7 @@ app.post("/api/admin/login", async (req, res) => {
     }
 
     /*
-     * Session oluştur.
+     * Yeni session oluştur.
      */
     const token = createToken();
 
@@ -357,16 +285,27 @@ app.post("/api/admin/login", async (req, res) => {
       .select("token,user_id,created_at")
       .single();
 
-    if (sessionError) throw sessionError;
+    if (sessionError) {
+      console.error("ADMIN SESSION ERROR:", sessionError);
+
+      return res.status(500).json({
+        ok: false,
+        success: false,
+        authenticated: false,
+        error: "Admin oturumu oluşturulamadı."
+      });
+    }
 
     /*
-     * Cookie oluştur.
+     * Session cookie
      */
     setSessionCookie(res, token);
 
     console.log(
-      "ADMIN LOGIN: Session oluşturuldu:",
-      session.user_id
+      "ADMIN LOGIN BAŞARILI:",
+      user.email,
+      "USER ID:",
+      user.id
     );
 
     return res.status(200).json({
