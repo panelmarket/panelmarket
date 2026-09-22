@@ -143,13 +143,42 @@ async function findUserById(id) {
 
 async function getSessionFromRequest(req) {
   const token = getTokenFromRequest(req);
+
   if (!token) return null;
+
   try {
     const decoded = verifySecureToken(token);
-    if (!decoded?.userId) return null;
-    async function getSessionFromRequest(req) {
-  const token = getTokenFromRequest(req);
-  if (!token) return null;
+
+    if (!decoded?.userId) {
+      return null;
+    }
+
+    const user = await findUserById(decoded.userId);
+
+    if (!user) {
+      console.error(
+        "SESSION USER NOT FOUND:",
+        decoded.userId
+      );
+      return null;
+    }
+
+    return {
+      token,
+      session: {
+        token,
+        user_id: user.id,
+        created_at: new Date(
+          decoded.createdAt || Date.now()
+        ).toISOString()
+      },
+      user
+    };
+  } catch (error) {
+    console.error("SESSION CHECK ERROR:", error);
+    return null;
+  }
+}
 
   try {
     const decoded = verifySecureToken(token);
