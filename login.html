@@ -563,7 +563,7 @@ const remember =
 
 
 /* =========================================================
-   DAHA ÖNCE KAYDEDİLEN E-POSTA
+   KAYITLI E-POSTA
 ========================================================= */
 
 const savedEmail =
@@ -574,11 +574,12 @@ if(savedEmail){
     emailInput.value = savedEmail;
 
     remember.checked = true;
+
 }
 
 
 /* =========================================================
-   MESAJ
+   MESAJ GÖSTER
 ========================================================= */
 
 function showMessage(text,type){
@@ -587,6 +588,7 @@ function showMessage(text,type){
 
     message.className =
         "message " + type;
+
 }
 
 
@@ -641,6 +643,7 @@ async function(e){
         );
 
         return;
+
     }
 
 
@@ -651,6 +654,10 @@ async function(e){
 
 
     try{
+
+        /* ================================================
+           1. NORMAL LOGIN
+        ================================================ */
 
         const response =
             await fetch("/api/login",{
@@ -693,15 +700,16 @@ async function(e){
 
             throw new Error(
                 data.error ||
+                data.message ||
                 "E-posta veya şifre hatalı."
             );
 
         }
 
 
-        /* =================================================
-           TOKEN
-        ================================================= */
+        /* ================================================
+           2. TOKEN KAYDET
+        ================================================ */
 
         if(data.token){
 
@@ -713,9 +721,9 @@ async function(e){
         }
 
 
-        /* =================================================
-           KULLANICI
-        ================================================= */
+        /* ================================================
+           3. KULLANICI BİLGİSİNİ KAYDET
+        ================================================ */
 
         if(data.user){
 
@@ -727,9 +735,9 @@ async function(e){
         }
 
 
-        /* =================================================
-           BENİ HATIRLA
-        ================================================= */
+        /* ================================================
+           4. BENİ HATIRLA
+        ================================================ */
 
         if(remember.checked){
 
@@ -747,25 +755,120 @@ async function(e){
         }
 
 
-        /* =================================================
-           BAŞARILI
-        ================================================= */
+        /* ================================================
+           5. ADMIN KONTROLÜ
+           
+           Login cevabına güvenmek yerine
+           server'daki /api/admin/me endpointini
+           kontrol ediyoruz.
+        ================================================ */
 
-        showMessage(
-            "Giriş başarılı. Ana sayfaya yönlendiriliyorsunuz...",
-            "success"
-        );
+        let isAdmin = false;
 
 
-        setTimeout(function(){
+        if(data.token){
 
-            window.location.href =
-                "/admin.html";
+            try{
 
-        },700);
+                const adminResponse =
+                    await fetch(
+                        "/api/admin/me",
+                        {
+                            method:"GET",
+
+                            headers:{
+                                "Authorization":
+                                    "Bearer " +
+                                    data.token
+                            },
+
+                            credentials:"include"
+                        }
+                    );
+
+
+                if(adminResponse.ok){
+
+                    const adminData =
+                        await adminResponse.json();
+
+                    /*
+                       /api/admin/me
+                       şu yapılardan birini döndürebilir:
+
+                       { user:{ is_admin:true } }
+
+                       veya
+
+                       { is_admin:true }
+                    */
+
+                    const adminUser =
+                        adminData.user ||
+                        adminData;
+
+
+                    isAdmin =
+                        adminUser.is_admin === true;
+
+                }
+
+            }catch(adminError){
+
+                console.log(
+                    "Admin kontrolü:",
+                    adminError
+                );
+
+                isAdmin = false;
+
+            }
+
+        }
+
+
+        /* ================================================
+           6. YÖNLENDİRME
+        ================================================ */
+
+        if(isAdmin){
+
+            showMessage(
+                "Admin girişi başarılı. Yönetim paneli açılıyor...",
+                "success"
+            );
+
+            setTimeout(function(){
+
+                window.location.href =
+                    "/admin.html";
+
+            },500);
+
+        }else{
+
+            showMessage(
+                "Giriş başarılı. Ana sayfaya yönlendiriliyorsunuz...",
+                "success"
+            );
+
+            setTimeout(function(){
+
+                window.location.href =
+                    "/index.html";
+
+            },500);
+
+        }
 
 
     }catch(error){
+
+        console.error(
+            "LOGIN ERROR:",
+            error
+        );
+
 
         showMessage(
             error.message ||
