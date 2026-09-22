@@ -1023,6 +1023,26 @@ async function checkAdmin() {
 
   } catch (error) {
 
+    async function checkAdmin() {
+
+  if (!token) {
+    location.href = "/login.html";
+    return false;
+  }
+
+  try {
+
+    const data = await api("/api/admin/me");
+
+    const user = data.user || data;
+
+    document.getElementById("adminUser").textContent =
+      user.email || user.name || "Admin";
+
+    return true;
+
+  } catch (error) {
+
     localStorage.removeItem(tokenKey);
     localStorage.removeItem("panelmarket_user");
 
@@ -1031,7 +1051,6 @@ async function checkAdmin() {
     return false;
   }
 }
-
 
 /* ---------------------------
    LOAD PRODUCTS
