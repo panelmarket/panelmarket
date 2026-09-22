@@ -897,12 +897,14 @@ document
 .getElementById("forgotPassword")
 .addEventListener(
 "click",
-function(e){
+async function(e){
 
     e.preventDefault();
 
     const email =
-        emailInput.value.trim();
+        emailInput.value
+        .trim()
+        .toLowerCase();
 
     if(!email){
 
@@ -917,10 +919,90 @@ function(e){
 
     }
 
+    const forgotButton = this;
+
+    forgotButton.style.pointerEvents = "none";
+    forgotButton.style.opacity = "0.6";
+
     showMessage(
-        "Şifre sıfırlama sistemi henüz etkinleştirilmedi.",
+        "Şifre sıfırlama bağlantısı gönderiliyor...",
         "success"
     );
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/forgot-password",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "application/json"
+                    },
+
+                    credentials:"include",
+
+                    cache:"no-store",
+
+                    body:JSON.stringify({
+                        email:email
+                    })
+                }
+            );
+
+        let data = {};
+
+        try{
+
+            data =
+                await response.json();
+
+        }catch(error){
+
+            data = {};
+
+        }
+
+        if(!response.ok){
+
+            throw new Error(
+                data.error ||
+                data.message ||
+                "Şifre sıfırlama isteği gönderilemedi."
+            );
+
+        }
+
+        showMessage(
+            data.message ||
+            "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.",
+            "success"
+        );
+
+    }catch(error){
+
+        console.error(
+            "FORGOT PASSWORD ERROR:",
+            error
+        );
+
+        showMessage(
+            error.message ||
+            "Şifre sıfırlama işlemi başarısız oldu.",
+            "error"
+        );
+
+    }finally{
+
+        forgotButton.style.pointerEvents = "";
+        forgotButton.style.opacity = "";
+
+    }
 
 });
 
