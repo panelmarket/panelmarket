@@ -1,3 +1,1069 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PanelMarket Admin</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+  background:#070a0f;
+  color:#f5f7fb;
+  font-family:Inter,Arial,sans-serif;
+}
+
+body{
+  min-height:100vh;
+}
+
+button,
+input,
+select,
+textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+.header{
+  height:76px;
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(7,10,15,.92);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid #1c2531;
+}
+
+.header-inner{
+  width:min(1400px,94%);
+  height:100%;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.logo-area{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.logo{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#1677ff,#7347ff);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  box-shadow:0 10px 30px rgba(37,140,255,.25);
+}
+
+.logo-text{
+  font-size:19px;
+  font-weight:800;
+}
+
+.logo-text span{
+  color:#6e9fff;
+}
+
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.admin-user{
+  color:#9ba7b8;
+  font-size:14px;
+}
+
+.logout{
+  border:1px solid #263343;
+  background:#0d131b;
+  color:#fff;
+  padding:10px 15px;
+  border-radius:10px;
+}
+
+.logout:hover{
+  border-color:#398cff;
+}
+
+.layout{
+  width:min(1400px,94%);
+  margin:30px auto 60px;
+  display:grid;
+  grid-template-columns:230px 1fr;
+  gap:25px;
+}
+
+.sidebar{
+  background:#0b1017;
+  border:1px solid #1b2531;
+  border-radius:18px;
+  padding:14px;
+  height:max-content;
+  position:sticky;
+  top:100px;
+}
+
+.side-title{
+  padding:10px 12px 15px;
+  font-size:12px;
+  color:#6e7d91;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:800;
+}
+
+.side-btn{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:#8e9aac;
+  padding:13px 12px;
+  border-radius:10px;
+  text-align:left;
+  margin-bottom:4px;
+  transition:.2s;
+}
+
+.side-btn:hover,
+.side-btn.active{
+  background:#121d2b;
+  color:#fff;
+}
+
+.side-btn.active{
+  box-shadow:inset 3px 0 #2988ff;
+}
+
+.main{
+  min-width:0;
+}
+
+.page-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:20px;
+  margin-bottom:24px;
+}
+
+.page-title h1{
+  margin:0;
+  font-size:32px;
+  letter-spacing:-1px;
+}
+
+.page-title p{
+  margin:7px 0 0;
+  color:#778599;
+}
+
+.primary{
+  border:0;
+  background:#1677ff;
+  color:#fff;
+  padding:13px 19px;
+  border-radius:11px;
+  font-weight:800;
+  box-shadow:0 10px 25px rgba(22,119,255,.18);
+}
+
+.primary:hover{
+  background:#2585ff;
+}
+
+.primary:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.secondary{
+  border:1px solid #273343;
+  background:#0d131b;
+  color:#fff;
+  padding:12px 17px;
+  border-radius:10px;
+}
+
+.danger{
+  border:1px solid #54262d;
+  background:#211015;
+  color:#ff8c98;
+  padding:10px 13px;
+  border-radius:9px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:22px;
+}
+
+.stat{
+  background:#0d131b;
+  border:1px solid #1c2633;
+  border-radius:15px;
+  padding:20px;
+}
+
+.stat-label{
+  color:#748298;
+  font-size:13px;
+}
+
+.stat-value{
+  font-size:27px;
+  font-weight:900;
+  margin-top:8px;
+}
+
+.panel{
+  background:#0d131b;
+  border:1px solid #1c2633;
+  border-radius:18px;
+  overflow:hidden;
+}
+
+.panel-header{
+  padding:19px 20px;
+  border-bottom:1px solid #1c2633;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.panel-header h2{
+  margin:0;
+  font-size:18px;
+}
+
+.search{
+  width:280px;
+  max-width:100%;
+  height:43px;
+  background:#080d13;
+  border:1px solid #202b39;
+  border-radius:9px;
+  padding:0 13px;
+  color:#fff;
+  outline:none;
+}
+
+.search:focus,
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color:#368cff;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:1000px;
+}
+
+th,
+td{
+  padding:15px 17px;
+  text-align:left;
+  border-bottom:1px solid #18212c;
+  white-space:nowrap;
+}
+
+th{
+  color:#718095;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+td{
+  font-size:14px;
+}
+
+.product-name{
+  font-weight:800;
+}
+
+.product-id{
+  color:#65748a;
+  font-size:12px;
+  margin-top:4px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding:5px 8px;
+  border-radius:7px;
+  font-size:11px;
+  font-weight:800;
+  background:rgba(36,137,255,.13);
+  color:#65adff;
+}
+
+.badge.green{
+  background:rgba(32,194,125,.12);
+  color:#4cdda1;
+}
+
+.badge.red{
+  background:rgba(255,67,88,.12);
+  color:#ff8490;
+}
+
+.actions{
+  display:flex;
+  gap:7px;
+}
+
+.action-btn{
+  border:1px solid #263343;
+  background:#101720;
+  color:#dce5f1;
+  padding:8px 10px;
+  border-radius:8px;
+  font-size:12px;
+}
+
+.action-btn:hover{
+  border-color:#398cff;
+}
+
+.action-btn.delete:hover{
+  border-color:#e84d5d;
+  color:#ff8490;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(7px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:500;
+  padding:20px;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  width:min(760px,100%);
+  max-height:92vh;
+  overflow:auto;
+  background:#0b1017;
+  border:1px solid #263242;
+  border-radius:20px;
+  box-shadow:0 30px 100px rgba(0,0,0,.55);
+}
+
+.modal-header{
+  padding:20px 22px;
+  border-bottom:1px solid #1d2734;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.modal-header h2{
+  margin:0;
+  font-size:20px;
+}
+
+.close{
+  border:0;
+  background:transparent;
+  color:#8491a3;
+  font-size:25px;
+  width:38px;
+  height:38px;
+  border-radius:9px;
+}
+
+.close:hover{
+  background:#151d27;
+  color:#fff;
+}
+
+.form{
+  padding:22px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.field.full{
+  grid-column:1/-1;
+}
+
+.field label{
+  font-size:12px;
+  color:#8c99aa;
+  font-weight:700;
+}
+
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  background:#070c12;
+  color:#fff;
+  border:1px solid #222e3d;
+  border-radius:9px;
+  outline:none;
+  padding:12px 13px;
+}
+
+.field input,
+.field select{
+  height:45px;
+}
+
+.field textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+.checkbox{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-height:45px;
+  color:#d8e0ea;
+}
+
+.checkbox input{
+  width:18px;
+  height:18px;
+}
+
+.form-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:22px;
+  padding-top:18px;
+  border-top:1px solid #1c2633;
+}
+
+.alert{
+  display:none;
+  padding:13px 15px;
+  border-radius:10px;
+  margin-bottom:17px;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.alert.show{
+  display:block;
+}
+
+.alert.error{
+  background:#251117;
+  border:1px solid #572832;
+  color:#ff9aa4;
+}
+
+.alert.success{
+  background:#0b2119;
+  border:1px solid #1d5a43;
+  color:#67d9a5;
+}
+
+.loading{
+  padding:45px;
+  text-align:center;
+  color:#728096;
+}
+
+.empty{
+  padding:55px 20px;
+  text-align:center;
+  color:#718096;
+}
+
+@media(max-width:1000px){
+
+  .layout{
+    grid-template-columns:1fr;
+  }
+
+  .sidebar{
+    position:static;
+    display:flex;
+    overflow:auto;
+    gap:5px;
+  }
+
+  .side-title{
+    display:none;
+  }
+
+  .side-btn{
+    min-width:max-content;
+    margin:0;
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:650px){
+
+  .header{
+    height:auto;
+    min-height:70px;
+  }
+
+  .header-inner{
+    padding:12px 0;
+  }
+
+  .admin-user{
+    display:none;
+  }
+
+  .layout{
+    width:94%;
+    margin-top:20px;
+  }
+
+  .page-title{
+    flex-direction:column;
+  }
+
+  .page-title .primary{
+    width:100%;
+  }
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .stat{
+    padding:15px;
+  }
+
+  .stat-value{
+    font-size:22px;
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .field.full{
+    grid-column:auto;
+  }
+
+  .panel-header{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .search{
+    width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="header-inner">
+
+<div class="logo-area">
+
+<div class="logo">P</div>
+
+<div class="logo-text">
+Panel<span>Market</span> Admin
+</div>
+
+</div>
+
+<div class="header-right">
+
+<div
+class="admin-user"
+id="adminUser">
+Kontrol ediliyor...
+</div>
+
+<button
+class="logout"
+id="logoutBtn">
+ÇIKIŞ YAP
+</button>
+
+</div>
+
+</div>
+
+</header>
+
+
+<div class="layout">
+
+<aside class="sidebar">
+
+<div class="side-title">
+Yönetim
+</div>
+
+<button
+class="side-btn"
+onclick="location.href='/index.html'">
+🏠 Ana Sayfa
+</button>
+
+<button
+class="side-btn active">
+📦 Ürünler
+</button>
+
+<button
+class="side-btn"
+onclick="location.href='/admin.html#users'">
+👥 Kullanıcılar
+</button>
+
+<button
+class="side-btn"
+onclick="location.href='/admin.html#orders'">
+🛒 Siparişler
+</button>
+
+<button
+class="side-btn"
+onclick="location.href='/admin.html#transactions'">
+💳 İşlemler
+</button>
+
+</aside>
+
+
+<main class="main">
+
+<div class="page-title">
+
+<div>
+
+<h1>Ürünler</h1>
+
+<p>
+PanelMarket ürün kataloğunu buradan tamamen yönet.
+</p>
+
+</div>
+
+<button
+class="primary"
+id="newProductBtn">
++ YENİ ÜRÜN
+</button>
+
+</div>
+
+
+<div
+id="alert"
+class="alert">
+</div>
+
+
+<section class="stats">
+
+<div class="stat">
+
+<div class="stat-label">
+Toplam Ürün
+</div>
+
+<div
+class="stat-value"
+id="totalProducts">
+0
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-label">
+Aktif Ürün
+</div>
+
+<div
+class="stat-value"
+id="activeProducts">
+0
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-label">
+Pasif Ürün
+</div>
+
+<div
+class="stat-value"
+id="passiveProducts">
+0
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-label">
+Katalog Durumu
+</div>
+
+<div
+class="stat-value"
+id="catalogStatus">
+—
+</div>
+
+</div>
+
+</section>
+
+
+<section class="panel">
+
+<div class="panel-header">
+
+<h2>Ürün Kataloğu</h2>
+
+<input
+class="search"
+id="searchInput"
+type="search"
+placeholder="Ürün ara...">
+
+</div>
+
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Ürün</th>
+<th>Kategori</th>
+<th>Fiyat</th>
+<th>Rozet</th>
+<th>Teslimat</th>
+<th>Durum</th>
+<th>Sıra</th>
+<th>İşlem</th>
+
+</tr>
+
+</thead>
+
+<tbody id="productsTable">
+
+<tr>
+
+<td colspan="8">
+
+<div class="loading">
+Ürünler yükleniyor...
+</div>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</main>
+
+</div>
+
+
+<div
+class="modal"
+id="productModal">
+
+<div class="modal-box">
+
+<div class="modal-header">
+
+<h2 id="modalTitle">
+Yeni Ürün
+</h2>
+
+<button
+class="close"
+id="closeModal"
+type="button">
+×
+</button>
+
+</div>
+
+
+<form
+class="form"
+id="productForm">
+
+<div class="form-grid">
+
+
+<div class="field">
+
+<label>Ürün ID / Slug</label>
+
+<input
+id="productId"
+type="text"
+placeholder="admin-panel"
+required>
+
+</div>
+
+
+<div class="field">
+
+<label>Ürün Adı</label>
+
+<input
+id="productName"
+type="text"
+placeholder="Profesyonel Admin Paneli"
+required>
+
+</div>
+
+
+<div class="field">
+
+<label>Kategori</label>
+
+<input
+id="productCategory"
+type="text"
+placeholder="Admin Paneli"
+required>
+
+</div>
+
+
+<div class="field">
+
+<label>Fiyat (₺)</label>
+
+<input
+id="productPrice"
+type="number"
+min="0.01"
+step="0.01"
+placeholder="1499"
+required>
+
+</div>
+
+
+<div class="field">
+
+<label>Eski Fiyat (₺)</label>
+
+<input
+id="productOldPrice"
+type="number"
+min="0"
+step="0.01"
+placeholder="1999">
+
+</div>
+
+
+<div class="field">
+
+<label>Rozet</label>
+
+<input
+id="productBadge"
+type="text"
+placeholder="ÇOK SATAN">
+
+</div>
+
+
+<div class="field">
+
+<label>Teslimat</label>
+
+<input
+id="productDelivery"
+type="text"
+placeholder="Hemen"
+value="Hemen">
+
+</div>
+
+
+<div class="field">
+
+<label>Güncelleme</label>
+
+<input
+id="productUpdate"
+type="text"
+placeholder="1 Yıl"
+value="1 Yıl">
+
+</div>
+
+
+<div class="field">
+
+<label>Destek</label>
+
+<input
+id="productSupport"
+type="text"
+placeholder="30 Gün"
+value="30 Gün">
+
+</div>
+
+
+<div class="field">
+
+<label>Sıralama</label>
+
+<input
+id="productSort"
+type="number"
+min="0"
+step="1"
+value="0">
+
+</div>
+
+
+<div class="field full">
+
+<label>Açıklama</label>
+
+<textarea
+id="productDescription"
+placeholder="Ürün hakkında kısa açıklama..."></textarea>
+
+</div>
+
+
+<div class="field full">
+
+<label>Ürün Durumu</label>
+
+<label class="checkbox">
+
+<input
+id="productActive"
+type="checkbox"
+checked>
+
+<span>Ürün satışta / aktif</span>
+
+</label>
+
+</div>
+
+
+</div>
+
+
+<div class="form-actions">
+
+<button
+type="button"
+class="secondary"
+id="cancelBtn">
+İPTAL
+</button>
+
+<button
+type="submit"
+class="primary"
+id="saveBtn">
+ÜRÜNÜ KAYDET
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+
 <script>
 
 "use strict";
@@ -2265,3 +3331,7 @@ document.addEventListener(
 
 })();
 </script>
+
+</body>
+</html>
+               HAZIR YAP HAZIRLA VER YAPITŞRIMALIK
