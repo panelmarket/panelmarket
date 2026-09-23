@@ -7,6 +7,7 @@
 <title>Giriş Yap - PanelMarket</title>
 
 <style>
+
 *{
     margin:0;
     padding:0;
@@ -31,6 +32,10 @@ button,
 input{
     font-family:inherit;
 }
+
+/* =========================================
+   HEADER
+========================================= */
 
 header{
     height:76px;
@@ -80,11 +85,18 @@ header{
     color:#fff;
 }
 
+
 /* =========================================
-   INDEX.HTML İLE AYNI HEADER BUTONLARI
+   INDEX.HTML İLE AYNI BUTONLAR
 ========================================= */
 
 .header-buttons{
+    display:flex;
+    align-items:center;
+}
+
+#guestButtons,
+#userButtons{
     display:flex;
     align-items:center;
     gap:10px;
@@ -92,6 +104,7 @@ header{
 
 .header-btn{
     box-sizing:border-box;
+
     display:inline-flex;
     align-items:center;
     justify-content:center;
@@ -108,11 +121,13 @@ header{
     line-height:1;
 
     white-space:nowrap;
-
     text-decoration:none;
+
+    margin:0;
 }
 
 /* GİRİŞ YAP */
+
 .login-link{
     border:1px solid #273241;
     background:transparent;
@@ -120,6 +135,7 @@ header{
 }
 
 /* KAYIT OL */
+
 .register{
     border:1px solid #1677ff;
     background:#1677ff;
@@ -127,6 +143,7 @@ header{
 }
 
 /* Hover */
+
 .login-link:hover{
     color:#fff;
 }
@@ -138,27 +155,8 @@ header{
 
 
 /* =========================================
-   MOBİL
+   ANA ALAN
 ========================================= */
-
-@media(max-width:700px){
-
-    .header-buttons{
-        gap:8px;
-    }
-
-    .header-btn{
-        min-height:40px;
-        height:40px;
-        padding:10px 13px;
-        font-size:12px;
-    }
-
-    .header-buttons .login-link{
-        display:none;
-    }
-
-}
 
 .main{
     flex:1;
@@ -176,6 +174,7 @@ header{
 .login-card{
     position:relative;
     overflow:hidden;
+
     background:
         radial-gradient(
             circle at 50% -20%,
@@ -183,34 +182,49 @@ header{
             transparent 42%
         ),
         #0d131b;
+
     border:1px solid #1c2633;
     border-radius:22px;
+
     padding:35px;
+
     box-shadow:0 25px 80px rgba(0,0,0,.28);
 }
 
 .login-card::before{
     content:"";
     position:absolute;
+
     top:-100px;
     left:50%;
+
     transform:translateX(-50%);
+
     width:250px;
     height:180px;
+
     background:rgba(115,71,255,.10);
+
     filter:blur(55px);
+
     pointer-events:none;
 }
 
 .login-logo{
     width:58px;
     height:58px;
+
     margin:0 auto 20px;
+
     border-radius:17px;
+
     display:grid;
     place-items:center;
+
     background:linear-gradient(135deg,#1677ff,#7347ff);
+
     box-shadow:0 12px 40px rgba(22,119,255,.25);
+
     font-size:24px;
     font-weight:900;
 }
@@ -227,7 +241,9 @@ header{
 
 .login-title p{
     margin-top:8px;
+
     color:#8995a7;
+
     font-size:13px;
     line-height:1.5;
 }
@@ -242,8 +258,11 @@ header{
 
 label{
     display:block;
+
     margin-bottom:8px;
+
     color:#c7d0dc;
+
     font-size:12px;
     font-weight:800;
 }
@@ -251,13 +270,19 @@ label{
 .input{
     width:100%;
     height:50px;
+
     padding:0 15px;
+
     border-radius:10px;
     border:1px solid #253140;
+
     outline:none;
+
     background:#080d13;
     color:#fff;
+
     font-size:14px;
+
     transition:.2s;
 }
 
@@ -280,13 +305,19 @@ label{
 
 .show-password{
     position:absolute;
+
     right:10px;
     top:50%;
+
     transform:translateY(-50%);
+
     border:0;
     background:transparent;
+
     color:#718096;
+
     cursor:pointer;
+
     font-size:11px;
     font-weight:800;
 }
@@ -299,15 +330,20 @@ label{
     display:flex;
     justify-content:space-between;
     align-items:center;
+
     margin:5px 0 20px;
+
     font-size:12px;
 }
 
 .remember{
     display:flex;
     align-items:center;
+
     gap:8px;
+
     color:#8995a7;
+
     margin:0;
 }
 
@@ -326,13 +362,18 @@ label{
 .login-button{
     width:100%;
     height:50px;
+
     border:0;
     border-radius:10px;
+
     background:#1677ff;
     color:#fff;
+
     cursor:pointer;
+
     font-size:13px;
     font-weight:900;
+
     transition:.2s;
 }
 
@@ -349,33 +390,47 @@ label{
 
 .message{
     display:none;
+
     padding:13px;
+
     border-radius:10px;
+
     margin-bottom:17px;
+
     font-size:12px;
     line-height:1.5;
 }
 
 .message.error{
     display:block;
+
     color:#ff9b9b;
+
     background:rgba(255,60,60,.08);
+
     border:1px solid rgba(255,60,60,.25);
 }
 
 .message.success{
     display:block;
+
     color:#8ff0b4;
+
     background:rgba(40,210,120,.08);
+
     border:1px solid rgba(40,210,120,.25);
 }
 
 .register-area{
     text-align:center;
+
     margin-top:25px;
     padding-top:23px;
+
     border-top:1px solid #19222d;
+
     color:#8995a7;
+
     font-size:12px;
 }
 
@@ -390,28 +445,57 @@ label{
 
 .security{
     margin-top:18px;
+
     padding:13px;
+
     border-radius:10px;
+
     background:rgba(22,119,255,.06);
+
     border:1px solid rgba(22,119,255,.14);
+
     color:#7f90a5;
+
     text-align:center;
+
     font-size:11px;
     line-height:1.5;
 }
 
 footer{
     border-top:1px solid #1c2531;
+
     padding:27px 3%;
+
     text-align:center;
+
     color:#657184;
+
     font-size:12px;
 }
+
+
+/* =========================================
+   MOBİL
+========================================= */
 
 @media(max-width:700px){
 
     .nav{
         display:none;
+    }
+
+    .header-buttons{
+        gap:8px;
+    }
+
+    .header-btn{
+        min-height:40px;
+        height:40px;
+
+        padding:10px 13px;
+
+        font-size:12px;
     }
 
     .header-buttons .login-link{
@@ -425,7 +509,9 @@ footer{
     .login-title h1{
         font-size:27px;
     }
+
 }
+
 </style>
 
 </head>
@@ -449,19 +535,26 @@ footer{
 
 <div class="header-buttons">
 
-<a href="/login.html"
-class="header-btn login-link">
-GİRİŞ YAP </a>
+<a
+    href="/login.html"
+    class="header-btn login-link"
+>
+    GİRİŞ YAP
+</a>
 
-<a href="/register.html"
-class="header-btn register">
-KAYIT OL </a>
+<a
+    href="/register.html"
+    class="header-btn register"
+>
+    KAYIT OL
+</a>
 
 </div>
 
 </div>
 
 </header>
+
 
 <main class="main">
 
@@ -484,9 +577,11 @@ PanelMarket hesabınıza giriş yaparak
 
 </div>
 
+
 <form class="form" id="loginForm">
 
 <div id="message" class="message"></div>
+
 
 <div class="form-group">
 
@@ -495,16 +590,16 @@ E-POSTA
 </label>
 
 <input
-id="email"
-class="input"
-type="email"
-autocomplete="email"
-placeholder="[ornek@email.com](mailto:ornek@email.com)"
-required
-
+    id="email"
+    class="input"
+    type="email"
+    autocomplete="email"
+    placeholder="ornek@email.com"
+    required
 >
 
 </div>
+
 
 <div class="form-group">
 
@@ -515,65 +610,72 @@ required
 <div class="password-box">
 
 <input
-id="password"
-class="input"
-type="password"
-autocomplete="current-password"
-placeholder="Şifrenizi girin"
-required
-
+    id="password"
+    class="input"
+    type="password"
+    autocomplete="current-password"
+    placeholder="Şifrenizi girin"
+    required
 >
 
 <button
-type="button"
-class="show-password"
-id="showPassword">
-GÖSTER </button>
+    type="button"
+    class="show-password"
+    id="showPassword"
+>
+    GÖSTER
+</button>
 
 </div>
 
 </div>
+
 
 <div class="options">
 
 <label class="remember">
 
 <input
-type="checkbox"
-id="remember"
-
+    type="checkbox"
+    id="remember"
 >
 
 <span>Beni hatırla</span>
 
 </label>
 
-<a href="#" class="forgot" id="forgotPassword">
-Şifremi unuttum
+<a
+    href="#"
+    class="forgot"
+    id="forgotPassword"
+>
+    Şifremi unuttum
 </a>
 
 </div>
 
+
 <button
-type="submit"
-class="login-button"
-id="loginButton">
-
-GİRİŞ YAP
-
+    type="submit"
+    class="login-button"
+    id="loginButton"
+>
+    GİRİŞ YAP
 </button>
 
 </form>
+
 
 <div class="register-area">
 
 Hesabınız yok mu?
 
 <a href="/register.html">
-Hemen kayıt olun
+    Hemen kayıt olun
 </a>
 
 </div>
+
 
 <div class="security">
 🔒 Hesabınız güvenli bağlantı üzerinden korunmaktadır.
@@ -585,13 +687,16 @@ Hemen kayıt olun
 
 </main>
 
+
 <footer>
 © 2026 PanelMarket — Güvenli yazılım alışverişi
 </footer>
 
+
 <script>
 
 "use strict";
+
 
 const form =
     document.getElementById("loginForm");
@@ -719,7 +824,7 @@ async function(e){
 
         /* =================================================
            ESKİ TOKEN TEMİZLE
-           
+
            Yeni giriş ile eski hesabın oturumu
            birbirine karışmasın.
         ================================================= */
@@ -861,10 +966,6 @@ async function(e){
 
         /* =================================================
            ADMIN KONTROLÜ
-           
-           SADECE LOGIN API'DEN GELEN BİLGİ KULLANILIYOR.
-           
-           Normal kullanıcı admin kontrolüne sokulmuyor.
         ================================================= */
 
         const isAdmin =
@@ -903,9 +1004,6 @@ async function(e){
 
         /* =================================================
            NORMAL KULLANICI
-           
-           ARTIK INDEX.HTML DEĞİL,
-           HESABIM.HTML AÇILIYOR.
         ================================================= */
 
         showMessage(
@@ -979,15 +1077,22 @@ async function(e){
 
     }
 
-    const forgotButton = this;
 
-    forgotButton.style.pointerEvents = "none";
-    forgotButton.style.opacity = "0.6";
+    const forgotButton =
+        this;
+
+    forgotButton.style.pointerEvents =
+        "none";
+
+    forgotButton.style.opacity =
+        "0.6";
+
 
     showMessage(
         "Şifre sıfırlama bağlantısı gönderiliyor...",
         "success"
     );
+
 
     try{
 
@@ -1015,6 +1120,7 @@ async function(e){
                 }
             );
 
+
         let data = {};
 
         try{
@@ -1028,6 +1134,7 @@ async function(e){
 
         }
 
+
         if(!response.ok){
 
             throw new Error(
@@ -1038,11 +1145,13 @@ async function(e){
 
         }
 
+
         showMessage(
             data.message ||
             "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.",
             "success"
         );
+
 
     }catch(error){
 
@@ -1057,10 +1166,14 @@ async function(e){
             "error"
         );
 
+
     }finally{
 
-        forgotButton.style.pointerEvents = "";
-        forgotButton.style.opacity = "";
+        forgotButton.style.pointerEvents =
+            "";
+
+        forgotButton.style.opacity =
+            "";
 
     }
 
