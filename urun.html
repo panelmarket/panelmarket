@@ -289,28 +289,24 @@ header{
     display:inline-flex !important;
 
     align-items:center !important;
-
     justify-content:center !important;
 
-    width:96px !important;
+    width:auto !important;
+    min-width:0 !important;
 
-    min-width:96px !important;
+    min-height:42px !important;
+    height:42px !important;
 
-    height:44px !important;
-
-    min-height:44px !important;
-
-    padding:0 !important;
+    padding:11px 16px !important;
 
     margin:0 !important;
 
-    border:0 !important;
+    border:1px solid #1677ff !important;
 
-    border-radius:10px !important;
+    border-radius:9px !important;
 
-    background:#0866e8 !important;
-
-    background-color:#0866e8 !important;
+    background:#1677ff !important;
+    background-color:#1677ff !important;
 
     color:#fff !important;
 
@@ -337,31 +333,33 @@ header{
     cursor:pointer !important;
 
     appearance:none !important;
-
     -webkit-appearance:none !important;
 
     outline:none !important;
 
     transition:none !important;
-
 }
+
+
+/* =========================================
+   ÇIKIŞ HOVER / ACTIVE / FOCUS
+========================================= */
 
 #headerButtons #userButtons button.logout-button:hover,
 #headerButtons #userButtons button.logout-button:active,
 #headerButtons #userButtons button.logout-button:focus{
 
-    background:#0866e8 !important;
+    background:#1677ff !important;
 
-    background-color:#0866e8 !important;
+    background-color:#1677ff !important;
 
-    border:0 !important;
+    border:1px solid #1677ff !important;
 
     color:#fff !important;
 
     box-shadow:none !important;
 
     outline:none !important;
-
 }
 
 
@@ -441,7 +439,6 @@ header{
     #headerButtons a.btn{
 
         min-height:40px !important;
-
         height:40px !important;
 
         padding:10px 13px !important;
@@ -452,18 +449,21 @@ header{
 
     #headerButtons #userButtons button.logout-button{
 
-        width:96px !important;
+        width:auto !important;
+        min-width:0 !important;
 
-        min-width:96px !important;
+        height:40px !important;
+        min-height:40px !important;
 
-        height:42px !important;
+        padding:10px 13px !important;
 
-        min-height:42px !important;
+        font-size:12px !important;
+
+        border-radius:9px !important;
 
     }
 
 }
-
 
 /* =========================================
    SAYFA
