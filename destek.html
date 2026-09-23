@@ -203,6 +203,21 @@ body{
 }
 
 
+/* HEADER BUTONLARI */
+
+.support-header-buttons{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.support-logout-button{
+    border:0;
+    cursor:pointer;
+    font-family:inherit;
+}
+
+
 /* MOBİL */
 
 @media(max-width:800px){
@@ -221,6 +236,10 @@ body{
 
     .support-top h1{
         font-size:30px;
+    }
+
+    .support-header-buttons{
+        gap:7px;
     }
 
 }
@@ -268,19 +287,22 @@ Destek
 </nav>
 
 
-<div class="header-buttons">
+<div class="header-buttons support-header-buttons">
 
 <a
 class="btn outline"
-href="/index.html">
-Ana Sayfa
-</a>
-
-<a
-class="btn blue"
 href="/hesabim.html">
 Hesabım
 </a>
+
+<button
+class="btn blue support-logout-button"
+type="button"
+onclick="logoutUser()">
+
+ÇIKIŞ YAP
+
+</button>
 
 </div>
 
@@ -555,178 +577,281 @@ Yazılım Panelleri • Lisans • Destek
 
 <script>
 
+
+/* =================================
+   ÇIKIŞ YAP
+================================= */
+
+async function logoutUser(){
+
+    try{
+
+        const token =
+            localStorage.getItem(
+                "panelmarket_token"
+            ) ||
+            sessionStorage.getItem(
+                "panelmarket_token"
+            ) ||
+            "";
+
+
+        const headers = {
+            "Accept":"application/json"
+        };
+
+
+        if(token){
+
+            headers.Authorization =
+                "Bearer " + token;
+
+        }
+
+
+        await fetch(
+            "/api/logout",
+            {
+                method:"POST",
+                headers:headers,
+                credentials:"include",
+                cache:"no-store"
+            }
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Çıkış API hatası:",
+            error
+        );
+
+
+    }finally{
+
+        try{
+
+            localStorage.removeItem(
+                "panelmarket_token"
+            );
+
+            localStorage.removeItem(
+                "panelmarket_user"
+            );
+
+            sessionStorage.removeItem(
+                "panelmarket_token"
+            );
+
+            sessionStorage.removeItem(
+                "panelmarket_user"
+            );
+
+        }catch(error){
+
+            console.error(
+                "Oturum temizleme hatası:",
+                error
+            );
+
+        }
+
+
+        window.location.href =
+            "/index.html";
+
+    }
+
+}
+
+
+/* =================================
+   DESTEK TALEBİ
+================================= */
+
 async function sendSupport(event){
 
-event.preventDefault();
+    event.preventDefault();
 
 
-const button =
-document.getElementById(
-"supportSubmit"
-);
-
-const result =
-document.getElementById(
-"supportResult"
-);
+    const button =
+        document.getElementById(
+            "supportSubmit"
+        );
 
 
-const name =
-document.getElementById(
-"supportName"
-).value.trim();
+    const result =
+        document.getElementById(
+            "supportResult"
+        );
 
 
-const email =
-document.getElementById(
-"supportEmail"
-).value.trim();
+    const name =
+        document.getElementById(
+            "supportName"
+        ).value.trim();
 
 
-const subject =
-document.getElementById(
-"supportSubject"
-).value;
+    const email =
+        document.getElementById(
+            "supportEmail"
+        ).value.trim();
 
 
-const message =
-document.getElementById(
-"supportMessage"
-).value.trim();
+    const subject =
+        document.getElementById(
+            "supportSubject"
+        ).value;
 
 
-if(
-!name ||
-!email ||
-!subject ||
-!message
-){
-
-return;
-
-}
+    const message =
+        document.getElementById(
+            "supportMessage"
+        ).value.trim();
 
 
-button.disabled=true;
+    if(
+        !name ||
+        !email ||
+        !subject ||
+        !message
+    ){
 
-button.textContent=
-"GÖNDERİLİYOR...";
+        return;
 
-
-try{
-
-const token =
-localStorage.getItem(
-"panelmarket_token"
-) ||
-sessionStorage.getItem(
-"panelmarket_token"
-) ||
-"";
+    }
 
 
-const headers={
+    button.disabled = true;
 
-"Content-Type":
-"application/json",
-
-"Accept":
-"application/json"
-
-};
+    button.textContent =
+        "GÖNDERİLİYOR...";
 
 
-if(token){
+    try{
 
-headers.Authorization =
-"Bearer " + token;
-
-}
-
-
-const response =
-await fetch(
-"/api/support",
-{
-method:"POST",
-headers,
-credentials:"include",
-cache:"no-store",
-
-body:JSON.stringify({
-
-name,
-email,
-subject,
-message
-
-})
-
-}
-);
+        const token =
+            localStorage.getItem(
+                "panelmarket_token"
+            ) ||
+            sessionStorage.getItem(
+                "panelmarket_token"
+            ) ||
+            "";
 
 
-const data =
-await response
-.json()
-.catch(()=>({}));
+        const headers = {
+
+            "Content-Type":
+                "application/json",
+
+            "Accept":
+                "application/json"
+
+        };
 
 
-if(!response.ok){
+        if(token){
 
-throw new Error(
-data.error ||
-"Destek talebi gönderilemedi."
-);
+            headers.Authorization =
+                "Bearer " + token;
 
-}
+        }
 
 
-result.style.display="block";
+        const response =
+            await fetch(
+                "/api/support",
+                {
+                    method:"POST",
+                    headers:headers,
+                    credentials:"include",
+                    cache:"no-store",
 
-result.style.background=
-"rgba(40,210,120,.1)";
+                    body:JSON.stringify({
 
-result.style.border=
-"1px solid rgba(40,210,120,.25)";
+                        name:name,
 
-result.style.color=
-"#73e6a3";
+                        email:email,
 
-result.textContent=
-"Destek talebiniz başarıyla gönderildi.";
+                        subject:subject,
 
+                        message:message
 
-document
-.getElementById("supportForm")
-.reset();
+                    })
+
+                }
+            );
 
 
-}catch(error){
+        const data =
+            await response
+                .json()
+                .catch(()=>({}));
 
-result.style.display="block";
 
-result.style.background=
-"rgba(255,60,60,.1)";
+        if(!response.ok){
 
-result.style.border=
-"1px solid rgba(255,60,60,.3)";
+            throw new Error(
+                data.error ||
+                "Destek talebi gönderilemedi."
+            );
 
-result.style.color=
-"#ff9b9b";
+        }
 
-result.textContent=
-error.message ||
-"Bir hata oluştu.";
 
-}finally{
+        result.style.display =
+            "block";
 
-button.disabled=false;
+        result.style.background =
+            "rgba(40,210,120,.1)";
 
-button.textContent=
-"DESTEK TALEBİ GÖNDER";
+        result.style.border =
+            "1px solid rgba(40,210,120,.25)";
 
-}
+        result.style.color =
+            "#73e6a3";
+
+        result.textContent =
+            "Destek talebiniz başarıyla gönderildi.";
+
+
+        document
+            .getElementById(
+                "supportForm"
+            )
+            .reset();
+
+
+    }catch(error){
+
+        result.style.display =
+            "block";
+
+        result.style.background =
+            "rgba(255,60,60,.1)";
+
+        result.style.border =
+            "1px solid rgba(255,60,60,.3)";
+
+        result.style.color =
+            "#ff9b9b";
+
+        result.textContent =
+            error.message ||
+            "Bir hata oluştu.";
+
+
+    }finally{
+
+        button.disabled =
+            false;
+
+        button.textContent =
+            "DESTEK TALEBİ GÖNDER";
+
+    }
 
 }
 
