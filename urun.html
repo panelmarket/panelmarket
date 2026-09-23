@@ -377,13 +377,32 @@ footer{
 </nav>
 
 <div class="header-buttons">
-    <a href="/login.html" class="header-btn login">
-        GİRİŞ YAP
-    </a>
 
-    <a href="/register.html" class="header-btn register">
-        KAYIT OL
-    </a>
+    <div id="guestButtons" style="display:flex;gap:9px;">
+        <a href="/login.html" class="header-btn login">
+            GİRİŞ YAP
+        </a>
+
+        <a href="/register.html" class="header-btn register">
+            KAYIT OL
+        </a>
+    </div>
+
+    <div id="userButtons" style="display:none;gap:9px;">
+        <a href="/hesabim.html" class="header-btn login">
+            HESABIM
+        </a>
+
+        <button
+            type="button"
+            class="header-btn register"
+            onclick="logoutUser()"
+            style="border:0;color:#fff;cursor:pointer;"
+        >
+            ÇIKIŞ YAP
+        </button>
+    </div>
+
 </div>
 
 </div>
@@ -423,6 +442,204 @@ footer{
 
 const content =
     document.getElementById("content");
+
+    /* =====================================================
+   OTURUM KONTROLÜ
+===================================================== */
+
+async function checkLogin(){
+
+    const token =
+        localStorage.getItem("panelmarket_token") ||
+        sessionStorage.getItem("panelmarket_token") ||
+        "";
+
+    try{
+
+        const headers = {
+            "Accept":"application/json"
+        };
+
+        if(token){
+            headers.Authorization =
+                "Bearer " + token;
+        }
+
+        const response = await fetch(
+            "/api/auth/me?t=" + Date.now(),
+            {
+                method:"GET",
+                headers,
+                credentials:"include",
+                cache:"no-store"
+            }
+        );
+
+        const data =
+            await response
+                .json()
+                .catch(()=>({}));
+
+        if(
+            response.ok &&
+            data &&
+            data.authenticated === true &&
+            data.user
+        ){
+
+            showLoggedIn();
+
+            try{
+                localStorage.setItem(
+                    "panelmarket_user",
+                    JSON.stringify(data.user)
+                );
+            }catch{}
+
+        }else{
+
+            showLoggedOut();
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "Oturum kontrolü başarısız:",
+            error
+        );
+
+        const savedUser =
+            localStorage.getItem(
+                "panelmarket_user"
+            );
+
+        const savedToken =
+            localStorage.getItem(
+                "panelmarket_token"
+            );
+
+        if(savedUser && savedToken){
+
+            showLoggedIn();
+
+        }else{
+
+            showLoggedOut();
+
+        }
+
+    }
+}
+
+
+function showLoggedIn(){
+
+    const guestButtons =
+        document.getElementById(
+            "guestButtons"
+        );
+
+    const userButtons =
+        document.getElementById(
+            "userButtons"
+        );
+
+    if(guestButtons){
+        guestButtons.style.display = "none";
+    }
+
+    if(userButtons){
+        userButtons.style.display = "flex";
+    }
+}
+
+
+function showLoggedOut(){
+
+    const guestButtons =
+        document.getElementById(
+            "guestButtons"
+        );
+
+    const userButtons =
+        document.getElementById(
+            "userButtons"
+        );
+
+    if(guestButtons){
+        guestButtons.style.display = "flex";
+    }
+
+    if(userButtons){
+        userButtons.style.display = "none";
+    }
+}
+
+
+async function logoutUser(){
+
+    try{
+
+        const token =
+            localStorage.getItem(
+                "panelmarket_token"
+            ) ||
+            sessionStorage.getItem(
+                "panelmarket_token"
+            ) ||
+            "";
+
+        const headers = {
+            "Accept":"application/json"
+        };
+
+        if(token){
+            headers.Authorization =
+                "Bearer " + token;
+        }
+
+        await fetch(
+            "/api/logout",
+            {
+                method:"POST",
+                headers,
+                credentials:"include",
+                cache:"no-store"
+            }
+        );
+
+    }catch(error){
+
+        console.error(
+            "Çıkış API hatası:",
+            error
+        );
+
+    }finally{
+
+        localStorage.removeItem(
+            "panelmarket_token"
+        );
+
+        localStorage.removeItem(
+            "panelmarket_user"
+        );
+
+        sessionStorage.removeItem(
+            "panelmarket_token"
+        );
+
+        sessionStorage.removeItem(
+            "panelmarket_user"
+        );
+
+        showLoggedOut();
+
+        window.location.href =
+            "/index.html";
+    }
+}
 
 
 /* =====================================================
@@ -891,6 +1108,7 @@ async function loadCart(){
    BAŞLAT
 ===================================================== */
 
+checkLogin();
 loadCart();
 
 </script>
