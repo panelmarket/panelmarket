@@ -7365,6 +7365,344 @@ Ana Sayfaya Dön
    START
    ========================================================= */
 
+/* =========================================================
+   PRODUCT REVIEWS / RATINGS API
+   ========================================================= */
+
+function cleanReviewText(value) {
+  return String(value ?? "").trim().slice(0, 2000);
+}
+
+function reviewPublicUser(user) {
+  return {
+    id: user?.id || null,
+    name: user?.name || "Kullanıcı"
+  };
+}
+
+function reviewRelativeTime(value) {
+  const time = new Date(value).getTime();
+  if (!Number.isFinite(time)) return "";
+  const diff = Math.max(0, Date.now() - time);
+  const minute = 60 * 1000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  const week = 7 * day;
+  const year = 365 * day;
+
+  if (diff < minute) return "az önce";
+  if (diff < hour) return `${Math.floor(diff / minute)} dakika önce`;
+  if (diff < day) return `${Math.floor(diff / hour)} saat önce`;
+  if (diff < week) return `${Math.floor(diff / day)} gün önce`;
+  if (diff < year) return `${Math.floor(diff / week)} hafta önce`;
+  return `${Math.floor(diff / year)} yıl önce`;
+}
+
+async function getReviewVoteCounts(reviewIds) {
+  if (!reviewIds.length) return new Map();
+
+  const { data, error } = await supabase
+    .from("product_review_votes")
+    .select("review_id,vote_type")
+    .in("review_id", reviewIds);
+
+  if (error) throw error;
+
+  const map = new Map();
+  for (const row of data || []) {
+    const item = map.get(row.review_id) || { likes: 0, dislikes: 0 };
+    if (row.vote_type === "like") item.likes++;
+    if (row.vote_type === "dislike") item.dislikes++;
+    map.set(row.review_id, item);
+  }
+  return map;
+}
+
+function buildReviewTree(rows, voteCounts, currentUserId = null) {
+  const byId = new Map();
+
+  for (const row of rows || []) {
+    const votes = voteCounts.get(row.id) || { likes: 0, dislikes: 0 };
+    byId.set(row.id, {
+      id: row.id,
+      productId: row.product_id,
+      userId: row.user_id,
+      username: row.username || "Kullanıcı",
+      rating: row.rating,
+      comment: row.comment,
+      parentId: row.parent_id,
+      createdAt: row.created_at,
+      relativeTime: reviewRelativeTime(row.created_at),
+      likes: votes.likes,
+      dislikes: votes.dislikes,
+      viewerVote: null,
+      replies: []
+    });
+  }
+
+  for (const row of rows || []) {
+    const item = byId.get(row.id);
+    if (row.parent_id && byId.has(row.parent_id)) {
+      byId.get(row.parent_id).replies.push(item);
+    }
+  }
+
+  return [...byId.values()]
+    .filter(item => !item.parentId)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
+async function attachViewerVotes(tree, userId) {
+  if (!userId) return tree;
+
+  const all = [];
+  const walk = items => {
+    for (const item of items) {
+      all.push(item);
+      walk(item.replies || []);
+    }
+  };
+  walk(tree);
+
+  if (!all.length) return tree;
+
+  const { data, error } = await supabase
+    .from("product_review_votes")
+    .select("review_id,vote_type")
+    .eq("user_id", userId)
+    .in("review_id", all.map(x => x.id));
+
+  if (error) throw error;
+
+  const map = new Map((data || []).map(x => [x.review_id, x.vote_type]));
+  for (const item of all) item.viewerVote = map.get(item.id) || null;
+  return tree;
+}
+
+app.get("/api/reviews/:productId", async (req, res) => {
+  try {
+    const productId = String(req.params.productId || "").trim();
+    if (!productId) {
+      return res.status(400).json({ ok: false, error: "Ürün ID gerekli." });
+    }
+
+    const { data: rows, error } = await supabase
+      .from("product_reviews")
+      .select("id,product_id,user_id,username,rating,comment,parent_id,created_at")
+      .eq("product_id", productId)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    const topLevel = (rows || []).filter(x => !x.parent_id);
+    const ratingSum = topLevel.reduce((sum, x) => sum + Number(x.rating || 0), 0);
+    const reviewCount = topLevel.length;
+    const averageRating = reviewCount ? Math.round((ratingSum / reviewCount) * 10) / 10 : 0;
+
+    const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    for (const row of topLevel) distribution[row.rating] = (distribution[row.rating] || 0) + 1;
+
+    const voteCounts = await getReviewVoteCounts((rows || []).map(x => x.id));
+    let viewerId = null;
+    try {
+      viewerId = (await getSessionFromRequest(req))?.user?.id || null;
+    } catch {}
+
+    const tree = await attachViewerVotes(
+      buildReviewTree(rows || [], voteCounts, viewerId),
+      viewerId
+    );
+
+    return res.json({
+      ok: true,
+      productId,
+      averageRating,
+      reviewCount,
+      totalComments: (rows || []).length,
+      distribution,
+      reviews: tree
+    });
+  } catch (error) {
+    console.error("REVIEWS GET ERROR:", error);
+    return res.status(500).json({ ok: false, error: "Değerlendirmeler alınamadı." });
+  }
+});
+
+app.post("/api/reviews", requireAuth, async (req, res) => {
+  try {
+    const productId = String(req.body.productId || "").trim();
+    const rating = Number(req.body.rating);
+    const comment = cleanReviewText(req.body.comment);
+
+    if (!productId) return res.status(400).json({ ok: false, error: "Ürün ID gerekli." });
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+      return res.status(400).json({ ok: false, error: "Puan 1 ile 5 arasında olmalıdır." });
+    }
+    if (!comment) return res.status(400).json({ ok: false, error: "Yorum boş bırakılamaz." });
+
+    const product = await getProductById(productId);
+    if (!product) return res.status(404).json({ ok: false, error: "Ürün bulunamadı." });
+
+    const username = String(req.user?.name || req.user?.email || "Kullanıcı").trim().slice(0, 120);
+
+    const { data, error } = await supabase
+      .from("product_reviews")
+      .insert({
+        product_id: productId,
+        user_id: String(req.user.id),
+        username,
+        rating,
+        comment,
+        parent_id: null
+      })
+      .select("id,product_id,user_id,username,rating,comment,parent_id,created_at")
+      .single();
+
+    if (error) {
+      if (String(error.message || "").toLowerCase().includes("duplicate")) {
+        return res.status(409).json({
+          ok: false,
+          error: "Bu ürün için zaten bir değerlendirmeniz var."
+        });
+      }
+      throw error;
+    }
+
+    return res.status(201).json({
+      ok: true,
+      review: {
+        ...data,
+        relativeTime: reviewRelativeTime(data.created_at),
+        likes: 0,
+        dislikes: 0,
+        viewerVote: null,
+        replies: []
+      }
+    });
+  } catch (error) {
+    console.error("REVIEW POST ERROR:", error);
+    return res.status(500).json({ ok: false, error: "Değerlendirme kaydedilemedi." });
+  }
+});
+
+app.post("/api/reviews/:reviewId/reply", requireAuth, async (req, res) => {
+  try {
+    const reviewId = Number(req.params.reviewId);
+    const comment = cleanReviewText(req.body.comment);
+
+    if (!Number.isInteger(reviewId) || reviewId <= 0) {
+      return res.status(400).json({ ok: false, error: "Geçersiz değerlendirme." });
+    }
+    if (!comment) return res.status(400).json({ ok: false, error: "Cevap boş bırakılamaz." });
+
+    const { data: parent, error: parentError } = await supabase
+      .from("product_reviews")
+      .select("id,product_id")
+      .eq("id", reviewId)
+      .maybeSingle();
+
+    if (parentError) throw parentError;
+    if (!parent) return res.status(404).json({ ok: false, error: "Değerlendirme bulunamadı." });
+
+    const username = String(req.user?.name || req.user?.email || "Kullanıcı").trim().slice(0, 120);
+
+    const { data, error } = await supabase
+      .from("product_reviews")
+      .insert({
+        product_id: parent.product_id,
+        user_id: String(req.user.id),
+        username,
+        rating: 5,
+        comment,
+        parent_id: reviewId
+      })
+      .select("id,product_id,user_id,username,rating,comment,parent_id,created_at")
+      .single();
+
+    if (error) throw error;
+
+    return res.status(201).json({
+      ok: true,
+      reply: {
+        ...data,
+        relativeTime: reviewRelativeTime(data.created_at),
+        likes: 0,
+        dislikes: 0,
+        viewerVote: null,
+        replies: []
+      }
+    });
+  } catch (error) {
+    console.error("REVIEW REPLY ERROR:", error);
+    return res.status(500).json({ ok: false, error: "Cevap kaydedilemedi." });
+  }
+});
+
+app.post("/api/reviews/:reviewId/vote", requireAuth, async (req, res) => {
+  try {
+    const reviewId = Number(req.params.reviewId);
+    const voteType = String(req.body.voteType || "").trim().toLowerCase();
+
+    if (!Number.isInteger(reviewId) || reviewId <= 0) {
+      return res.status(400).json({ ok: false, error: "Geçersiz değerlendirme." });
+    }
+    if (!["like", "dislike"].includes(voteType)) {
+      return res.status(400).json({ ok: false, error: "Geçersiz oy türü." });
+    }
+
+    const { data: existing, error: existingError } = await supabase
+      .from("product_review_votes")
+      .select("id,vote_type")
+      .eq("review_id", reviewId)
+      .eq("user_id", String(req.user.id))
+      .maybeSingle();
+
+    if (existingError) throw existingError;
+
+    if (existing?.vote_type === voteType) {
+      const { error } = await supabase
+        .from("product_review_votes")
+        .delete()
+        .eq("id", existing.id);
+      if (error) throw error;
+    } else if (existing) {
+      const { error } = await supabase
+        .from("product_review_votes")
+        .update({ vote_type: voteType })
+        .eq("id", existing.id);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase
+        .from("product_review_votes")
+        .insert({
+          review_id: reviewId,
+          user_id: String(req.user.id),
+          vote_type: voteType
+        });
+      if (error) throw error;
+    }
+
+    const { data: votes, error: votesError } = await supabase
+      .from("product_review_votes")
+      .select("vote_type")
+      .eq("review_id", reviewId);
+
+    if (votesError) throw votesError;
+
+    return res.json({
+      ok: true,
+      viewerVote: existing?.vote_type === voteType ? null : voteType,
+      likes: (votes || []).filter(x => x.vote_type === "like").length,
+      dislikes: (votes || []).filter(x => x.vote_type === "dislike").length
+    });
+  } catch (error) {
+    console.error("REVIEW VOTE ERROR:", error);
+    return res.status(500).json({ ok: false, error: "Oy işlemi başarısız." });
+  }
+});
+
+
+
 app.listen(
   PORT,
   () => {
@@ -7406,3 +7744,5 @@ app.listen(
     );
   }
 );
+
+
