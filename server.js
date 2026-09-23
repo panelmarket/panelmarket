@@ -7481,46 +7481,92 @@ app.post("/api/reviews/:reviewId/vote", requireAuth, async (req, res) => {
   try {
     const reviewId = Number(req.params.reviewId);
     const voteType = String(req.body.voteType || "").trim().toLowerCase();
+    const userId = String(req.user?.id || "").trim();
 
     if (!Number.isInteger(reviewId) || reviewId <= 0) {
-      return res.status(400).json({ ok: false, error: "Geçersiz değerlendirme." });
-    }
-    if (!["like", "dislike"].includes(voteType)) {
-      return res.status(400).json({ ok: false, error: "Geçersiz oy türü." });
+      return res.status(400).json({
+        ok: false,
+        error: "Geçersiz değerlendirme."
+      });
     }
 
+    if (!["like", "dislike"].includes(voteType)) {
+      return res.status(400).json({
+        ok: false,
+        error: "Geçersiz oy türü."
+      });
+    }
+
+    if (!userId) {
+      return res.status(401).json({
+        ok: false,
+        error: "Kullanıcı kimliği bulunamadı."
+      });
+    }
+
+    // Önce yorumun gerçekten var olduğunu kontrol et
+    const { data: review, error: reviewError } = await supabase
+      .from("product_reviews")
+      .select("id")
+      .eq("id", reviewId)
+      .maybeSingle();
+
+    if (reviewError) throw reviewError;
+
+    if (!review) {
+      return res.status(404).json({
+        ok: false,
+        error: "Değerlendirme bulunamadı."
+      });
+    }
+
+    // Kullanıcının mevcut oyunu
     const { data: existing, error: existingError } = await supabase
       .from("product_review_votes")
       .select("id,vote_type")
       .eq("review_id", reviewId)
-      .eq("user_id", String(req.user.id))
+      .eq("user_id", userId)
       .maybeSingle();
 
     if (existingError) throw existingError;
 
-    if (existing?.vote_type === voteType) {
-      const { error } = await supabase
+    // Aynı oya tekrar basıldıysa oyu kaldır
+    if (existing && existing.vote_type === voteType) {
+
+      const { error: deleteError } = await supabase
         .from("product_review_votes")
         .delete()
         .eq("id", existing.id);
-      if (error) throw error;
+
+      if (deleteError) throw deleteError;
+
+    // Farklı oy varsa değiştir
     } else if (existing) {
-      const { error } = await supabase
+
+      const { error: updateError } = await supabase
         .from("product_review_votes")
-        .update({ vote_type: voteType })
+        .update({
+          vote_type: voteType
+        })
         .eq("id", existing.id);
-      if (error) throw error;
+
+      if (updateError) throw updateError;
+
+    // Hiç oy yoksa yeni oy oluştur
     } else {
-      const { error } = await supabase
+
+      const { error: insertError } = await supabase
         .from("product_review_votes")
         .insert({
           review_id: reviewId,
-          user_id: String(req.user.id),
+          user_id: userId,
           vote_type: voteType
         });
-      if (error) throw error;
+
+      if (insertError) throw insertError;
     }
 
+    // Güncel oyları getir
     const { data: votes, error: votesError } = await supabase
       .from("product_review_votes")
       .select("vote_type")
@@ -7528,15 +7574,40 @@ app.post("/api/reviews/:reviewId/vote", requireAuth, async (req, res) => {
 
     if (votesError) throw votesError;
 
+    const likes = (votes || []).filter(
+      x => x.vote_type === "like"
+    ).length;
+
+    const dislikes = (votes || []).filter(
+      x => x.vote_type === "dislike"
+    ).length;
+
+    let viewerVote = null;
+
+    if (existing && existing.vote_type === voteType) {
+      viewerVote = null;
+    } else {
+      viewerVote = voteType;
+    }
+
     return res.json({
       ok: true,
-      viewerVote: existing?.vote_type === voteType ? null : voteType,
-      likes: (votes || []).filter(x => x.vote_type === "like").length,
-      dislikes: (votes || []).filter(x => x.vote_type === "dislike").length
+      viewerVote,
+      likes,
+      dislikes
     });
+
   } catch (error) {
     console.error("REVIEW VOTE ERROR:", error);
-    return res.status(500).json({ ok: false, error: "Oy işlemi başarısız." });
+
+    // Gerçek Supabase hatasını geçici olarak göster
+    return res.status(500).json({
+      ok: false,
+      error: error?.message || "Oy işlemi başarısız.",
+      details: error?.details || null,
+      code: error?.code || null,
+      hint: error?.hint || null
+    });
   }
 });
 
