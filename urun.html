@@ -177,6 +177,11 @@ header{
     border-radius:18px
 }
 
+
+/* =========================================
+   ÜRÜN GÖRSEL ALANI
+========================================= */
+
 .preview{
     min-height:430px;
     display:flex;
@@ -191,7 +196,11 @@ header{
             rgba(40,130,255,.23),
             transparent 55%
         ),
-        #101722
+        #101722;
+}
+
+.preview.has-image{
+    padding:20px;
 }
 
 .preview-screen{
@@ -202,6 +211,15 @@ header{
     border:1px solid #33445a;
     padding:18px;
     box-shadow:0 20px 70px rgba(22,119,255,.18)
+}
+
+.product-preview-image{
+    width:100%;
+    height:390px;
+    max-width:100%;
+    display:block;
+    object-fit:contain;
+    border-radius:14px;
 }
 
 .top-line{
@@ -351,6 +369,19 @@ h1{
 
 
 /* =========================================
+   ÜRÜN YÜKLENİYOR
+========================================= */
+
+.product-loading{
+    opacity:.65;
+}
+
+.product-error{
+    color:#ff6b6b !important;
+}
+
+
+/* =========================================
    MOBİL
 ========================================= */
 
@@ -362,6 +393,14 @@ h1{
 
     .preview{
         min-height:300px
+    }
+
+    .preview.has-image{
+        padding:15px;
+    }
+
+    .product-preview-image{
+        height:270px;
     }
 
     .nav{
@@ -408,6 +447,14 @@ h1{
 
     .buy{
         text-align:center
+    }
+
+    .preview{
+        min-height:280px;
+    }
+
+    .product-preview-image{
+        height:240px;
     }
 
 }
@@ -538,10 +585,20 @@ Hesabım
 <div class="product-detail">
 
 
-<div class="card preview">
+<!-- =========================================
+     ÜRÜN GÖRSELİ
+========================================= -->
+
+<div
+    class="card preview"
+    id="productPreview"
+>
 
 
-<div class="preview-screen">
+<div
+    class="preview-screen"
+    id="defaultPreview"
+>
 
 <div class="top-line"></div>
 
@@ -555,6 +612,15 @@ Hesabım
 </div>
 
 </div>
+
+
+<img
+    id="productImage"
+    class="product-preview-image"
+    src=""
+    alt="Ürün görseli"
+    style="display:none;"
+>
 
 
 </div>
@@ -1053,74 +1119,8 @@ async function logoutUser(){
 
 
 /* =========================================
-   ÜRÜNLER
+   ÜRÜN ID
 ========================================= */
-
-const products={
-
-"admin-panel":{
-name:"Profesyonel Admin Paneli",
-category:"Admin Paneli",
-description:"Kullanıcı, içerik, ayar ve sistem yönetimi için modern yönetim paneli.",
-price:1499,
-delivery:"Hemen",
-update:"1 Yıl",
-support:"30 Gün"
-},
-
-"ecommerce-panel":{
-name:"E-Ticaret Yönetim Paneli",
-category:"E-Ticaret",
-description:"Ürün, sipariş, müşteri, stok ve mağaza yönetimi için kapsamlı panel.",
-price:2799,
-delivery:"Hemen",
-update:"1 Yıl",
-support:"60 Gün"
-},
-
-"company-panel":{
-name:"Firma Yönetim Paneli",
-category:"İşletme",
-description:"Firma bilgileri, çalışanlar, müşteriler ve raporlar için işletme paneli.",
-price:1799,
-delivery:"Hemen",
-update:"6 Ay",
-support:"30 Gün"
-},
-
-"finance-panel":{
-name:"Finans & Muhasebe Paneli",
-category:"Finans",
-description:"Gelir, gider, ödeme ve finansal raporları tek panel üzerinden yönetin.",
-price:2999,
-delivery:"24 Saat",
-update:"1 Yıl",
-support:"60 Gün"
-},
-
-"support-panel":{
-name:"Müşteri Destek Paneli",
-category:"Destek",
-description:"Ticket, müşteri talepleri ve destek süreçlerini yönetmek için hazır sistem.",
-price:1899,
-delivery:"Hemen",
-update:"1 Yıl",
-support:"90 Gün"
-},
-
-"stock-panel":{
-name:"Stok & Sipariş Paneli",
-category:"İşletme",
-description:"Stok takibi, sipariş yönetimi ve ürün kontrolü için profesyonel panel.",
-price:1999,
-delivery:"Hemen",
-update:"1 Yıl",
-support:"30 Gün"
-}
-
-};
-
-
 
 const params =
     new URLSearchParams(
@@ -1133,71 +1133,19 @@ const id =
     "admin-panel";
 
 
-const product =
-    products[id] ||
-    products["admin-panel"];
+let product = null;
 
-
-
-document.getElementById(
-    "productName"
-).textContent =
-    product.name;
-
-
-document.getElementById(
-    "productCategory"
-).textContent =
-    product.category;
-
-
-document.getElementById(
-    "productDescription"
-).textContent =
-    product.description;
-
-
-document.getElementById(
-    "productDelivery"
-).textContent =
-    product.delivery;
-
-
-document.getElementById(
-    "productUpdate"
-).textContent =
-    product.update;
-
-
-document.getElementById(
-    "productSupport"
-).textContent =
-    product.support;
+let prices = {
+    "1-site":0,
+    "3-site":0,
+    "unlimited":0
+};
 
 
 
 /* =========================================
-   FİYATLAR
+   FİYAT GÜNCELLE
 ========================================= */
-
-const prices={
-
-"1-site":
-    product.price,
-
-"3-site":
-    Math.round(
-        product.price * 1.667
-    ),
-
-"unlimited":
-    Math.round(
-        product.price * 3.334
-    )
-
-};
-
-
 
 function updatePrice(){
 
@@ -1207,15 +1155,55 @@ function updatePrice(){
         );
 
 
+    if(!selected){
+
+        return;
+
+    }
+
+
     const price =
-        prices[selected.value];
+        prices[selected.value] || 0;
 
 
     document.getElementById(
         "productPrice"
     ).textContent =
         "₺" +
-        price.toLocaleString(
+        Number(price).toLocaleString(
+            "tr-TR"
+        );
+
+
+    document.getElementById(
+        "price1"
+    ).textContent =
+        "₺" +
+        Number(
+            prices["1-site"] || 0
+        ).toLocaleString(
+            "tr-TR"
+        );
+
+
+    document.getElementById(
+        "price3"
+    ).textContent =
+        "₺" +
+        Number(
+            prices["3-site"] || 0
+        ).toLocaleString(
+            "tr-TR"
+        );
+
+
+    document.getElementById(
+        "priceUnlimited"
+    ).textContent =
+        "₺" +
+        Number(
+            prices["unlimited"] || 0
+        ).toLocaleString(
             "tr-TR"
         );
 
@@ -1223,16 +1211,397 @@ function updatePrice(){
 
 
 
-document.querySelectorAll(
-    'input[name="license"]'
-).forEach(input=>{
+/* =========================================
+   ÜRÜN GÖRSELİNİ GÖSTER
+========================================= */
 
-    input.addEventListener(
-        "change",
-        updatePrice
+function showProductImage(imageUrl){
+
+    const preview =
+        document.getElementById(
+            "productPreview"
+        );
+
+
+    const image =
+        document.getElementById(
+            "productImage"
+        );
+
+
+    const defaultPreview =
+        document.getElementById(
+            "defaultPreview"
+        );
+
+
+    if(
+        imageUrl &&
+        String(imageUrl).trim()
+    ){
+
+        image.src =
+            String(imageUrl).trim();
+
+
+        image.alt =
+            product?.name ||
+            "Ürün görseli";
+
+
+        image.style.display =
+            "block";
+
+
+        defaultPreview.style.display =
+            "none";
+
+
+        preview.classList.add(
+            "has-image"
+        );
+
+
+        image.onload = function(){
+
+            image.style.display =
+                "block";
+
+
+            defaultPreview.style.display =
+                "none";
+
+
+            preview.classList.add(
+                "has-image"
+            );
+
+        };
+
+
+        image.onerror = function(){
+
+            console.error(
+                "Ürün görseli yüklenemedi:",
+                imageUrl
+            );
+
+
+            image.style.display =
+                "none";
+
+
+            defaultPreview.style.display =
+                "block";
+
+
+            preview.classList.remove(
+                "has-image"
+            );
+
+        };
+
+    }else{
+
+        image.style.display =
+            "none";
+
+
+        defaultPreview.style.display =
+            "block";
+
+
+        preview.classList.remove(
+            "has-image"
+        );
+
+    }
+
+}
+
+
+
+/* =========================================
+   ÜRÜNÜ API'DEN GETİR
+========================================= */
+
+async function loadProduct(){
+
+    const nameElement =
+        document.getElementById(
+            "productName"
+        );
+
+
+    const descriptionElement =
+        document.getElementById(
+            "productDescription"
+        );
+
+
+    nameElement.classList.add(
+        "product-loading"
     );
 
-});
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/products/" +
+                encodeURIComponent(id) +
+                "?t=" +
+                Date.now(),
+                {
+                    method:"GET",
+                    headers:{
+                        "Accept":
+                            "application/json"
+                    },
+                    credentials:"include",
+                    cache:"no-store"
+                }
+            );
+
+
+        const data =
+            await response
+                .json()
+                .catch(()=>({}));
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.error ||
+                "Ürün bulunamadı."
+            );
+
+        }
+
+
+        if(
+            !data ||
+            !data.id
+        ){
+
+            throw new Error(
+                "Ürün bilgisi alınamadı."
+            );
+
+        }
+
+
+        product = data;
+
+
+        /* =================================
+           ÜRÜN BİLGİLERİ
+        ================================= */
+
+        document.getElementById(
+            "productName"
+        ).textContent =
+            product.name || "";
+
+
+        document.getElementById(
+            "productCategory"
+        ).textContent =
+            product.category || "";
+
+
+        document.getElementById(
+            "productDescription"
+        ).textContent =
+            product.description || "";
+
+
+        document.getElementById(
+            "productDelivery"
+        ).textContent =
+            product.delivery ||
+            "Hemen";
+
+
+        document.getElementById(
+            "productUpdate"
+        ).textContent =
+            product.update ||
+            "1 Yıl";
+
+
+        document.getElementById(
+            "productSupport"
+        ).textContent =
+            product.support ||
+            "30 Gün";
+
+
+        /* =================================
+           GÖRSEL
+        ================================= */
+
+        showProductImage(
+            product.image_url || ""
+        );
+
+
+        /* =================================
+           FİYATLAR
+        ================================= */
+
+        const basePrice =
+            Number(
+                product.price || 0
+            );
+
+
+        prices = {
+
+            "1-site":
+                basePrice,
+
+            "3-site":
+                Math.round(
+                    basePrice * 1.667
+                ),
+
+            "unlimited":
+                Math.round(
+                    basePrice * 3.334
+                )
+
+        };
+
+
+        updatePrice();
+
+
+        nameElement.classList.remove(
+            "product-loading"
+        );
+
+
+        descriptionElement.classList.remove(
+            "product-error"
+        );
+
+
+        /* =================================
+           LİSANS DEĞİŞİKLİKLERİ
+        ================================= */
+
+        document.querySelectorAll(
+            'input[name="license"]'
+        ).forEach(input=>{
+
+            input.onchange =
+                updatePrice;
+
+        });
+
+
+    }catch(error){
+
+        console.error(
+            "ÜRÜN YÜKLEME HATASI:",
+            error
+        );
+
+
+        nameElement.textContent =
+            "Ürün bulunamadı";
+
+
+        descriptionElement.textContent =
+            error.message ||
+            "Bu ürün artık mevcut değil.";
+
+
+        descriptionElement.classList.add(
+            "product-error"
+        );
+
+
+        document.getElementById(
+            "productCategory"
+        ).textContent =
+            "ÜRÜN BULUNAMADI";
+
+
+        document.getElementById(
+            "productDelivery"
+        ).textContent =
+            "-";
+
+
+        document.getElementById(
+            "productUpdate"
+        ).textContent =
+            "-";
+
+
+        document.getElementById(
+            "productSupport"
+        ).textContent =
+            "-";
+
+
+        document.getElementById(
+            "price1"
+        ).textContent =
+            "₺0";
+
+
+        document.getElementById(
+            "price3"
+        ).textContent =
+            "₺0";
+
+
+        document.getElementById(
+            "priceUnlimited"
+        ).textContent =
+            "₺0";
+
+
+        document.getElementById(
+            "productPrice"
+        ).textContent =
+            "₺0";
+
+
+        const image =
+            document.getElementById(
+                "productImage"
+            );
+
+
+        const defaultPreview =
+            document.getElementById(
+                "defaultPreview"
+            );
+
+
+        if(image){
+
+            image.style.display =
+                "none";
+
+        }
+
+
+        if(defaultPreview){
+
+            defaultPreview.style.display =
+                "block";
+
+        }
+
+    }
+
+}
 
 
 
@@ -1244,6 +1613,16 @@ document.getElementById(
     "addToCart"
 ).onclick=()=>{
 
+    if(!product){
+
+        alert(
+            "Ürün bilgileri henüz yüklenmedi."
+        );
+
+        return;
+
+    }
+
 
     const selected =
         document.querySelector(
@@ -1251,9 +1630,34 @@ document.getElementById(
         );
 
 
+    if(!selected){
+
+        alert(
+            "Lütfen bir lisans seçin."
+        );
+
+        return;
+
+    }
+
+
+    const selectedPrice =
+        prices[
+            selected.value
+        ] || 0;
+
+
+    const licenseNameElement =
+        selected.parentElement
+            .querySelector(
+                ".license-name"
+            );
+
+
     const cart={
 
-        productId:id,
+        productId:
+            product.id,
 
         productName:
             product.name,
@@ -1262,17 +1666,14 @@ document.getElementById(
             selected.value,
 
         licenseName:
-            selected
-                .parentElement
-                .querySelector(
-                    ".license-name"
-                )
-                .textContent,
+            licenseNameElement
+                ? licenseNameElement
+                    .textContent
+                    .trim()
+                : selected.value,
 
         price:
-            prices[
-                selected.value
-            ]
+            selectedPrice
 
     };
 
@@ -1296,7 +1697,7 @@ document.getElementById(
 
 checkLogin();
 
-updatePrice();
+loadProduct();
 
 </script>
 
