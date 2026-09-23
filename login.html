@@ -101,34 +101,56 @@ header{
 .header-buttons{
     display:flex;
     align-items:center;
+    gap:10px;
 }
 
 .header-buttons .btn{
     box-sizing:border-box;
-
     display:inline-flex;
     align-items:center;
     justify-content:center;
-
     min-height:42px;
     height:42px;
-
     padding:11px 16px;
-
     border-radius:9px;
-
     font-family:inherit;
     font-size:12px;
     font-weight:800;
-
     line-height:1;
-
     white-space:nowrap;
     text-decoration:none;
-
     margin:0;
 }
 
+.header-buttons .btn.outline{
+    border:1px solid #273241;
+    background:transparent;
+    color:#f5f7fb;
+}
+
+.header-buttons .btn.blue{
+    border:1px solid #1677ff;
+    background:#1677ff;
+    color:#fff;
+}
+
+.header-buttons .btn.blue:hover{
+    background:#298cff;
+    border-color:#298cff;
+}
+
+@media(max-width:700px){
+    .header-buttons{
+        gap:8px;
+    }
+
+    .header-buttons .btn{
+        min-height:40px;
+        height:40px;
+        padding:10px 13px;
+        font-size:12px;
+    }
+}
 
 /* GİRİŞ YAP */
 
