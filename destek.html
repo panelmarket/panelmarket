@@ -30,6 +30,73 @@ body{
 
 
 /* =========================================
+   HEADER BUTONLARI
+========================================= */
+
+#headerButtons{
+    display:flex;
+    align-items:center;
+}
+
+#guestButtons,
+#userButtons{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+#guestButtons .btn,
+#userButtons .btn{
+    box-sizing:border-box;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:42px;
+    height:42px;
+    padding:11px 16px;
+    border-radius:9px;
+    font-size:12px;
+    font-weight:800;
+    line-height:1;
+    white-space:nowrap;
+}
+
+#guestButtons .btn.outline,
+#userButtons .btn.outline{
+    border:1px solid #273241;
+}
+
+#guestButtons .btn.blue,
+#userButtons .btn.blue{
+    border:1px solid #1677ff;
+}
+
+#userButtons button.btn{
+    font-family:inherit;
+    cursor:pointer;
+    appearance:none;
+    -webkit-appearance:none;
+}
+
+@media(max-width:800px){
+
+    #guestButtons,
+    #userButtons{
+        gap:7px;
+    }
+
+    #guestButtons .btn,
+    #userButtons .btn{
+        min-height:40px;
+        height:40px;
+        padding:10px 13px;
+        font-size:12px;
+    }
+
+}
+
+
+/* =========================================
    DESTEK SAYFASI
 ========================================= */
 
@@ -259,10 +326,6 @@ body{
         font-size:30px;
     }
 
-    .header-buttons{
-        gap:7px;
-    }
-
 }
 
 </style>
@@ -313,10 +376,9 @@ Destek
 </nav>
 
 
-<!--
-    INDEX.HTML'DEKİ BUTONLARIN
-    AYNISI KULLANILIYOR
--->
+<!-- =========================================
+     DİNAMİK OTURUM BUTONLARI
+========================================= -->
 
 <div
     class="header-buttons"
@@ -324,25 +386,53 @@ Destek
 >
 
 
+<!-- ÇIKIŞ YAPILMIŞ -->
+
+<div
+    id="guestButtons"
+    style="display:flex;gap:10px;align-items:center;"
+>
+
+<a
+    class="btn outline"
+    href="/login.html"
+>
+Giriş Yap
+</a>
+
+<a
+    class="btn blue"
+    href="/register.html"
+>
+Kayıt Ol
+</a>
+
+</div>
+
+
+<!-- GİRİŞ YAPILMIŞ -->
+
+<div
+    id="userButtons"
+    style="display:none;gap:10px;align-items:center;"
+>
+
 <a
     class="btn outline"
     href="/hesabim.html"
 >
-
 Hesabım
-
 </a>
-
 
 <button
     class="btn blue"
     type="button"
     onclick="logoutUser()"
 >
-
 Çıkış Yap
-
 </button>
+
+</div>
 
 
 </div>
@@ -748,6 +838,188 @@ Yazılım Panelleri • Lisans • Destek
 
 
 /* =========================================
+   OTURUM KONTROLÜ
+========================================= */
+
+async function checkLogin(){
+
+    const token =
+        localStorage.getItem(
+            "panelmarket_token"
+        ) ||
+        sessionStorage.getItem(
+            "panelmarket_token"
+        ) ||
+        "";
+
+
+    try{
+
+        const headers = {
+            "Accept":"application/json"
+        };
+
+
+        if(token){
+
+            headers.Authorization =
+                "Bearer " + token;
+
+        }
+
+
+        const response =
+            await fetch(
+                "/api/auth/me?t=" + Date.now(),
+                {
+                    method:"GET",
+                    headers:headers,
+                    credentials:"include",
+                    cache:"no-store"
+                }
+            );
+
+
+        const data =
+            await response
+                .json()
+                .catch(()=>({}));
+
+
+        if(
+            response.ok &&
+            data &&
+            data.authenticated === true &&
+            data.user
+        ){
+
+            showLoggedIn();
+
+
+            try{
+
+                localStorage.setItem(
+                    "panelmarket_user",
+                    JSON.stringify(data.user)
+                );
+
+            }catch{}
+
+        }else{
+
+            showLoggedOut();
+
+        }
+
+
+    }catch(error){
+
+        console.error(
+            "Oturum kontrolü başarısız:",
+            error
+        );
+
+
+        const savedUser =
+            localStorage.getItem(
+                "panelmarket_user"
+            );
+
+
+        const savedToken =
+            localStorage.getItem(
+                "panelmarket_token"
+            );
+
+
+        if(savedUser && savedToken){
+
+            showLoggedIn();
+
+        }else{
+
+            showLoggedOut();
+
+        }
+
+    }
+
+}
+
+
+/* =========================================
+   GİRİŞ YAPILMIŞ
+========================================= */
+
+function showLoggedIn(){
+
+    const guestButtons =
+        document.getElementById(
+            "guestButtons"
+        );
+
+
+    const userButtons =
+        document.getElementById(
+            "userButtons"
+        );
+
+
+    if(guestButtons){
+
+        guestButtons.style.display =
+            "none";
+
+    }
+
+
+    if(userButtons){
+
+        userButtons.style.display =
+            "flex";
+
+    }
+
+}
+
+
+/* =========================================
+   GİRİŞ YAPILMAMIŞ
+========================================= */
+
+function showLoggedOut(){
+
+    const guestButtons =
+        document.getElementById(
+            "guestButtons"
+        );
+
+
+    const userButtons =
+        document.getElementById(
+            "userButtons"
+        );
+
+
+    if(guestButtons){
+
+        guestButtons.style.display =
+            "flex";
+
+    }
+
+
+    if(userButtons){
+
+        userButtons.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* =========================================
    ÇIKIŞ YAP
 ========================================= */
 
@@ -799,7 +1071,6 @@ async function logoutUser(){
 
     }finally{
 
-
         try{
 
             localStorage.removeItem(
@@ -828,13 +1099,17 @@ async function logoutUser(){
         }
 
 
+        /*
+         * Direkt index'e git.
+         * index.html de oturumu tekrar kontrol edecek.
+         */
+
         window.location.href =
             "/index.html";
 
     }
 
 }
-
 
 
 /* =========================================
@@ -1025,6 +1300,13 @@ async function sendSupport(event){
     }
 
 }
+
+
+/* =========================================
+   SAYFA AÇILINCA OTURUMU KONTROL ET
+========================================= */
+
+checkLogin();
 
 </script>
 
