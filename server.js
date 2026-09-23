@@ -131,7 +131,25 @@ function publicUser(user) {
   return { id:user.id, name:user.name || "", email:user.email || "", balance:money(user.balance), isAdmin:user.is_admin === true, is_admin:user.is_admin === true };
 }
 function formatProduct(p) {
-  return { id:p.id, name:p.name, category:p.category || "", description:p.description || "", price:money(p.price), oldPrice:p.oldPrice ?? p.old_price ?? null, badge:p.badge || "", delivery:p.delivery || "Hemen", update:p.update || p.update_period || "1 Yıl", support:p.support || "30 Gün", active:p.active !== false, sortOrder:Number(p.sortOrder ?? p.sort_order ?? 0) };
+  return {
+    id: p.id,
+    name: p.name,
+    category: p.category || "",
+    description: p.description || "",
+    price: money(p.price),
+    oldPrice: p.oldPrice ?? p.old_price ?? null,
+    badge: p.badge || "",
+    delivery: p.delivery || "Hemen",
+    update: p.update || p.update_period || "1 Yıl",
+    support: p.support || "30 Gün",
+    active: p.active !== false,
+    sortOrder: Number(
+      p.sortOrder ??
+      p.sort_order ??
+      0
+    ),
+    image_url: p.image_url || ""
+  };
 }
 function formatOrder(o) {
   return { id:o.id, userId:o.user_id, orderNumber:o.order_number, productId:o.product_id, productName:o.product_name, licenseId:o.license_id, licenseName:o.license_name, amount:money(o.amount), status:o.status, deliveryStatus:o.delivery_status, licenseKey:o.license_key, createdAt:o.created_at };
@@ -199,6 +217,215 @@ async function requireAdmin(req, res, next) {
     req.adminUser = user;
     next();
   } catch (e) { console.error("ADMIN AUTH ERROR:", e); res.status(500).json({ ok:false, error:"Admin doğrulama hatası." }); }
+}
+
+/* =========================================================
+   PRODUCT IMAGE - SUPABASE STORAGE
+   ========================================================= */
+
+const PRODUCT_IMAGE_BUCKET = "product-images";
+
+async function ensureProductImageBucket() {
+  try {
+    const {
+      data: buckets,
+      error
+    } = await supabase.storage.listBuckets();
+
+    if (error) {
+      throw error;
+    }
+
+    const exists =
+      Array.isArray(buckets) &&
+      buckets.some(
+        bucket =>
+          bucket.name === PRODUCT_IMAGE_BUCKET
+      );
+
+    if (!exists) {
+      const {
+        error: createError
+      } = await supabase.storage.createBucket(
+        PRODUCT_IMAGE_BUCKET,
+        {
+          public: true
+        }
+      );
+
+      if (
+        createError &&
+        !String(createError.message || "")
+          .toLowerCase()
+          .includes("already exists")
+      ) {
+        throw createError;
+      }
+
+      console.log(
+        "PRODUCT IMAGE BUCKET OLUŞTURULDU:",
+        PRODUCT_IMAGE_BUCKET
+      );
+    }
+
+  } catch (error) {
+    console.error(
+      "PRODUCT IMAGE BUCKET ERROR:",
+      error
+    );
+    throw error;
+  }
+}
+
+
+async function uploadProductImage(
+  imageData,
+  productId
+) {
+  const value =
+    String(imageData || "").trim();
+
+  if (!value) {
+    return "";
+  }
+
+  /*
+   * Eğer zaten normal bir URL geldiyse
+   * tekrar upload etme.
+   */
+  if (
+    /^https?:\/\//i.test(value)
+  ) {
+    return value;
+  }
+
+  /*
+   * Sadece data:image/... formatını kabul et.
+   */
+  const match =
+    value.match(
+      /^data:(image\/(?:jpeg|jpg|png|webp));base64,(.+)$/i
+    );
+
+  if (!match) {
+    throw new Error(
+      "Geçersiz ürün görseli formatı."
+    );
+  }
+
+  const contentType =
+    String(match[1] || "")
+      .toLowerCase();
+
+  const base64Data =
+    String(match[2] || "");
+
+  if (!base64Data) {
+    throw new Error(
+      "Ürün görseli boş."
+    );
+  }
+
+  const buffer =
+    Buffer.from(
+      base64Data,
+      "base64"
+    );
+
+  /*
+   * Yaklaşık 5 MB sınırı.
+   */
+  if (
+    buffer.length >
+    5 * 1024 * 1024
+  ) {
+    throw new Error(
+      "Ürün görseli 5 MB'dan büyük olamaz."
+    );
+  }
+
+  await ensureProductImageBucket();
+
+  let extension = "webp";
+
+  if (
+    contentType.includes("png")
+  ) {
+    extension = "png";
+  } else if (
+    contentType.includes("jpeg") ||
+    contentType.includes("jpg")
+  ) {
+    extension = "jpg";
+  }
+
+  const safeProductId =
+    String(productId || "product")
+      .toLowerCase()
+      .replace(
+        /[^a-z0-9-]/g,
+        "-"
+      );
+
+  const fileName =
+    `${safeProductId}-${Date.now()}-${crypto.randomBytes(4).toString("hex")}.${extension}`;
+
+  const {
+    error
+  } = await supabase.storage
+    .from(PRODUCT_IMAGE_BUCKET)
+    .upload(
+      fileName,
+      buffer,
+      {
+        contentType:
+          contentType === "image/jpg"
+            ? "image/jpeg"
+            : contentType,
+        upsert: true,
+        cacheControl: "31536000"
+      }
+    );
+
+  if (error) {
+    console.error(
+      "PRODUCT IMAGE UPLOAD ERROR:",
+      error
+    );
+
+    throw new Error(
+      `Ürün görseli yüklenemedi: ${error.message}`
+    );
+  }
+
+  const {
+    data: publicData
+  } =
+    supabase.storage
+      .from(PRODUCT_IMAGE_BUCKET)
+      .getPublicUrl(
+        fileName
+      );
+
+  const publicUrl =
+    publicData?.publicUrl || "";
+
+  if (!publicUrl) {
+    throw new Error(
+      "Ürün görseli için public URL oluşturulamadı."
+    );
+  }
+
+  console.log(
+    "PRODUCT IMAGE UPLOADED:",
+    {
+      productId,
+      fileName,
+      publicUrl
+    }
+  );
+
+  return publicUrl;
 }
 
 /* PUBLIC PRODUCTS */
@@ -2868,348 +3095,994 @@ app.post("/api/admin/users/:id/balance",requireAuth,requireAdmin,async(req,res)=
 app.patch("/api/admin/orders/:id",requireAuth,requireAdmin,async(req,res)=>{try{const patch={};if(req.body.status!==undefined)patch.status=String(req.body.status);if(req.body.deliveryStatus!==undefined)patch.delivery_status=String(req.body.deliveryStatus);const {data,error}=await supabase.from("orders").update(patch).eq("id",req.params.id).select("*").single();if(error)throw error;res.json({success:true,order:formatOrder(data)});}catch(e){res.status(500).json({error:"Sipariş güncellenemedi."});}});
 app.get("/api/admin/transactions",requireAuth,requireAdmin,async(req,res)=>{try{const {data,error}=await supabase.from("transactions").select("*").order("created_at",{ascending:false});if(error)throw error;res.json(data||[]);}catch(e){res.status(500).json({error:"İşlemler alınamadı."});}});
 
-/* ADMIN PRODUCTS */
-app.get("/api/admin/products",requireAuth,requireAdmin,async(req,res)=>{try{const {data,error}=await supabase.from("products").select("*").order("sort_order",{ascending:true});if(error)throw error;res.json(data||[]);}catch(e){res.status(500).json({error:"Ürünler alınamadı."});}});
-app.post("/api/admin/products", requireAuth, requireAdmin, async (req, res) => {
-  try {
-    const id = String(req.body.id || "")
-      .trim()
-      .toLowerCase();
+/* =========================================================
+   ADMIN PRODUCTS
+   ========================================================= */
 
-    const name = String(req.body.name || "").trim();
-    const category = String(req.body.category || "").trim();
-    const description = String(req.body.description || "").trim();
-    const badge = String(req.body.badge || "").trim();
-    const delivery = String(req.body.delivery || "Hemen").trim();
-    const update = String(req.body.update || "1 Yıl").trim();
-    const support = String(req.body.support || "30 Gün").trim();
+/* TÜM ÜRÜNLER */
 
-    const price = money(req.body.price);
-
-    const oldPrice =
-      req.body.oldPrice === null ||
-      req.body.oldPrice === undefined ||
-      req.body.oldPrice === ""
-        ? null
-        : money(req.body.oldPrice);
-
-    const active =
-      req.body.active !== false;
-
-    const sortOrder =
-      Number(req.body.sortOrder || 0);
-
-    /* ID KONTROLÜ */
-    if (!id) {
-      return res.status(400).json({
-        ok: false,
-        error: "Ürün ID boş bırakılamaz."
-      });
-    }
-
-    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) {
-      return res.status(400).json({
-        ok: false,
-        error:
-          "Geçerli ürün ID girin. Örnek: yeni-panel"
-      });
-    }
-
-    /* ÜRÜN ADI */
-    if (!name) {
-      return res.status(400).json({
-        ok: false,
-        error: "Ürün adı zorunludur."
-      });
-    }
-
-    /* FİYAT */
-    if (!Number.isFinite(price) || price < 0) {
-      return res.status(400).json({
-        ok: false,
-        error: "Geçerli bir ürün fiyatı girin."
-      });
-    }
-
-    /* AYNI ID VAR MI? */
-    const {
-      data: existingProduct,
-      error: existingError
-    } = await supabase
-      .from("products")
-      .select("id,name")
-      .eq("id", id)
-      .maybeSingle();
-
-    if (existingError) {
-      console.error(
-        "PRODUCT EXISTING CHECK ERROR:",
-        existingError
-      );
-
-      return res.status(500).json({
-        ok: false,
-        error: "Ürün kontrolü yapılamadı.",
-        databaseError: existingError.message
-      });
-    }
-
-    if (existingProduct) {
-      return res.status(409).json({
-        ok: false,
-        error:
-          `Bu ürün ID zaten kullanılıyor: ${id}`,
-        existingProduct: existingProduct.name || ""
-      });
-    }
-
-    /* YENİ ÜRÜN */
-    const row = {
-      id,
-      name,
-      category,
-      description,
-      price,
-      old_price: oldPrice,
-      badge,
-      delivery,
-      update_period: update,
-      support,
-      active,
-      /* YENİ ÜRÜN */
-const row = {
-  id,
-  name,
-  category,
-  description,
-  price,
-  old_price: oldPrice,
-  badge,
-  delivery,
-  update_period: update,
-  support,
-  active,
-  sort_order: Number.isFinite(sortOrder)
-    ? sortOrder
-    : 0,
-  image_url: String(req.body.image_url || "").trim()
-};
-
-console.log(
-  "ADMIN PRODUCT CREATE:",
-  {
-    id: row.id,
-    name: row.name,
-    category: row.category,
-    price: row.price,
-    image_url: row.image_url
-  }
-);
-
-const {
-  data,
-  error
-} = await supabase
-  .from("products")
-  .insert(row)
-  .select("*")
-  .single();
-
-if (error) {
-  console.error(
-    "ADMIN PRODUCT INSERT ERROR:",
-    error
-  );
-
-  return res.status(500).json({
-    ok: false,
-    error: "Ürün veritabanına eklenemedi.",
-    databaseError: error.message,
-    databaseCode: error.code || null,
-    databaseDetails: error.details || null,
-    databaseHint: error.hint || null
-  });
-}
-
-console.log(
-  "ADMIN PRODUCT CREATED:",
-  data?.id
-);
-
-return res.status(201).json({
-  ok: true,
-  success: true,
-  product: data
-});
-
-} catch (e) {
-
-  console.error(
-    "ADMIN PRODUCT CREATE ERROR:",
-    e
-  );
-
-  return res.status(500).json({
-    ok: false,
-    error: "Ürün oluşturulamadı.",
-    databaseError: e?.message || null
-  });
-}
-});
-
-    console.log(
-      "ADMIN PRODUCT CREATE:",
-      {
-        id: row.id,
-        name: row.name,
-        category: row.category,
-        price: row.price
-      }
-    );
-
-    const {
-      data,
-      error
-    } = await supabase
-      .from("products")
-      .insert(row)
-      .select("*")
-      .single();
-
-    if (error) {
-      console.error(
-        "ADMIN PRODUCT INSERT ERROR:",
-        error
-      );
-
-      return res.status(500).json({
-        ok: false,
-        error: "Ürün veritabanına eklenemedi.",
-        databaseError: error.message,
-        databaseCode: error.code || null,
-        databaseDetails: error.details || null,
-        databaseHint: error.hint || null
-      });
-    }
-
-    console.log(
-      "ADMIN PRODUCT CREATED:",
-      data?.id
-    );
-
-    return res.status(201).json({
-      ok: true,
-      success: true,
-      product: data
-    });
-
-  } catch (e) {
-
-    console.error(
-      "ADMIN PRODUCT CREATE ERROR:",
-      e
-    );
-
-    return res.status(500).json({
-      ok: false,
-      error: "Ürün oluşturulamadı.",
-      databaseError: e?.message || null
-    });
-  }
-});
-app.patch("/api/admin/products/:id/status",requireAuth,requireAdmin,async(req,res)=>{try{const {data,error}=await supabase.from("products").update({active:Boolean(req.body.active)}).eq("id",req.params.id).select("*").single();if(error)throw error;res.json({success:true,product:data});}catch(e){res.status(500).json({error:"Ürün durumu güncellenemedi."});}});
-app.put(
-  "/api/admin/products/:id",
+app.get(
+  "/api/admin/products",
   requireAuth,
   requireAdmin,
   async (req, res) => {
+
     try {
-      const patch = {};
-
-      const fields = {
-        name: req.body.name,
-        category: req.body.category,
-        description: req.body.description,
-        badge: req.body.badge,
-        delivery: req.body.delivery,
-        update_period: req.body.update,
-        support: req.body.support,
-        image_url: req.body.image_url
-      };
-
-      for (const [key, value] of Object.entries(fields)) {
-        if (value !== undefined) {
-          patch[key] = String(value);
-        }
-      }
-
-      if (req.body.price !== undefined) {
-        patch.price = money(req.body.price);
-      }
-
-      if (req.body.oldPrice !== undefined) {
-        patch.old_price =
-          req.body.oldPrice === null ||
-          req.body.oldPrice === ""
-            ? null
-            : money(req.body.oldPrice);
-      }
-
-      if (req.body.active !== undefined) {
-        patch.active = Boolean(req.body.active);
-      }
-
-      if (req.body.sortOrder !== undefined) {
-        patch.sort_order = Number(req.body.sortOrder);
-      }
 
       const {
         data,
         error
       } = await supabase
         .from("products")
-        .update(patch)
-        .eq("id", req.params.id)
         .select("*")
-        .single();
+        .order(
+          "sort_order",
+          {
+            ascending: true
+          }
+        );
 
       if (error) {
+        console.error(
+          "ADMIN PRODUCTS ERROR:",
+          error
+        );
+
+        return res.status(500).json({
+          ok: false,
+          error:
+            "Ürünler alınamadı.",
+          databaseError:
+            error.message
+        });
+      }
+
+      return res.json(
+        Array.isArray(data)
+          ? data
+          : []
+      );
+
+    } catch (e) {
+
+      console.error(
+        "ADMIN PRODUCTS EXCEPTION:",
+        e
+      );
+
+      return res.status(500).json({
+        ok: false,
+        error:
+          "Ürünler alınamadı.",
+        databaseError:
+          e?.message || null
+      });
+    }
+  }
+);
+
+
+/* =========================================================
+   YENİ ÜRÜN
+   ========================================================= */
+
+app.post(
+  "/api/admin/products",
+  requireAuth,
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+
+      const id =
+        String(
+          req.body.id || ""
+        )
+          .trim()
+          .toLowerCase();
+
+      const name =
+        String(
+          req.body.name || ""
+        ).trim();
+
+      const category =
+        String(
+          req.body.category || ""
+        ).trim();
+
+      const description =
+        String(
+          req.body.description || ""
+        ).trim();
+
+      const badge =
+        String(
+          req.body.badge || ""
+        ).trim();
+
+      const delivery =
+        String(
+          req.body.delivery ||
+          "Hemen"
+        ).trim();
+
+      const update =
+        String(
+          req.body.update ||
+          "1 Yıl"
+        ).trim();
+
+      const support =
+        String(
+          req.body.support ||
+          "30 Gün"
+        ).trim();
+
+      const price =
+        money(
+          req.body.price
+        );
+
+      const oldPrice =
+        req.body.oldPrice === null ||
+        req.body.oldPrice === undefined ||
+        req.body.oldPrice === ""
+          ? null
+          : money(
+              req.body.oldPrice
+            );
+
+      const active =
+        req.body.active !== false;
+
+      const sortOrder =
+        Number(
+          req.body.sortOrder || 0
+        );
+
+      const imageData =
+        String(
+          req.body.image_url || ""
+        ).trim();
+
+
+      /* ID */
+
+      if (!id) {
+
+        return res.status(400).json({
+          ok: false,
+          error:
+            "Ürün ID boş bırakılamaz."
+        });
+      }
+
+
+      if (
+        !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)
+      ) {
+
+        return res.status(400).json({
+          ok: false,
+          error:
+            "Geçerli ürün ID girin. Örnek: yeni-panel"
+        });
+      }
+
+
+      /* ÜRÜN ADI */
+
+      if (!name) {
+
+        return res.status(400).json({
+          ok: false,
+          error:
+            "Ürün adı zorunludur."
+        });
+      }
+
+
+      /* FİYAT */
+
+      if (
+        !Number.isFinite(price) ||
+        price < 0
+      ) {
+
+        return res.status(400).json({
+          ok: false,
+          error:
+            "Geçerli bir ürün fiyatı girin."
+        });
+      }
+
+
+      /* AYNI ID */
+
+      const {
+        data: existingProduct,
+        error: existingError
+      } =
+        await supabase
+          .from("products")
+          .select(
+            "id,name"
+          )
+          .eq(
+            "id",
+            id
+          )
+          .maybeSingle();
+
+      if (existingError) {
+
+        console.error(
+          "PRODUCT EXISTING CHECK ERROR:",
+          existingError
+        );
+
+        return res.status(500).json({
+          ok: false,
+          error:
+            "Ürün kontrolü yapılamadı.",
+          databaseError:
+            existingError.message
+        });
+      }
+
+
+      if (existingProduct) {
+
+        return res.status(409).json({
+          ok: false,
+          error:
+            `Bu ürün ID zaten kullanılıyor: ${id}`,
+          existingProduct:
+            existingProduct.name ||
+            ""
+        });
+      }
+
+
+      /* GÖRSEL */
+
+      let imageUrl = "";
+
+      if (imageData) {
+
+        try {
+
+          imageUrl =
+            await uploadProductImage(
+              imageData,
+              id
+            );
+
+        } catch (imageError) {
+
+          console.error(
+            "PRODUCT IMAGE ERROR:",
+            imageError
+          );
+
+          return res.status(400).json({
+            ok: false,
+            error:
+              imageError?.message ||
+              "Ürün görseli yüklenemedi."
+          });
+        }
+      }
+
+
+      /* VERİTABANI SATIRI */
+
+      const row = {
+
+        id,
+
+        name,
+
+        category,
+
+        description,
+
+        price,
+
+        old_price:
+          oldPrice,
+
+        badge,
+
+        delivery,
+
+        update_period:
+          update,
+
+        support,
+
+        active,
+
+        sort_order:
+          Number.isFinite(
+            sortOrder
+          )
+            ? sortOrder
+            : 0,
+
+        image_url:
+          imageUrl
+
+      };
+
+
+      console.log(
+        "ADMIN PRODUCT CREATE:",
+        {
+          id:
+            row.id,
+
+          name:
+            row.name,
+
+          category:
+            row.category,
+
+          price:
+            row.price,
+
+          image_url:
+            !!row.image_url
+        }
+      );
+
+
+      const {
+        data,
+        error
+      } =
+        await supabase
+          .from("products")
+          .insert(
+            row
+          )
+          .select("*")
+          .single();
+
+
+      if (error) {
+
+        console.error(
+          "ADMIN PRODUCT INSERT ERROR:",
+          error
+        );
+
+        return res.status(500).json({
+
+          ok: false,
+
+          error:
+            "Ürün veritabanına eklenemedi.",
+
+          databaseError:
+            error.message,
+
+          databaseCode:
+            error.code ||
+            null,
+
+          databaseDetails:
+            error.details ||
+            null,
+
+          databaseHint:
+            error.hint ||
+            null
+
+        });
+      }
+
+
+      console.log(
+        "ADMIN PRODUCT CREATED:",
+        data?.id
+      );
+
+
+      return res.status(201).json({
+
+        ok: true,
+
+        success: true,
+
+        product:
+          formatProduct(data)
+
+      });
+
+
+    } catch (e) {
+
+      console.error(
+        "ADMIN PRODUCT CREATE ERROR:",
+        e
+      );
+
+      return res.status(500).json({
+
+        ok: false,
+
+        error:
+          "Ürün oluşturulamadı.",
+
+        databaseError:
+          e?.message ||
+          null
+
+      });
+    }
+  }
+);
+
+
+/* =========================================================
+   ÜRÜN DURUMU
+   ========================================================= */
+
+app.patch(
+  "/api/admin/products/:id/status",
+  requireAuth,
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+
+      const active =
+        Boolean(
+          req.body.active
+        );
+
+      const {
+        data,
+        error
+      } =
+        await supabase
+          .from("products")
+          .update({
+            active
+          })
+          .eq(
+            "id",
+            req.params.id
+          )
+          .select("*")
+          .single();
+
+      if (error) {
+
+        console.error(
+          "PRODUCT STATUS ERROR:",
+          error
+        );
+
+        return res.status(500).json({
+          ok: false,
+          error:
+            "Ürün durumu güncellenemedi.",
+          databaseError:
+            error.message
+        });
+      }
+
+      return res.json({
+
+        ok: true,
+
+        success: true,
+
+        product:
+          formatProduct(data)
+
+      });
+
+    } catch (e) {
+
+      console.error(
+        "PRODUCT STATUS EXCEPTION:",
+        e
+      );
+
+      return res.status(500).json({
+        ok: false,
+        error:
+          "Ürün durumu güncellenemedi."
+      });
+    }
+  }
+);
+
+
+/* =========================================================
+   ÜRÜN GÜNCELLE
+   ========================================================= */
+
+app.put(
+  "/api/admin/products/:id",
+  requireAuth,
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+
+      const productId =
+        String(
+          req.params.id || ""
+        )
+          .trim()
+          .toLowerCase();
+
+
+      const {
+        data: currentProduct,
+        error: currentError
+      } =
+        await supabase
+          .from("products")
+          .select("*")
+          .eq(
+            "id",
+            productId
+          )
+          .maybeSingle();
+
+
+      if (currentError) {
+
+        console.error(
+          "PRODUCT CURRENT QUERY ERROR:",
+          currentError
+        );
+
+        return res.status(500).json({
+          ok: false,
+          error:
+            "Mevcut ürün okunamadı.",
+          databaseError:
+            currentError.message
+        });
+      }
+
+
+      if (!currentProduct) {
+
+        return res.status(404).json({
+          ok: false,
+          error:
+            "Ürün bulunamadı."
+        });
+      }
+
+
+      const patch = {};
+
+
+      const fields = {
+
+        name:
+          req.body.name,
+
+        category:
+          req.body.category,
+
+        description:
+          req.body.description,
+
+        badge:
+          req.body.badge,
+
+        delivery:
+          req.body.delivery,
+
+        update_period:
+          req.body.update,
+
+        support:
+          req.body.support
+
+      };
+
+
+      for (
+        const [key, value]
+        of Object.entries(fields)
+      ) {
+
+        if (
+          value !== undefined
+        ) {
+
+          patch[key] =
+            String(value);
+        }
+      }
+
+
+      if (
+        req.body.price !==
+        undefined
+      ) {
+
+        const price =
+          money(
+            req.body.price
+          );
+
+        if (
+          !Number.isFinite(
+            price
+          ) ||
+          price < 0
+        ) {
+
+          return res.status(400).json({
+            ok: false,
+            error:
+              "Geçerli bir ürün fiyatı girin."
+          });
+        }
+
+        patch.price =
+          price;
+      }
+
+
+      if (
+        req.body.oldPrice !==
+        undefined
+      ) {
+
+        patch.old_price =
+          req.body.oldPrice ===
+            null ||
+          req.body.oldPrice ===
+            ""
+            ? null
+            : money(
+                req.body.oldPrice
+              );
+      }
+
+
+      if (
+        req.body.active !==
+        undefined
+      ) {
+
+        patch.active =
+          Boolean(
+            req.body.active
+          );
+      }
+
+
+      if (
+        req.body.sortOrder !==
+        undefined
+      ) {
+
+        const sortOrder =
+          Number(
+            req.body.sortOrder
+          );
+
+        patch.sort_order =
+          Number.isFinite(
+            sortOrder
+          )
+            ? sortOrder
+            : 0;
+      }
+
+
+      /*
+       * YENİ GÖRSEL GELDİYSE
+       * SUPABASE STORAGE'A YÜKLE.
+       */
+      if (
+        req.body.image_url !==
+        undefined
+      ) {
+
+        const imageData =
+          String(
+            req.body.image_url ||
+            ""
+          ).trim();
+
+        if (imageData) {
+
+          try {
+
+            patch.image_url =
+              await uploadProductImage(
+                imageData,
+                productId
+              );
+
+          } catch (imageError) {
+
+            console.error(
+              "PRODUCT UPDATE IMAGE ERROR:",
+              imageError
+            );
+
+            return res.status(400).json({
+              ok: false,
+              error:
+                imageError?.message ||
+                "Ürün görseli yüklenemedi."
+            });
+          }
+
+        } else {
+
+          /*
+           * Boş gönderildiyse mevcut
+           * görseli silmiyoruz.
+           */
+          patch.image_url =
+            currentProduct.image_url ||
+            "";
+        }
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await supabase
+          .from("products")
+          .update(
+            patch
+          )
+          .eq(
+            "id",
+            productId
+          )
+          .select("*")
+          .single();
+
+
+      if (error) {
+
         console.error(
           "ADMIN PRODUCT UPDATE ERROR:",
           error
         );
 
         return res.status(500).json({
+
           ok: false,
-          error: "Ürün güncellenemedi.",
-          databaseError: error.message,
-          databaseCode: error.code || null,
-          databaseDetails: error.details || null,
-          databaseHint: error.hint || null
+
+          error:
+            "Ürün güncellenemedi.",
+
+          databaseError:
+            error.message,
+
+          databaseCode:
+            error.code ||
+            null,
+
+          databaseDetails:
+            error.details ||
+            null,
+
+          databaseHint:
+            error.hint ||
+            null
+
         });
       }
 
+
       return res.json({
+
         ok: true,
+
         success: true,
-        product: data
+
+        product:
+          formatProduct(data)
+
       });
 
+
     } catch (e) {
+
       console.error(
         "ADMIN PRODUCT UPDATE EXCEPTION:",
         e
       );
 
       return res.status(500).json({
+
         ok: false,
-        error: "Ürün güncellenemedi.",
-        databaseError: e?.message || null
+
+        error:
+          "Ürün güncellenemedi.",
+
+        databaseError:
+          e?.message ||
+          null
+
       });
     }
   }
 );
-app.delete("/api/admin/products/:id",requireAuth,requireAdmin,async(req,res)=>{try{const {error}=await supabase.from("products").delete().eq("id",req.params.id);if(error)throw error;res.json({success:true});}catch(e){res.status(500).json({error:"Ürün silinemedi."});}});
+
+
+/* =========================================================
+   ÜRÜN SİL
+   ========================================================= */
+
+app.delete(
+  "/api/admin/products/:id",
+  requireAuth,
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+
+      const productId =
+        String(
+          req.params.id || ""
+        ).trim();
+
+
+      const {
+        data: product,
+        error: productError
+      } =
+        await supabase
+          .from("products")
+          .select(
+            "id,image_url"
+          )
+          .eq(
+            "id",
+            productId
+          )
+          .maybeSingle();
+
+
+      if (productError) {
+        throw productError;
+      }
+
+
+      const {
+        error
+      } =
+        await supabase
+          .from("products")
+          .delete()
+          .eq(
+            "id",
+            productId
+          );
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      /*
+       * Storage görselini de silmeye çalış.
+       * DB silinmesini engellemez.
+       */
+      if (
+        product?.image_url
+      ) {
+
+        try {
+
+          const url =
+            String(
+              product.image_url
+            );
+
+          const marker =
+            `/storage/v1/object/public/${PRODUCT_IMAGE_BUCKET}/`;
+
+          const index =
+            url.indexOf(
+              marker
+            );
+
+          if (
+            index !== -1
+          ) {
+
+            const filePath =
+              decodeURIComponent(
+                url.slice(
+                  index +
+                  marker.length
+                )
+              );
+
+            if (filePath) {
+
+              const {
+                error:
+                  storageError
+              } =
+                await supabase
+                  .storage
+                  .from(
+                    PRODUCT_IMAGE_BUCKET
+                  )
+                  .remove([
+                    filePath
+                  ]);
+
+              if (
+                storageError
+              ) {
+
+                console.error(
+                  "PRODUCT IMAGE DELETE ERROR:",
+                  storageError
+                );
+              }
+            }
+          }
+
+        } catch (storageDeleteError) {
+
+          console.error(
+            "PRODUCT IMAGE CLEANUP ERROR:",
+            storageDeleteError
+          );
+        }
+      }
+
+
+      return res.json({
+
+        ok: true,
+
+        success: true
+
+      });
+
+
+    } catch (e) {
+
+      console.error(
+        "ADMIN PRODUCT DELETE ERROR:",
+        e
+      );
+
+      return res.status(500).json({
+
+        ok: false,
+
+        error:
+          "Ürün silinemedi.",
+
+        databaseError:
+          e?.message ||
+          null
+
+      });
+    }
+  }
+);
 
 /* DEBUG */
 app.get("/api/session/status",async(req,res)=>{try{const token=getTokenFromRequest(req);if(!token)return res.json({ok:true,tokenPresent:false,authenticated:false});const auth=await getSessionFromRequest(req);res.json({ok:true,tokenPresent:true,tokenLength:token.length,authenticated:!!auth,user:auth?publicUser(auth.user):null,is_admin:auth?.user?.is_admin===true,isAdmin:auth?.user?.is_admin===true});}catch(e){res.status(500).json({ok:false,error:e.message});}});
