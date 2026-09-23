@@ -79,25 +79,67 @@ header{
     color:#fff;
 }
 
+
+/* =========================================================
+   HEADER BUTONLARI - INDEX.HTML İLE AYNI
+========================================================= */
+
 .header-buttons{
     display:flex;
-    gap:9px;
+    align-items:center;
+    gap:10px;
 }
 
-.header-btn{
+.header-buttons .header-btn{
+    box-sizing:border-box;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    min-height:42px;
+    height:42px;
+
     padding:11px 16px;
+
     border-radius:9px;
+
+    font-family:inherit;
     font-size:12px;
     font-weight:800;
+    line-height:1;
+
+    white-space:nowrap;
+    text-decoration:none;
+
+    margin:0;
+    cursor:pointer;
 }
 
-.login{
+.header-buttons .login{
     border:1px solid #273241;
+    background:transparent;
+    color:#f5f7fb;
 }
 
-.register-btn{
+.header-buttons .register-btn{
+    border:1px solid #1677ff;
     background:#1677ff;
+    color:#fff;
 }
+
+.header-buttons .login:hover{
+    color:#fff;
+}
+
+.header-buttons .register-btn:hover{
+    background:#298cff;
+    border-color:#298cff;
+}
+
+
+/* =========================================================
+   ANA ALAN
+========================================================= */
 
 .main{
     flex:1;
@@ -115,6 +157,7 @@ header{
 .register-card{
     position:relative;
     overflow:hidden;
+
     background:
         radial-gradient(
             circle at 50% -20%,
@@ -122,9 +165,11 @@ header{
             transparent 42%
         ),
         #0d131b;
+
     border:1px solid #1c2633;
     border-radius:22px;
     padding:35px;
+
     box-shadow:0 25px 80px rgba(0,0,0,.28);
 }
 
@@ -134,10 +179,13 @@ header{
     top:-100px;
     left:50%;
     transform:translateX(-50%);
+
     width:250px;
     height:180px;
+
     background:rgba(115,71,255,.10);
     filter:blur(55px);
+
     pointer-events:none;
 }
 
@@ -145,11 +193,16 @@ header{
     width:58px;
     height:58px;
     margin:0 auto 20px;
+
     border-radius:17px;
+
     display:grid;
     place-items:center;
+
     background:linear-gradient(135deg,#1677ff,#7347ff);
+
     box-shadow:0 12px 40px rgba(22,119,255,.25);
+
     font-size:24px;
     font-weight:900;
 }
@@ -190,13 +243,18 @@ label{
 .input{
     width:100%;
     height:49px;
+
     padding:0 15px;
+
     border-radius:10px;
     border:1px solid #253140;
     outline:none;
+
     background:#080d13;
     color:#fff;
+
     font-size:14px;
+
     transition:.2s;
 }
 
@@ -222,10 +280,14 @@ label{
     right:10px;
     top:50%;
     transform:translateY(-50%);
+
     border:0;
     background:transparent;
+
     color:#718096;
+
     cursor:pointer;
+
     font-size:11px;
     font-weight:800;
 }
@@ -236,6 +298,7 @@ label{
 
 .password-info{
     margin-top:8px;
+
     display:flex;
     gap:5px;
     flex-wrap:wrap;
@@ -243,10 +306,14 @@ label{
 
 .rule{
     padding:5px 7px;
+
     border-radius:6px;
+
     background:#101720;
     border:1px solid #1e2a38;
+
     color:#667589;
+
     font-size:10px;
 }
 
@@ -259,9 +326,13 @@ label{
 .terms{
     display:flex;
     align-items:flex-start;
+
     gap:9px;
+
     margin:4px 0 19px;
+
     color:#7f8c9e;
+
     font-size:11px;
     line-height:1.5;
 }
@@ -282,23 +353,31 @@ label{
 
 .message{
     display:none;
+
     padding:13px;
+
     border-radius:10px;
+
     margin-bottom:17px;
+
     font-size:12px;
     line-height:1.5;
 }
 
 .message.error{
     display:block;
+
     color:#ff9b9b;
+
     background:rgba(255,60,60,.08);
     border:1px solid rgba(255,60,60,.25);
 }
 
 .message.success{
     display:block;
+
     color:#8ff0b4;
+
     background:rgba(40,210,120,.08);
     border:1px solid rgba(40,210,120,.25);
 }
@@ -306,13 +385,18 @@ label{
 .register-button{
     width:100%;
     height:50px;
+
     border:0;
     border-radius:10px;
+
     background:#1677ff;
     color:#fff;
+
     cursor:pointer;
+
     font-size:13px;
     font-weight:900;
+
     transition:.2s;
 }
 
@@ -329,10 +413,14 @@ label{
 
 .login-area{
     text-align:center;
+
     margin-top:23px;
     padding-top:22px;
+
     border-top:1px solid #19222d;
+
     color:#8995a7;
+
     font-size:12px;
 }
 
@@ -347,23 +435,38 @@ label{
 
 .security{
     margin-top:18px;
+
     padding:13px;
+
     border-radius:10px;
+
     background:rgba(22,119,255,.06);
     border:1px solid rgba(22,119,255,.14);
+
     color:#7f90a5;
+
     text-align:center;
+
     font-size:11px;
     line-height:1.5;
 }
 
 footer{
     border-top:1px solid #1c2531;
+
     padding:27px 3%;
+
     text-align:center;
+
     color:#657184;
+
     font-size:12px;
 }
+
+
+/* =========================================================
+   MOBİL
+========================================================= */
 
 @media(max-width:700px){
 
@@ -371,8 +474,17 @@ footer{
         display:none;
     }
 
-    .header-buttons .login{
-        display:none;
+    .header-buttons{
+        gap:8px;
+    }
+
+    .header-buttons .header-btn{
+        min-height:40px;
+        height:40px;
+
+        padding:10px 13px;
+
+        font-size:12px;
     }
 
     .register-card{
@@ -398,22 +510,37 @@ footer{
 </a>
 
 <nav class="nav">
-    <a href="/index.html">Ana Sayfa</a>
-    <a href="/siparislerim.html">Siparişlerim</a>
-    <a href="/hesabim.html">Hesabım</a>
+
+    <a href="/index.html">
+        Ana Sayfa
+    </a>
+
+    <a href="/siparislerim.html">
+        Siparişlerim
+    </a>
+
+    <a href="/hesabim.html">
+        Hesabım
+    </a>
+
 </nav>
+
 
 <div class="header-buttons">
 
-<a href="/login.html"
-   class="header-btn login">
-   GİRİŞ YAP
-</a>
+    <a
+        href="/login.html"
+        class="header-btn login"
+    >
+        GİRİŞ YAP
+    </a>
 
-<a href="/register.html"
-   class="header-btn register-btn">
-   KAYIT OL
-</a>
+    <a
+        href="/register.html"
+        class="header-btn register-btn"
+    >
+        KAYIT OL
+    </a>
 
 </div>
 
@@ -432,13 +559,16 @@ footer{
     P
 </div>
 
+
 <div class="title">
 
-<h1>Hesap Oluştur</h1>
+<h1>
+    Hesap Oluştur
+</h1>
 
 <p>
-PanelMarket'e katılın ve satın aldığınız
-panelleri tek hesabınızdan yönetin.
+    PanelMarket'e katılın ve satın aldığınız
+    panelleri tek hesabınızdan yönetin.
 </p>
 
 </div>
@@ -452,7 +582,7 @@ panelleri tek hesabınızdan yönetin.
 <div class="form-group">
 
 <label for="name">
-AD SOYAD
+    AD SOYAD
 </label>
 
 <input
@@ -472,7 +602,7 @@ AD SOYAD
 <div class="form-group">
 
 <label for="email">
-E-POSTA
+    E-POSTA
 </label>
 
 <input
@@ -490,7 +620,7 @@ E-POSTA
 <div class="form-group">
 
 <label for="password">
-ŞİFRE
+    ŞİFRE
 </label>
 
 <div class="password-box">
@@ -508,7 +638,8 @@ E-POSTA
 <button
     type="button"
     class="show-password"
-    id="showPassword">
+    id="showPassword"
+>
     GÖSTER
 </button>
 
@@ -518,15 +649,15 @@ E-POSTA
 <div class="password-info">
 
 <span class="rule" id="lengthRule">
-8+ karakter
+    8+ karakter
 </span>
 
 <span class="rule" id="numberRule">
-1 rakam
+    1 rakam
 </span>
 
 <span class="rule" id="letterRule">
-1 harf
+    1 harf
 </span>
 
 </div>
@@ -537,7 +668,7 @@ E-POSTA
 <div class="form-group">
 
 <label for="passwordConfirm">
-ŞİFRE TEKRARI
+    ŞİFRE TEKRARI
 </label>
 
 <div class="password-box">
@@ -555,7 +686,8 @@ E-POSTA
 <button
     type="button"
     class="show-password"
-    id="showConfirm">
+    id="showConfirm"
+>
     GÖSTER
 </button>
 
@@ -573,8 +705,8 @@ E-POSTA
 >
 
 <span>
-PanelMarket kullanım koşullarını ve gizlilik politikasını
-okudum ve kabul ediyorum.
+    PanelMarket kullanım koşullarını ve gizlilik politikasını
+    okudum ve kabul ediyorum.
 </span>
 
 </label>
@@ -583,10 +715,9 @@ okudum ve kabul ediyorum.
 <button
     type="submit"
     class="register-button"
-    id="registerButton">
-
-HESAP OLUŞTUR
-
+    id="registerButton"
+>
+    HESAP OLUŞTUR
 </button>
 
 </form>
@@ -594,17 +725,19 @@ HESAP OLUŞTUR
 
 <div class="login-area">
 
-Zaten hesabınız var mı?
+    Zaten hesabınız var mı?
 
-<a href="/login.html">
-Giriş yapın
-</a>
+    <a href="/login.html">
+        Giriş yapın
+    </a>
 
 </div>
 
 
 <div class="security">
-🔒 Hesap bilgileriniz güvenli bağlantı üzerinden korunmaktadır.
+
+    🔒 Hesap bilgileriniz güvenli bağlantı üzerinden korunmaktadır.
+
 </div>
 
 </div>
@@ -615,7 +748,9 @@ Giriş yapın
 
 
 <footer>
+
 © 2026 PanelMarket — Güvenli yazılım alışverişi
+
 </footer>
 
 
