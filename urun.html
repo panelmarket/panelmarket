@@ -982,6 +982,232 @@ footer{
 
 }
 
+
+/* =========================================
+   DEĞERLENDİRMELER
+========================================= */
+.reviews-section{
+    margin-top:24px;
+}
+.reviews-summary{
+    display:grid;
+    grid-template-columns:190px 1fr;
+    gap:28px;
+    align-items:center;
+}
+.review-score{
+    text-align:center;
+    padding:20px;
+    border:1px solid #1d2a39;
+    border-radius:16px;
+    background:#09111b;
+}
+.review-average{
+    font-size:44px;
+    line-height:1;
+    font-weight:900;
+}
+.review-stars{
+    color:#ffc107;
+    letter-spacing:2px;
+    font-size:20px;
+    margin:8px 0 5px;
+}
+.review-count{
+    color:#78869a;
+    font-size:12px;
+}
+.review-bars{
+    display:grid;
+    gap:8px;
+}
+.review-bar{
+    display:grid;
+    grid-template-columns:28px 1fr 34px;
+    gap:9px;
+    align-items:center;
+    font-size:11px;
+    color:#8995a7;
+}
+.review-bar-track{
+    height:8px;
+    border-radius:20px;
+    overflow:hidden;
+    background:#182330;
+}
+.review-bar-fill{
+    height:100%;
+    border-radius:20px;
+    background:#ffc107;
+}
+.review-form{
+    margin-top:22px;
+    padding:20px;
+    border:1px solid #1d2a39;
+    border-radius:16px;
+    background:#09111b;
+}
+.review-form-title{
+    font-size:16px;
+    font-weight:900;
+    margin-bottom:14px;
+}
+.rating-picker{
+    display:flex;
+    gap:4px;
+    margin-bottom:13px;
+}
+.rating-star{
+    border:0;
+    background:transparent;
+    color:#3a4655;
+    cursor:pointer;
+    font-size:30px;
+    padding:0 2px;
+    line-height:1;
+}
+.rating-star.active{
+    color:#ffc107;
+}
+.review-textarea{
+    width:100%;
+    min-height:100px;
+    resize:vertical;
+    padding:13px 14px;
+    border:1px solid #263445;
+    border-radius:11px;
+    background:#0d131b;
+    color:#fff;
+    outline:none;
+    font-size:13px;
+}
+.review-textarea:focus{
+    border-color:#1677ff;
+}
+.review-form-bottom{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-top:10px;
+}
+.review-login-note{
+    color:#78869a;
+    font-size:12px;
+}
+.reviews-list{
+    margin-top:22px;
+    display:grid;
+    gap:12px;
+}
+.review-item{
+    padding:18px;
+    border:1px solid #1c2633;
+    border-radius:15px;
+    background:#0d131b;
+}
+.review-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+.review-author{
+    font-size:13px;
+    font-weight:900;
+}
+.review-meta{
+    color:#6f7d90;
+    font-size:11px;
+}
+.review-item-stars{
+    color:#ffc107;
+    font-size:14px;
+    letter-spacing:1px;
+    margin:7px 0;
+}
+.review-comment{
+    color:#c8d0db;
+    font-size:13px;
+    line-height:1.65;
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+}
+.review-actions{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:7px;
+    margin-top:12px;
+}
+.review-action{
+    border:1px solid #263445;
+    background:#101720;
+    color:#9aa6b7;
+    border-radius:8px;
+    padding:7px 10px;
+    cursor:pointer;
+    font-size:11px;
+}
+.review-action.active{
+    border-color:#1677ff;
+    color:#fff;
+    background:rgba(22,119,255,.12);
+}
+.review-reply-form{
+    display:flex;
+    gap:8px;
+    margin-top:12px;
+}
+.review-reply-input{
+    flex:1;
+    min-width:0;
+    height:38px;
+    border:1px solid #263445;
+    border-radius:9px;
+    background:#101720;
+    color:#fff;
+    padding:0 12px;
+    outline:none;
+}
+.review-replies{
+    margin:14px 0 0 22px;
+    padding-left:14px;
+    border-left:2px solid #1d2a39;
+    display:grid;
+    gap:10px;
+}
+.review-reply{
+    padding:11px 13px;
+    background:#101720;
+    border:1px solid #1b2734;
+    border-radius:11px;
+}
+.reviews-empty{
+    text-align:center;
+    padding:34px 20px;
+    border:1px dashed #263445;
+    border-radius:15px;
+    color:#78869a;
+    font-size:13px;
+}
+.reviews-error{
+    padding:14px;
+    border-radius:10px;
+    background:rgba(220,53,69,.08);
+    border:1px solid rgba(220,53,69,.2);
+    color:#ff9aa4;
+    font-size:12px;
+}
+@media(max-width:700px){
+    .reviews-summary{grid-template-columns:1fr;}
+    .review-score{padding:18px;}
+    .review-form-bottom{align-items:stretch;flex-direction:column;}
+    .review-form-bottom .btn{width:100%;}
+    .review-reply-form{flex-direction:column;}
+    .review-reply-input{width:100%;}
+}
+
 </style>
 
 </head>
@@ -2555,6 +2781,45 @@ async function loadProduct(){
 
             </div>
 
+
+            <section class="card reviews-section" id="reviewsSection">
+                <div class="review-head" style="margin-bottom:18px;">
+                    <div>
+                        <div class="category">MÜŞTERİ DENEYİMLERİ</div>
+                        <h2 style="font-size:26px;margin-top:5px;">Değerlendirmeler</h2>
+                    </div>
+                </div>
+
+                <div id="reviewsSummary" class="reviews-summary">
+                    <div class="review-score">
+                        <div id="reviewAverage" class="review-average">0,0</div>
+                        <div id="reviewAverageStars" class="review-stars">☆☆☆☆☆</div>
+                        <div id="reviewCount" class="review-count">0 değerlendirme</div>
+                    </div>
+                    <div id="reviewBars" class="review-bars"></div>
+                </div>
+
+                <div class="review-form">
+                    <div class="review-form-title">Ürünü değerlendir</div>
+                    <div id="ratingPicker" class="rating-picker" aria-label="Puan seç">
+                        <button class="rating-star" type="button" data-rating="1" onclick="selectRating(1)">★</button>
+                        <button class="rating-star" type="button" data-rating="2" onclick="selectRating(2)">★</button>
+                        <button class="rating-star" type="button" data-rating="3" onclick="selectRating(3)">★</button>
+                        <button class="rating-star" type="button" data-rating="4" onclick="selectRating(4)">★</button>
+                        <button class="rating-star" type="button" data-rating="5" onclick="selectRating(5)">★</button>
+                    </div>
+                    <textarea id="reviewComment" class="review-textarea" maxlength="2000" placeholder="Ürün hakkında deneyiminizi yazın..."></textarea>
+                    <div class="review-form-bottom">
+                        <div id="reviewLoginNote" class="review-login-note">Değerlendirme yapmak için giriş yapın.</div>
+                        <button id="reviewSubmit" type="button" class="btn primary" onclick="submitReview()">Değerlendirmeyi Gönder</button>
+                    </div>
+                </div>
+
+                <div id="reviewsList" class="reviews-list">
+                    <div class="reviews-empty">Değerlendirmeler yükleniyor...</div>
+                </div>
+            </section>
+
         `;
 
 
@@ -2596,6 +2861,8 @@ async function loadProduct(){
 
         };
 
+        await loadReviews(productId);
+
 
     }catch(error){
 
@@ -2631,6 +2898,270 @@ async function loadProduct(){
 
     }
 
+}
+
+
+
+/* =========================================
+   DEĞERLENDİRME SİSTEMİ
+========================================= */
+
+let selectedRating = 0;
+let reviewData = null;
+
+function ratingStars(value, empty = "☆"){
+    const n = Math.max(0, Math.min(5, Math.round(Number(value) || 0)));
+    return "★".repeat(n) + empty.repeat(5 - n);
+}
+
+function selectRating(rating){
+    selectedRating = Number(rating);
+    document.querySelectorAll("#ratingPicker .rating-star").forEach(btn => {
+        btn.classList.toggle("active", Number(btn.dataset.rating) <= selectedRating);
+    });
+}
+
+function reviewAuthHeaders(){
+    const token = localStorage.getItem("panelmarket_token");
+    return token ? { "Authorization": "Bearer " + token } : {};
+}
+
+function isLoggedInForReview(){
+    return Boolean(localStorage.getItem("panelmarket_token"));
+}
+
+function updateReviewFormState(){
+    const note = document.getElementById("reviewLoginNote");
+    const submit = document.getElementById("reviewSubmit");
+    if (!note || !submit) return;
+
+    if (isLoggedInForReview()){
+        note.textContent = "Puanınızı seçip deneyiminizi paylaşabilirsiniz.";
+        submit.disabled = false;
+        submit.style.opacity = "1";
+    } else {
+        note.innerHTML = '<a href="/login.html" style="color:#5eacff;font-weight:800;">Giriş yapın</a> ve değerlendirme bırakın.';
+        submit.disabled = false;
+    }
+}
+
+function renderReviewBars(distribution, count){
+    const box = document.getElementById("reviewBars");
+    if (!box) return;
+    const total = Number(count || 0);
+    box.innerHTML = [5,4,3,2,1].map(star => {
+        const n = Number(distribution?.[star] || 0);
+        const pct = total ? (n / total) * 100 : 0;
+        return `
+            <div class="review-bar">
+                <span>${star}★</span>
+                <div class="review-bar-track"><div class="review-bar-fill" style="width:${pct}%"></div></div>
+                <span>${n}</span>
+            </div>
+        `;
+    }).join("");
+}
+
+function renderOneReply(reply){
+    return `
+        <div class="review-reply">
+            <div class="review-head">
+                <span class="review-author">${escapeHtml(reply.username || "Kullanıcı")}</span>
+                <span class="review-meta">${escapeHtml(reply.relativeTime || "")}</span>
+            </div>
+            <div class="review-comment" style="margin-top:5px;">${escapeHtml(reply.comment || "")}</div>
+            <div class="review-actions">
+                <button class="review-action ${reply.viewerVote === "like" ? "active" : ""}" onclick="voteReview(${reply.id},'like')">👍 ${Number(reply.likes || 0)}</button>
+                <button class="review-action ${reply.viewerVote === "dislike" ? "active" : ""}" onclick="voteReview(${reply.id},'dislike')">👎 ${Number(reply.dislikes || 0)}</button>
+            </div>
+        </div>
+    `;
+}
+
+function renderReview(item){
+    const replies = (item.replies || []).map(renderOneReply).join("");
+    return `
+        <article class="review-item">
+            <div class="review-head">
+                <div>
+                    <div class="review-author">${escapeHtml(item.username || "Kullanıcı")}</div>
+                    <div class="review-item-stars">${ratingStars(item.rating)}</div>
+                </div>
+                <div class="review-meta">${escapeHtml(item.relativeTime || "")}</div>
+            </div>
+
+            <div class="review-comment">${escapeHtml(item.comment || "")}</div>
+
+            <div class="review-actions">
+                <button class="review-action ${item.viewerVote === "like" ? "active" : ""}" onclick="voteReview(${item.id},'like')">👍 ${Number(item.likes || 0)}</button>
+                <button class="review-action ${item.viewerVote === "dislike" ? "active" : ""}" onclick="voteReview(${item.id},'dislike')">👎 ${Number(item.dislikes || 0)}</button>
+                <button class="review-action" onclick="toggleReply(${item.id})">↩️ Cevapla</button>
+            </div>
+
+            <div id="replyForm-${item.id}" class="review-reply-form" style="display:none;">
+                <input id="replyInput-${item.id}" class="review-reply-input" maxlength="2000" placeholder="Cevabınızı yazın...">
+                <button class="btn primary" type="button" onclick="submitReply(${item.id})">Gönder</button>
+            </div>
+
+            ${replies ? `<div class="review-replies">${replies}</div>` : ""}
+        </article>
+    `;
+}
+
+function renderReviews(data){
+    reviewData = data || {};
+    const average = Number(data?.averageRating || 0);
+    const count = Number(data?.reviewCount || 0);
+
+    const avgEl = document.getElementById("reviewAverage");
+    const starsEl = document.getElementById("reviewAverageStars");
+    const countEl = document.getElementById("reviewCount");
+    const list = document.getElementById("reviewsList");
+
+    if (avgEl) avgEl.textContent = average.toFixed(1).replace(".", ",");
+    if (starsEl) starsEl.textContent = ratingStars(average);
+    if (countEl) countEl.textContent = `${count} değerlendirme`;
+    renderReviewBars(data?.distribution || {}, count);
+
+    if (!list) return;
+
+    const reviews = Array.isArray(data?.reviews) ? data.reviews : [];
+    if (!reviews.length){
+        list.innerHTML = '<div class="reviews-empty">Henüz değerlendirme yok. İlk değerlendirmeyi siz bırakın.</div>';
+        return;
+    }
+    list.innerHTML = reviews.map(renderReview).join("");
+}
+
+async function loadReviews(productId){
+    try{
+        const response = await fetch("/api/reviews/" + encodeURIComponent(productId) + "?t=" + Date.now(), {
+            headers: { "Accept":"application/json" },
+            credentials:"include",
+            cache:"no-store"
+        });
+        const data = await response.json();
+        if (!response.ok || !data.ok) throw new Error(data.error || "Değerlendirmeler alınamadı.");
+        renderReviews(data);
+        updateReviewFormState();
+    }catch(error){
+        console.error("Değerlendirme yükleme hatası:", error);
+        const list = document.getElementById("reviewsList");
+        if (list) list.innerHTML = `<div class="reviews-error">${escapeHtml(error.message || "Değerlendirmeler alınamadı.")}</div>`;
+    }
+}
+
+async function submitReview(){
+    if (!isLoggedInForReview()){
+        window.location.href = "/login.html";
+        return;
+    }
+    const productId = String(window.currentProduct?.id || "");
+    const commentEl = document.getElementById("reviewComment");
+    const submit = document.getElementById("reviewSubmit");
+    const comment = String(commentEl?.value || "").trim();
+
+    if (!productId) return alert("Ürün bilgisi hazır değil.");
+    if (!selectedRating) return alert("Lütfen 1 ile 5 arasında puan seçin.");
+    if (!comment) return alert("Lütfen yorumunuzu yazın.");
+
+    try{
+        submit.disabled = true;
+        const response = await fetch("/api/reviews", {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "Accept":"application/json",
+                ...reviewAuthHeaders()
+            },
+            credentials:"include",
+            body:JSON.stringify({ productId, rating:selectedRating, comment })
+        });
+        const data = await response.json();
+        if (response.status === 401){
+            window.location.href = "/login.html";
+            return;
+        }
+        if (!response.ok || !data.ok) throw new Error(data.error || "Değerlendirme kaydedilemedi.");
+
+        commentEl.value = "";
+        selectRating(0);
+        await loadReviews(productId);
+    }catch(error){
+        alert(error.message || "Değerlendirme kaydedilemedi.");
+    }finally{
+        submit.disabled = false;
+    }
+}
+
+function toggleReply(reviewId){
+    if (!isLoggedInForReview()){
+        window.location.href = "/login.html";
+        return;
+    }
+    const form = document.getElementById("replyForm-" + reviewId);
+    if (form) form.style.display = form.style.display === "none" ? "flex" : "none";
+}
+
+async function submitReply(reviewId){
+    if (!isLoggedInForReview()){
+        window.location.href = "/login.html";
+        return;
+    }
+    const input = document.getElementById("replyInput-" + reviewId);
+    const comment = String(input?.value || "").trim();
+    if (!comment) return alert("Lütfen cevabınızı yazın.");
+
+    try{
+        const response = await fetch("/api/reviews/" + encodeURIComponent(reviewId) + "/reply", {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "Accept":"application/json",
+                ...reviewAuthHeaders()
+            },
+            credentials:"include",
+            body:JSON.stringify({ comment })
+        });
+        const data = await response.json();
+        if (response.status === 401){
+            window.location.href = "/login.html";
+            return;
+        }
+        if (!response.ok || !data.ok) throw new Error(data.error || "Cevap kaydedilemedi.");
+        await loadReviews(window.currentProduct?.id);
+    }catch(error){
+        alert(error.message || "Cevap kaydedilemedi.");
+    }
+}
+
+async function voteReview(reviewId, voteType){
+    if (!isLoggedInForReview()){
+        window.location.href = "/login.html";
+        return;
+    }
+
+    try{
+        const response = await fetch("/api/reviews/" + encodeURIComponent(reviewId) + "/vote", {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "Accept":"application/json",
+                ...reviewAuthHeaders()
+            },
+            credentials:"include",
+            body:JSON.stringify({ voteType })
+        });
+        const data = await response.json();
+        if (response.status === 401){
+            window.location.href = "/login.html";
+            return;
+        }
+        if (!response.ok || !data.ok) throw new Error(data.error || "Oy işlemi başarısız.");
+        await loadReviews(window.currentProduct?.id);
+    }catch(error){
+        alert(error.message || "Oy işlemi başarısız.");
+    }
 }
 
 
