@@ -460,6 +460,7 @@ app.get("/api/admin/me",requireAuth,requireAdmin,async(req,res)=>{
 
 /* =========================================================
    PANELMARKET - ŞİFRE SIFIRLAMA SİSTEMİ
+   Gmail + Nodemailer + SCRYPT
    ========================================================= */
 
 const PASSWORD_RESET_SECRET =
@@ -506,14 +507,22 @@ function createPasswordResetToken(user) {
     type: "password-reset"
   };
 
-  const encodedPayload = Buffer
-    .from(JSON.stringify(payload), "utf8")
-    .toString("base64url");
+  const encodedPayload =
+    Buffer
+      .from(
+        JSON.stringify(payload),
+        "utf8"
+      )
+      .toString("base64url");
 
-  const signature = crypto
-    .createHmac("sha256", PASSWORD_RESET_SECRET)
-    .update(encodedPayload)
-    .digest("base64url");
+  const signature =
+    crypto
+      .createHmac(
+        "sha256",
+        PASSWORD_RESET_SECRET
+      )
+      .update(encodedPayload)
+      .digest("base64url");
 
   return `${encodedPayload}.${signature}`;
 }
@@ -529,9 +538,10 @@ function verifyPasswordResetToken(token) {
       return null;
     }
 
-    const parts = String(token || "")
-      .trim()
-      .split(".");
+    const parts =
+      String(token || "")
+        .trim()
+        .split(".");
 
     if (parts.length !== 2) {
       return null;
@@ -540,20 +550,26 @@ function verifyPasswordResetToken(token) {
     const encodedPayload = parts[0];
     const receivedSignature = parts[1];
 
-    const expectedSignature = crypto
-      .createHmac("sha256", PASSWORD_RESET_SECRET)
-      .update(encodedPayload)
-      .digest("base64url");
+    const expectedSignature =
+      crypto
+        .createHmac(
+          "sha256",
+          PASSWORD_RESET_SECRET
+        )
+        .update(encodedPayload)
+        .digest("base64url");
 
-    const receivedBuffer = Buffer.from(
-      receivedSignature,
-      "utf8"
-    );
+    const receivedBuffer =
+      Buffer.from(
+        receivedSignature,
+        "utf8"
+      );
 
-    const expectedBuffer = Buffer.from(
-      expectedSignature,
-      "utf8"
-    );
+    const expectedBuffer =
+      Buffer.from(
+        expectedSignature,
+        "utf8"
+      );
 
     if (
       receivedBuffer.length !==
@@ -571,12 +587,15 @@ function verifyPasswordResetToken(token) {
       return null;
     }
 
-    const payload = JSON.parse(
-      Buffer.from(
-        encodedPayload,
-        "base64url"
-      ).toString("utf8")
-    );
+    const payload =
+      JSON.parse(
+        Buffer
+          .from(
+            encodedPayload,
+            "base64url"
+          )
+          .toString("utf8")
+      );
 
     if (
       !payload ||
@@ -588,15 +607,19 @@ function verifyPasswordResetToken(token) {
       return null;
     }
 
-    const now = Math.floor(Date.now() / 1000);
+    const now =
+      Math.floor(Date.now() / 1000);
 
-    if (Number(payload.exp) <= now) {
+    if (
+      Number(payload.exp) <= now
+    ) {
       return null;
     }
 
     return payload;
 
   } catch (e) {
+
     console.error(
       "PASSWORD RESET TOKEN ERROR:",
       e.message
@@ -606,18 +629,31 @@ function verifyPasswordResetToken(token) {
   }
 }
 
-async function sendPasswordResetEmail(user, resetUrl) {
-  const gmailUser = String(
-    process.env.GMAIL_USER || ""
-  ).trim();
 
-  const gmailPassword = String(
-    process.env.GMAIL_APP_PASSWORD || ""
-  ).trim();
+/* =========================================================
+   GMAIL ŞİFRE SIFIRLAMA E-POSTASI
+   ========================================================= */
 
-  const from = String(
-    process.env.MAIL_FROM || gmailUser
-  ).trim();
+async function sendPasswordResetEmail(
+  user,
+  resetUrl
+) {
+
+  const gmailUser =
+    String(
+      process.env.GMAIL_USER || ""
+    ).trim();
+
+  const gmailPassword =
+    String(
+      process.env.GMAIL_APP_PASSWORD || ""
+    ).trim();
+
+  const from =
+    String(
+      process.env.MAIL_FROM ||
+      gmailUser
+    ).trim();
 
   if (!gmailUser) {
     throw new Error(
@@ -643,60 +679,100 @@ async function sendPasswordResetEmail(user, resetUrl) {
     );
   }
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: gmailUser,
-      pass: gmailPassword
+  console.log(
+    "PASSWORD RESET EMAIL DEBUG:",
+    {
+      to: user.email,
+      from,
+      gmailUser,
+      resetUrlCreated: true
     }
-  });
+  );
+
+  const transporter =
+    nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: gmailUser,
+        pass: gmailPassword
+      }
+    });
 
   const html = `
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>PanelMarket Şifre Sıfırlama</title>
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1.0"
+>
+
+<title>
+PanelMarket Şifre Sıfırlama
+</title>
+
 </head>
 
-<body style="
+<body
+style="
 margin:0;
 padding:0;
 background:#f5f7fb;
 font-family:Arial,Helvetica,sans-serif;
-">
+"
+>
 
-<div style="
+<div
+style="
 max-width:600px;
 margin:40px auto;
 background:#ffffff;
 border-radius:16px;
 padding:32px;
 box-shadow:0 8px 30px rgba(0,0,0,.08);
-">
+"
+>
 
-<h1 style="color:#111827;">
+<h1
+style="
+margin:0 0 20px;
+font-size:28px;
+color:#111827;
+"
+>
 PanelMarket
 </h1>
 
-<h2 style="color:#111827;">
+<h2
+style="
+margin:0 0 16px;
+color:#111827;
+"
+>
 Şifre Sıfırlama
 </h2>
 
-<p style="
+<p
+style="
 font-size:16px;
 line-height:1.6;
 color:#4b5563;
-">
+"
+>
 Hesabınız için şifre sıfırlama isteği aldık.
 </p>
 
-<p style="
+<p
+style="
 font-size:16px;
 line-height:1.6;
 color:#4b5563;
-">
+"
+>
 Yeni şifrenizi belirlemek için aşağıdaki butona tıklayın:
 </p>
 
@@ -720,255 +796,101 @@ font-weight:bold;
 
 </div>
 
-<p style="
+<p
+style="
 font-size:14px;
 line-height:1.6;
 color:#6b7280;
-">
+"
+>
 Bu bağlantı güvenlik nedeniyle 30 dakika geçerlidir.
 </p>
 
-<p style="
+<p
+style="
 font-size:14px;
 line-height:1.6;
 color:#6b7280;
-">
+"
+>
 Bu işlemi siz yapmadıysanız bu e-postayı dikkate almayabilirsiniz.
 </p>
 
-<hr style="
+<hr
+style="
 border:0;
 border-top:1px solid #e5e7eb;
 margin:30px 0;
-">
+"
+>
 
-<p style="
+<p
+style="
 font-size:13px;
 color:#9ca3af;
-">
+margin:0;
+"
+>
 PanelMarket
 </p>
 
 </div>
 
 </body>
+
 </html>
 `;
 
   try {
-    const info = await transporter.sendMail({
-      from,
-      to: String(user.email),
-      subject: "PanelMarket - Şifre Sıfırlama",
-      html
-    });
+
+    const info =
+      await transporter.sendMail({
+        from,
+        to: String(user.email),
+        subject:
+          "PanelMarket - Şifre Sıfırlama",
+        html
+      });
 
     console.log(
       "PASSWORD RESET EMAIL SENT:",
       {
         to: user.email,
-        messageId: info.messageId
+        messageId:
+          info.messageId
       }
     );
 
     return info;
 
   } catch (error) {
+
     console.error(
       "GMAIL PASSWORD RESET ERROR:",
       {
-        message: error?.message,
-        code: error?.code,
-        command: error?.command
+        message:
+          error?.message,
+        code:
+          error?.code,
+        command:
+          error?.command,
+        response:
+          error?.response
       }
     );
 
     throw new Error(
       `Gmail e-posta hatası: ${
-        error?.message || "Bilinmeyen Gmail hatası"
+        error?.message ||
+        "Bilinmeyen Gmail hatası"
       }`
     );
   }
 }
-  const html = `
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>PanelMarket Şifre Sıfırlama</title>
-</head>
 
-<body style="
-margin:0;
-padding:0;
-background:#f5f7fb;
-font-family:Arial,Helvetica,sans-serif;
-">
-
-<div style="
-max-width:600px;
-margin:40px auto;
-background:#ffffff;
-border-radius:16px;
-padding:32px;
-box-shadow:0 8px 30px rgba(0,0,0,.08);
-">
-
-<h1 style="
-margin:0 0 20px;
-font-size:28px;
-color:#111827;
-">
-PanelMarket
-</h1>
-
-<h2 style="
-margin:0 0 16px;
-color:#111827;
-">
-Şifre Sıfırlama
-</h2>
-
-<p style="
-font-size:16px;
-line-height:1.6;
-color:#4b5563;
-">
-Hesabınız için şifre sıfırlama isteği aldık.
-</p>
-
-<p style="
-font-size:16px;
-line-height:1.6;
-color:#4b5563;
-">
-Yeni bir şifre belirlemek için aşağıdaki butona tıklayın:
-</p>
-
-<div style="margin:30px 0;">
-<a
-href="${resetUrl}"
-style="
-display:inline-block;
-background:#2563eb;
-color:#ffffff;
-text-decoration:none;
-padding:14px 24px;
-border-radius:10px;
-font-size:16px;
-font-weight:bold;
-"
->
-Şifremi Sıfırla
-</a>
-</div>
-
-<p style="
-font-size:14px;
-line-height:1.6;
-color:#6b7280;
-">
-Bu bağlantı güvenlik nedeniyle 30 dakika geçerlidir.
-</p>
-
-<p style="
-font-size:14px;
-line-height:1.6;
-color:#6b7280;
-">
-Bu işlemi siz yapmadıysanız bu e-postayı dikkate almayabilirsiniz.
-</p>
-
-<hr style="
-border:0;
-border-top:1px solid #e5e7eb;
-margin:30px 0;
-">
-
-<p style="
-font-size:13px;
-color:#9ca3af;
-margin:0;
-">
-PanelMarket
-</p>
-
-</div>
-
-</body>
-</html>
-`;
-
-  console.log("PASSWORD RESET EMAIL DEBUG:", {
-    to: user.email,
-    from,
-    hasApiKey: !!apiKey,
-    apiKeyLength: apiKey.length,
-    resetUrlCreated: !!resetUrl
-  });
-
-  const response = await fetch(
-    "https://api.resend.com/emails",
-    {
-      method: "POST",
-
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "User-Agent": "PanelMarket/1.0"
-      },
-
-      body: JSON.stringify({
-        from,
-        to: [String(user.email)],
-        subject: "PanelMarket - Şifre Sıfırlama",
-        html
-      })
-    }
-  );
-
-  const responseText = await response.text();
-
-  let result = {};
-
-  try {
-    result = JSON.parse(responseText);
-  } catch {
-    result = {
-      raw: responseText
-    };
-  }
-
-  console.log("RESEND RESPONSE:", {
-    status: response.status,
-    ok: response.ok,
-    result
-  });
-
-  if (!response.ok) {
-    const resendMessage =
-      result?.message ||
-      result?.error ||
-      result?.raw ||
-      "Bilinmeyen Resend hatası";
-
-    throw new Error(
-      `Resend e-posta hatası (${response.status}): ${resendMessage}`
-    );
-  }
-
-  if (!result?.id) {
-    console.warn(
-      "RESEND: E-posta gönderildi ancak response içinde id bulunamadı."
-    );
-  }
-
-  return result;
-}
 
 /* =========================================================
-   ŞİFRE SIFIRLAMA E-POSTASI
+   ŞİFRE SIFIRLAMA E-POSTASI İSTEĞİ
    ========================================================= */
 
 app.post(
@@ -977,11 +899,12 @@ app.post(
 
     try {
 
-      const email = String(
-        req.body.email || ""
-      )
-        .trim()
-        .toLowerCase();
+      const email =
+        String(
+          req.body.email || ""
+        )
+          .trim()
+          .toLowerCase();
 
       if (
         !email ||
@@ -1005,6 +928,11 @@ app.post(
       const user =
         await findUserByEmail(email);
 
+      /*
+         Güvenlik nedeniyle kayıtlı olmayan
+         e-postalarda da başarılı cevap veriyoruz.
+      */
+
       if (!user) {
 
         return res.status(200).json({
@@ -1024,7 +952,10 @@ app.post(
 
       console.log(
         "PASSWORD RESET URL CREATED:",
-        user.email
+        {
+          email: user.email,
+          urlCreated: true
+        }
       );
 
       await sendPasswordResetEmail(
@@ -1060,9 +991,9 @@ app.post(
       });
 
     }
-
   }
 );
+
 
 /* =========================================================
    RESET TOKEN KONTROLÜ
@@ -1074,50 +1005,65 @@ app.get(
 
     try {
 
-      const token = String(
-        req.query.token || ""
-      ).trim();
+      const token =
+        String(
+          req.query.token || ""
+        ).trim();
 
       if (!token) {
+
         return res.status(400).json({
           ok: false,
           valid: false,
           error:
             "Şifre sıfırlama bağlantısı bulunamadı."
         });
+
       }
 
       const payload =
-        verifyPasswordResetToken(token);
+        verifyPasswordResetToken(
+          token
+        );
 
       if (!payload) {
+
         return res.status(400).json({
           ok: false,
           valid: false,
           error:
             "Şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş."
         });
+
       }
 
       const user =
-        await findUserById(payload.uid);
+        await findUserById(
+          payload.uid
+        );
 
       if (!user) {
+
         return res.status(404).json({
           ok: false,
           valid: false,
           error:
             "Kullanıcı bulunamadı."
         });
+
       }
 
       const databaseEmail =
-        String(user.email || "")
+        String(
+          user.email || ""
+        )
           .trim()
           .toLowerCase();
 
       const tokenEmail =
-        String(payload.email || "")
+        String(
+          payload.email || ""
+        )
           .trim()
           .toLowerCase();
 
@@ -1125,12 +1071,14 @@ app.get(
         databaseEmail !==
         tokenEmail
       ) {
+
         return res.status(400).json({
           ok: false,
           valid: false,
           error:
             "Şifre sıfırlama bağlantısı geçersiz."
         });
+
       }
 
       return res.json({
@@ -1152,6 +1100,7 @@ app.get(
         error:
           "Şifre sıfırlama bağlantısı kontrol edilemedi."
       });
+
     }
   }
 );
@@ -1167,81 +1116,113 @@ app.post(
 
     try {
 
-      const token = String(
-        req.body.token || ""
-      ).trim();
+      const token =
+        String(
+          req.body.token || ""
+        ).trim();
 
-      const newPassword = String(
-        req.body.newPassword || ""
-      );
+      const newPassword =
+        String(
+          req.body.newPassword || ""
+        );
 
       if (!token) {
+
         return res.status(400).json({
           ok: false,
           success: false,
           error:
             "Şifre sıfırlama bağlantısı bulunamadı."
         });
+
       }
 
-      if (newPassword.length < 8) {
+      if (
+        newPassword.length < 8
+      ) {
+
         return res.status(400).json({
           ok: false,
           success: false,
           error:
             "Yeni şifre en az 8 karakter olmalıdır."
         });
+
       }
 
-      if (!/[A-Za-z]/.test(newPassword)) {
+      if (
+        !/[A-Za-z]/.test(
+          newPassword
+        )
+      ) {
+
         return res.status(400).json({
           ok: false,
           success: false,
           error:
             "Yeni şifre en az bir harf içermelidir."
         });
+
       }
 
-      if (!/[0-9]/.test(newPassword)) {
+      if (
+        !/[0-9]/.test(
+          newPassword
+        )
+      ) {
+
         return res.status(400).json({
           ok: false,
           success: false,
           error:
             "Yeni şifre en az bir rakam içermelidir."
         });
+
       }
 
       const payload =
-        verifyPasswordResetToken(token);
+        verifyPasswordResetToken(
+          token
+        );
 
       if (!payload) {
+
         return res.status(400).json({
           ok: false,
           success: false,
           error:
             "Şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş."
         });
+
       }
 
       const user =
-        await findUserById(payload.uid);
+        await findUserById(
+          payload.uid
+        );
 
       if (!user) {
+
         return res.status(404).json({
           ok: false,
           success: false,
           error:
             "Kullanıcı bulunamadı."
         });
+
       }
 
       const databaseEmail =
-        String(user.email || "")
+        String(
+          user.email || ""
+        )
           .trim()
           .toLowerCase();
 
       const tokenEmail =
-        String(payload.email || "")
+        String(
+          payload.email || ""
+        )
           .trim()
           .toLowerCase();
 
@@ -1249,37 +1230,49 @@ app.post(
         databaseEmail !==
         tokenEmail
       ) {
+
         return res.status(400).json({
           ok: false,
           success: false,
           error:
             "Şifre sıfırlama bağlantısı geçersiz."
         });
+
       }
 
       /*
-         ÖNEMLİ:
-         Giriş sistemi SCRYPT kullanıyor.
-         Şifre sıfırlamada da SCRYPT kullanılıyor.
+         LOGIN SISTEMI SCRYPT KULLANIYOR.
+         RESET DE AYNI SISTEMI KULLANIYOR.
       */
 
       const pw =
-        hashPassword(newPassword);
+        hashPassword(
+          newPassword
+        );
 
       const {
         data,
         error
-      } = await supabase
-        .from("users")
-        .update({
-          password_hash: pw.hash,
-          password_salt: pw.salt
-        })
-        .eq("id", user.id)
-        .select("id,email")
-        .single();
+      } =
+        await supabase
+          .from("users")
+          .update({
+            password_hash:
+              pw.hash,
+            password_salt:
+              pw.salt
+          })
+          .eq(
+            "id",
+            user.id
+          )
+          .select(
+            "id,email"
+          )
+          .single();
 
       if (error) {
+
         console.error(
           "RESET PASSWORD DB ERROR:",
           error
@@ -1293,33 +1286,43 @@ app.post(
           databaseError:
             error.message
         });
+
       }
 
       if (!data) {
+
         return res.status(404).json({
           ok: false,
           success: false,
           error:
             "Kullanıcı bulunamadı."
         });
+
       }
 
       /*
-         Eski oturumların tamamını kapat.
+         Kullanıcının eski bütün
+         oturumlarını kapat.
       */
 
       const {
         error: sessionError
-      } = await supabase
-        .from("sessions")
-        .delete()
-        .eq("user_id", user.id);
+      } =
+        await supabase
+          .from("sessions")
+          .delete()
+          .eq(
+            "user_id",
+            user.id
+          );
 
       if (sessionError) {
+
         console.error(
           "RESET SESSION DELETE ERROR:",
           sessionError.message
         );
+
       }
 
       console.log(
@@ -1352,6 +1355,7 @@ app.post(
             ? undefined
             : e?.message
       });
+
     }
   }
 );
