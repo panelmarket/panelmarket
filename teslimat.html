@@ -1,474 +1,1448 @@
+```html
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
 <title>Ürün Teslimatı - PanelMarket</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Inter,Arial,sans-serif;background:#070a0f;color:#f5f7fb}
-a{text-decoration:none;color:inherit}
-button{font-family:inherit}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box
+}
+
+body{
+    font-family:Inter,Arial,sans-serif;
+    background:#070a0f;
+    color:#f5f7fb
+}
+
+a{
+    text-decoration:none;
+    color:inherit
+}
+
+button{
+    font-family:inherit
+}
+
+
+/* HEADER */
 
 header{
-position:sticky;top:0;z-index:1000;height:76px;
-background:rgba(7,10,15,.92);
-backdrop-filter:blur(18px);
-border-bottom:1px solid #1c2531
+    position:sticky;
+    top:0;
+    z-index:1000;
+    height:76px;
+
+    background:rgba(7,10,15,.92);
+
+    backdrop-filter:blur(18px);
+
+    border-bottom:1px solid #1c2531
 }
+
 .header{
-width:min(1200px,94%);height:100%;margin:auto;
-display:flex;align-items:center;justify-content:space-between
+    width:min(1200px,94%);
+    height:100%;
+    margin:auto;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between
 }
-.logo{display:flex;align-items:center;gap:11px;font-size:21px;font-weight:900}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:11px;
+
+    font-size:21px;
+    font-weight:900
+}
+
 .logo-icon{
-width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
-background:linear-gradient(135deg,#1677ff,#7347ff);
-box-shadow:0 8px 30px rgba(22,119,255,.25)
+    width:40px;
+    height:40px;
+
+    border-radius:12px;
+
+    display:grid;
+    place-items:center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1677ff,
+            #7347ff
+        );
+
+    box-shadow:
+        0 8px 30px
+        rgba(22,119,255,.25)
 }
-.nav{display:flex;gap:28px}
-.nav a{color:#8995a7;font-size:13px}
-.nav a:hover{color:#fff}
-.header-buttons{display:flex;gap:9px}
-.header-btn{padding:11px 16px;border-radius:9px;font-size:12px;font-weight:800}
-.login{border:1px solid #273241}
-.register{background:#1677ff}
+
+.nav{
+    display:flex;
+    gap:28px
+}
+
+.nav a{
+    color:#8995a7;
+    font-size:13px
+}
+
+.nav a:hover{
+    color:#fff
+}
+
+
+/* AUTH BUTTONS */
+
+.header-buttons{
+    display:flex;
+    gap:9px;
+    align-items:center
+}
+
+.header-btn{
+    padding:11px 16px;
+
+    border-radius:9px;
+
+    font-size:12px;
+    font-weight:800;
+
+    cursor:pointer
+}
+
+.login{
+    border:1px solid #273241;
+    background:transparent;
+    color:#fff
+}
+
+.register{
+    background:#1677ff;
+    border:1px solid #1677ff;
+    color:#fff
+}
+
+.logout{
+    border:1px solid #273241;
+    background:#101820;
+    color:#fff
+}
+
+.logout:hover{
+    background:#17212c
+}
+
+
+/* CONTAINER */
 
 .container{
-width:min(900px,94%);
-margin:55px auto 100px
+    width:min(900px,94%);
+
+    margin:55px auto 100px
 }
+
+
+/* CARD */
 
 .card{
-background:#0d131b;
-border:1px solid #1c2633;
-border-radius:20px;
-padding:30px
+    background:#0d131b;
+
+    border:1px solid #1c2633;
+
+    border-radius:20px;
+
+    padding:30px
 }
+
+
+/* SUCCESS */
 
 .success-icon{
-width:75px;
-height:75px;
-margin:0 auto 20px;
-border-radius:24px;
-display:grid;
-place-items:center;
-font-size:34px;
-background:rgba(50,210,120,.1);
-border:1px solid rgba(50,210,120,.25);
-color:#72e6a2
+    width:75px;
+    height:75px;
+
+    margin:0 auto 20px;
+
+    border-radius:24px;
+
+    display:grid;
+    place-items:center;
+
+    font-size:34px;
+
+    background:
+        rgba(50,210,120,.1);
+
+    border:
+        1px solid
+        rgba(50,210,120,.25);
+
+    color:#72e6a2
 }
 
-.center{text-align:center}
+.center{
+    text-align:center
+}
 
 .center h1{
-font-size:34px;
-letter-spacing:-1.5px
-}
-.center p{
-margin-top:8px;
-color:#8995a7
+    font-size:34px;
+    letter-spacing:-1.5px
 }
 
+.center p{
+    margin-top:8px;
+    color:#8995a7
+}
+
+
+/* PRODUCT */
+
 .product{
-margin-top:30px;
-padding:22px;
-border-radius:14px;
-background:#090f16;
-border:1px solid #1d2937
+    margin-top:30px;
+
+    padding:22px;
+
+    border-radius:14px;
+
+    background:#090f16;
+
+    border:1px solid #1d2937
 }
 
 .product-title{
-font-size:22px;
-font-weight:900
-}
-.product-category{
-margin-top:5px;
-color:#5eacff;
-font-size:12px;
-font-weight:800
+    font-size:22px;
+    font-weight:900
 }
 
+.product-category{
+    margin-top:5px;
+
+    color:#5eacff;
+
+    font-size:12px;
+    font-weight:800
+}
+
+
+/* DETAILS */
+
 .details{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-margin-top:20px
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:10px;
+
+    margin-top:20px
 }
 
 .detail{
-padding:15px;
-background:#0d151e;
-border:1px solid #1d2937;
-border-radius:10px
+    padding:15px;
+
+    background:#0d151e;
+
+    border:1px solid #1d2937;
+
+    border-radius:10px
 }
+
 .detail-label{
-font-size:10px;
-color:#718096;
-text-transform:uppercase
+    font-size:10px;
+
+    color:#718096;
+
+    text-transform:uppercase
 }
+
 .detail-value{
-font-size:14px;
-font-weight:900;
-margin-top:5px;
-word-break:break-word
+    font-size:14px;
+
+    font-weight:900;
+
+    margin-top:5px;
+
+    word-break:break-word
 }
+
+
+/* KEY */
 
 .key{
-margin-top:20px;
-padding:20px;
-border-radius:13px;
-background:
-radial-gradient(circle at 50% 0,rgba(22,119,255,.17),transparent 60%),
-#080e15;
-border:1px solid #263c59
-}
-.key-label{
-font-size:11px;
-color:#8995a7
-}
-.key-value{
-font-family:monospace;
-font-size:20px;
-font-weight:900;
-letter-spacing:1px;
-margin-top:8px;
-word-break:break-all;
-color:#fff
+    margin-top:20px;
+
+    padding:20px;
+
+    border-radius:13px;
+
+    background:
+        radial-gradient(
+            circle at 50% 0,
+            rgba(22,119,255,.17),
+            transparent 60%
+        ),
+        #080e15;
+
+    border:1px solid #263c59
 }
 
+.key-label{
+    font-size:11px;
+    color:#8995a7
+}
+
+.key-value{
+    font-family:monospace;
+
+    font-size:20px;
+
+    font-weight:900;
+
+    letter-spacing:1px;
+
+    margin-top:8px;
+
+    word-break:break-all;
+
+    color:#fff
+}
+
+
+/* BUTTONS */
+
 .buttons{
-display:flex;
-gap:10px;
-margin-top:22px
+    display:flex;
+
+    gap:10px;
+
+    margin-top:22px
 }
 
 .btn{
-flex:1;
-border:0;
-cursor:pointer;
-padding:14px 20px;
-border-radius:10px;
-font-size:12px;
-font-weight:900;
-text-align:center
+    flex:1;
+
+    border:0;
+
+    cursor:pointer;
+
+    padding:14px 20px;
+
+    border-radius:10px;
+
+    font-size:12px;
+
+    font-weight:900;
+
+    text-align:center
 }
+
 .primary{
-background:#1677ff;
-color:#fff
+    background:#1677ff;
+    color:#fff
 }
-.primary:hover{background:#2a87ff}
+
+.primary:hover{
+    background:#2a87ff
+}
+
 .secondary{
-background:#101820;
-border:1px solid #263546;
-color:#fff
+    background:#101820;
+
+    border:1px solid #263546;
+
+    color:#fff
 }
+
+
+/* NOTICE */
 
 .notice{
-margin-top:18px;
-padding:15px;
-border-radius:10px;
-background:rgba(22,119,255,.07);
-border:1px solid rgba(22,119,255,.18);
-color:#9eb0c5;
-font-size:12px;
-line-height:1.6
+    margin-top:18px;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    background:
+        rgba(22,119,255,.07);
+
+    border:
+        1px solid
+        rgba(22,119,255,.18);
+
+    color:#9eb0c5;
+
+    font-size:12px;
+
+    line-height:1.6
 }
+
+
+/* LOADING */
 
 .loading{
-text-align:center;
-color:#8995a7;
-padding:50px
+    text-align:center;
+
+    color:#8995a7;
+
+    padding:50px
 }
+
+
+/* ERROR */
 
 .error{
-text-align:center;
-padding:40px;
-color:#ff9999
+    text-align:center;
+
+    padding:40px;
+
+    color:#ff9999
 }
+
+
+/* FOOTER */
 
 footer{
-border-top:1px solid #1c2531;
-padding:30px 3%;
-text-align:center;color:#657184;font-size:12px
+    border-top:1px solid #1c2531;
+
+    padding:30px 3%;
+
+    text-align:center;
+
+    color:#657184;
+
+    font-size:12px
 }
 
+
+/* MOBILE */
+
 @media(max-width:600px){
-.nav{display:none}
-.card{padding:20px}
-.details{grid-template-columns:1fr}
-.buttons{flex-direction:column}
-.center h1{font-size:27px}
-.key-value{font-size:16px}
+
+    .nav{
+        display:none
+    }
+
+    .card{
+        padding:20px
+    }
+
+    .details{
+        grid-template-columns:1fr
+    }
+
+    .buttons{
+        flex-direction:column
+    }
+
+    .center h1{
+        font-size:27px
+    }
+
+    .key-value{
+        font-size:16px
+    }
+
 }
+
 </style>
+
 </head>
+
 
 <body>
 
+
 <header>
+
 <div class="header">
 
-<a href="/index.html" class="logo">
-<span class="logo-icon">P</span>
-<span>PanelMarket</span>
+
+<a
+    href="/index.html"
+    class="logo"
+>
+
+    <span class="logo-icon">
+        P
+    </span>
+
+    <span>
+        PanelMarket
+    </span>
+
 </a>
 
+
 <nav class="nav">
-<a href="/index.html">Ana Sayfa</a>
-<a href="/siparislerim.html">Siparişlerim</a>
-<a href="/hesabim.html">Hesabım</a>
+
+    <a href="/index.html">
+        Ana Sayfa
+    </a>
+
+    <a href="/siparislerim.html">
+        Siparişlerim
+    </a>
+
+    <a href="/hesabim.html">
+        Hesabım
+    </a>
+
 </nav>
 
-<div class="header-buttons">
-<a href="/login.html" class="header-btn login">GİRİŞ YAP</a>
-<a href="/register.html" class="header-btn register">KAYIT OL</a>
-</div>
+
+<!--
+    BURASI LOGIN.HTML İLE SENKRON
+    panelmarket_token
+    panelmarket_user
+-->
+
+<div
+    class="header-buttons"
+    id="authButtons"
+>
+
+    <!-- JS dolduracak -->
 
 </div>
+
+
+</div>
+
 </header>
+
 
 <main class="container">
 
+
 <div id="content">
 
-<div class="card loading">
-Sipariş bilgileri yükleniyor...
-</div>
+    <div class="card loading">
+        Sipariş bilgileri yükleniyor...
+    </div>
 
 </div>
+
 
 </main>
 
+
 <footer>
+
 © 2026 PanelMarket — Güvenli yazılım alışverişi
+
 </footer>
+
 
 <script>
 
-const params=new URLSearchParams(location.search);
-const orderId=params.get("id");
+"use strict";
+
+
+/* =========================================================
+   LOGIN.HTML'DEKİ GERÇEK ANAHTARLAR
+========================================================= */
+
+const TOKEN_KEY =
+    "panelmarket_token";
+
+const USER_KEY =
+    "panelmarket_user";
+
+
+/* =========================================================
+   TOKEN
+========================================================= */
+
+function getToken(){
+
+    try{
+
+        return (
+            localStorage.getItem(
+                TOKEN_KEY
+            ) || ""
+        );
+
+    }catch(error){
+
+        console.error(
+            "TOKEN OKUMA HATASI:",
+            error
+        );
+
+        return "";
+
+    }
+
+}
+
+
+/* =========================================================
+   USER
+========================================================= */
+
+function getUser(){
+
+    try{
+
+        const raw =
+            localStorage.getItem(
+                USER_KEY
+            );
+
+        if(!raw){
+
+            return null;
+
+        }
+
+        return JSON.parse(raw);
+
+    }catch(error){
+
+        console.error(
+            "USER OKUMA HATASI:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+/* =========================================================
+   LOGIN.HTML İLE AYNI OTURUM KONTROLÜ
+========================================================= */
+
+function isLoggedIn(){
+
+    const token =
+        getToken();
+
+    const user =
+        getUser();
+
+    /*
+       login.html başarılı girişte:
+
+       localStorage.setItem(
+           "panelmarket_token",
+           data.token
+       );
+
+       localStorage.setItem(
+           "panelmarket_user",
+           JSON.stringify(data.user)
+       );
+
+       Bu yüzden ikisini birlikte kontrol ediyoruz.
+    */
+
+    return !!(
+        token &&
+        user
+    );
+
+}
+
+
+/* =========================================================
+   HEADER'I GÜNCELLE
+========================================================= */
+
+function updateAuthHeader(){
+
+    const box =
+        document.getElementById(
+            "authButtons"
+        );
+
+    if(!box){
+
+        return;
+
+    }
+
+
+    if(isLoggedIn()){
+
+        box.innerHTML = `
+
+            <a
+                href="/hesabim.html"
+                class="header-btn login"
+            >
+                HESABIM
+            </a>
+
+            <button
+                type="button"
+                class="header-btn logout"
+                onclick="logoutUser()"
+            >
+                ÇIKIŞ YAP
+            </button>
+
+        `;
+
+    }else{
+
+        box.innerHTML = `
+
+            <a
+                href="/login.html"
+                class="header-btn login"
+            >
+                GİRİŞ YAP
+            </a>
+
+            <a
+                href="/register.html"
+                class="header-btn register"
+            >
+                KAYIT OL
+            </a>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   ÇIKIŞ
+========================================================= */
+
+function logoutUser(){
+
+    try{
+
+        localStorage.removeItem(
+            TOKEN_KEY
+        );
+
+        localStorage.removeItem(
+            USER_KEY
+        );
+
+    }catch(error){
+
+        console.error(
+            "LOGOUT ERROR:",
+            error
+        );
+
+    }
+
+
+    /*
+       Sunucu tarafındaki cookie/session
+       varsa onu da kapatmayı deniyoruz.
+    */
+
+    fetch(
+        "/api/logout",
+        {
+            method:"POST",
+            credentials:"include"
+        }
+    ).catch(function(){});
+
+
+    window.location.replace(
+        "/login.html"
+    );
+
+}
+
+
+/* =========================================================
+   ORDER ID
+========================================================= */
+
+const params =
+    new URLSearchParams(
+        location.search
+    );
+
+const orderId =
+    params.get("id");
+
+
+/* =========================================================
+   ORDER YOK
+========================================================= */
 
 if(!orderId){
 
-document.getElementById("content").innerHTML=`
-<div class="card error">
-<h2>Sipariş bulunamadı</h2>
-<p style="margin-top:10px;color:#8995a7">
-Teslimat sayfasını bir sipariş üzerinden açmanız gerekiyor.
-</p>
-<br>
-<a href="/siparislerim.html" class="btn primary">
-SİPARİŞLERİME GİT
-</a>
-</div>`;
+    document.getElementById(
+        "content"
+    ).innerHTML = `
+
+        <div class="card error">
+
+            <h2>
+                Sipariş bulunamadı
+            </h2>
+
+            <p
+                style="
+                    margin-top:10px;
+                    color:#8995a7
+                "
+            >
+                Teslimat sayfasını bir sipariş
+                üzerinden açmanız gerekiyor.
+            </p>
+
+            <br>
+
+            <a
+                href="/siparislerim.html"
+                class="btn primary"
+            >
+                SİPARİŞLERİME GİT
+            </a>
+
+        </div>
+
+    `;
 
 }else{
 
-loadOrder();
+    loadOrder();
 
 }
+
+
+/* =========================================================
+   SİPARİŞ
+========================================================= */
 
 async function loadOrder(){
 
-try{
 
-const res=await fetch(
-"/api/orders/"+encodeURIComponent(orderId)
-);
+    /* ---------------------------------------------
+       GERÇEK LOGIN KONTROLÜ
+    --------------------------------------------- */
 
-const data=await res.json();
+    if(!isLoggedIn()){
 
-if(!res.ok){
-throw new Error(data.error||"Sipariş bulunamadı.");
+        document.getElementById(
+            "content"
+        ).innerHTML = `
+
+            <div class="card error">
+
+                <h2>
+                    Giriş yapmanız gerekiyor
+                </h2>
+
+                <p
+                    style="
+                        margin-top:10px;
+                        color:#8995a7
+                    "
+                >
+                    Sipariş teslimatını görüntülemek
+                    için PanelMarket hesabınıza giriş yapın.
+                </p>
+
+                <br>
+
+                <a
+                    href="/login.html"
+                    class="btn primary"
+                >
+                    GİRİŞ YAP
+                </a>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    try{
+
+
+        const token =
+            getToken();
+
+
+        /*
+           login.html'deki API sistemiyle uyumlu:
+           Authorization + credentials include
+        */
+
+        const headers = {
+
+            "Accept":
+                "application/json"
+
+        };
+
+
+        if(token){
+
+            headers[
+                "Authorization"
+            ] =
+                "Bearer " + token;
+
+        }
+
+
+        const res =
+            await fetch(
+
+                "/api/orders/" +
+                encodeURIComponent(
+                    orderId
+                ),
+
+                {
+
+                    method:"GET",
+
+                    headers:headers,
+
+                    credentials:"include",
+
+                    cache:"no-store"
+
+                }
+
+            );
+
+
+        let data = {};
+
+
+        try{
+
+            data =
+                await res.json();
+
+        }catch(error){
+
+            data = {};
+
+        }
+
+
+        /* ---------------------------------------------
+           OTURUM GEÇERSİZ
+        --------------------------------------------- */
+
+        if(
+            res.status === 401 ||
+            res.status === 403
+        ){
+
+            /*
+               Token gerçekten geçersizse temizle.
+            */
+
+            localStorage.removeItem(
+                TOKEN_KEY
+            );
+
+            localStorage.removeItem(
+                USER_KEY
+            );
+
+
+            updateAuthHeader();
+
+
+            document.getElementById(
+                "content"
+            ).innerHTML = `
+
+                <div class="card error">
+
+                    <h2>
+                        Oturum geçersiz
+                    </h2>
+
+                    <p
+                        style="
+                            margin-top:10px;
+                            color:#8995a7
+                        "
+                    >
+                        Siparişinizi görüntülemek
+                        için tekrar giriş yapın.
+                    </p>
+
+                    <br>
+
+                    <a
+                        href="/login.html"
+                        class="btn primary"
+                    >
+                        GİRİŞ YAP
+                    </a>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        if(!res.ok){
+
+            throw new Error(
+
+                data.error ||
+                data.message ||
+                "Sipariş bulunamadı."
+
+            );
+
+        }
+
+
+        const order =
+            data.order ||
+            data;
+
+
+        const product =
+            order.productName ||
+            order.product?.name ||
+            "Panel";
+
+
+        const license =
+            order.licenseName ||
+            order.license?.name ||
+            "1 Site";
+
+
+        const orderNumber =
+            order.orderNumber ||
+            order.id ||
+            "-";
+
+
+        const licenseKey =
+            order.licenseKey ||
+            order.license_key ||
+            "";
+
+
+        document.getElementById(
+            "content"
+        ).innerHTML = `
+
+            <div class="card">
+
+
+                <div class="center">
+
+
+                    <div class="success-icon">
+                        ✓
+                    </div>
+
+
+                    <h1>
+                        Satın Alma Tamamlandı
+                    </h1>
+
+
+                    <p>
+                        Paneliniz başarıyla
+                        hesabınıza tanımlandı.
+                    </p>
+
+
+                </div>
+
+
+
+                <div class="product">
+
+
+                    <div class="product-title">
+
+                        ${escapeHtml(
+                            product
+                        )}
+
+                    </div>
+
+
+                    <div class="product-category">
+
+                        PanelMarket Lisanslı Ürün
+
+                    </div>
+
+
+
+                    <div class="details">
+
+
+                        <div class="detail">
+
+                            <div class="detail-label">
+                                Sipariş No
+                            </div>
+
+                            <div class="detail-value">
+
+                                ${escapeHtml(
+                                    orderNumber
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="detail">
+
+                            <div class="detail-label">
+                                Lisans
+                            </div>
+
+                            <div class="detail-value">
+
+                                ${escapeHtml(
+                                    license
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="detail">
+
+                            <div class="detail-label">
+                                Durum
+                            </div>
+
+                            <div
+                                class="detail-value"
+                                style="color:#70e4a0"
+                            >
+
+                                ${escapeHtml(
+                                    order.status ||
+                                    "Tamamlandı"
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="detail">
+
+                            <div class="detail-label">
+                                Tutar
+                            </div>
+
+                            <div class="detail-value">
+
+                                ₺${format(
+                                    order.amount ??
+                                    order.price ??
+                                    0
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="key">
+
+
+                        <div class="key-label">
+
+                            LİSANS ANAHTARI
+
+                        </div>
+
+
+                        <div class="key-value">
+
+                            ${escapeHtml(
+                                licenseKey ||
+                                "Lisans anahtarı oluşturulmadı"
+                            )}
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="buttons">
+
+
+                        <button
+                            class="btn primary"
+                            onclick="copyKey('${escapeJs(licenseKey)}')"
+                        >
+
+                            LİSANS ANAHTARINI KOPYALA
+
+                        </button>
+
+
+                        <a
+                            href="/siparislerim.html"
+                            class="btn secondary"
+                        >
+
+                            SİPARİŞLERİME GİT
+
+                        </a>
+
+
+                    </div>
+
+
+
+                    <div class="notice">
+
+                        <strong>
+                            Satın alınan paneli teslim alma:
+                        </strong>
+
+                        <br><br>
+
+                        Bu siparişin lisans anahtarı
+                        hesabınıza tanımlanmıştır.
+
+                        Gerçek panel ZIP dosyasının
+                        indirilebilmesi için ilgili panel
+                        dosyasının sunucuya eklenmesi gerekir.
+
+                        Lisans anahtarı hazırdır ve
+                        siparişiniz hesabınızda kayıtlıdır.
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        `;
+
+
+    }catch(e){
+
+
+        console.error(
+            "ORDER LOAD ERROR:",
+            e
+        );
+
+
+        document.getElementById(
+            "content"
+        ).innerHTML = `
+
+            <div class="card error">
+
+                <h2>
+                    Sipariş yüklenemedi
+                </h2>
+
+                <p
+                    style="
+                        margin-top:10px
+                    "
+                >
+
+                    ${escapeHtml(
+                        e.message
+                    )}
+
+                </p>
+
+                <br>
+
+                <a
+                    href="/siparislerim.html"
+                    class="btn primary"
+                >
+                    SİPARİŞLERİME GİT
+                </a>
+
+            </div>
+
+        `;
+
+    }
+
 }
 
-const order=data.order||data;
 
-const product=
-order.productName||
-order.product?.name||
-"Panel";
-
-const license=
-order.licenseName||
-order.license?.name||
-"1 Site";
-
-const orderNumber=
-order.orderNumber||
-order.id||
-"-";
-
-const licenseKey=
-order.licenseKey||
-order.license_key||
-"";
-
-document.getElementById("content").innerHTML=`
-
-<div class="card">
-
-<div class="center">
-
-<div class="success-icon">✓</div>
-
-<h1>Satın Alma Tamamlandı</h1>
-
-<p>
-Paneliniz başarıyla hesabınıza tanımlandı.
-</p>
-
-</div>
-
-<div class="product">
-
-<div class="product-title">
-${escapeHtml(product)}
-</div>
-
-<div class="product-category">
-PanelMarket Lisanslı Ürün
-</div>
-
-<div class="details">
-
-<div class="detail">
-<div class="detail-label">Sipariş No</div>
-<div class="detail-value">
-${escapeHtml(orderNumber)}
-</div>
-</div>
-
-<div class="detail">
-<div class="detail-label">Lisans</div>
-<div class="detail-value">
-${escapeHtml(license)}
-</div>
-</div>
-
-<div class="detail">
-<div class="detail-label">Durum</div>
-<div class="detail-value" style="color:#70e4a0">
-${escapeHtml(order.status||"Tamamlandı")}
-</div>
-</div>
-
-<div class="detail">
-<div class="detail-label">Tutar</div>
-<div class="detail-value">
-₺${format(order.amount??order.price??0)}
-</div>
-</div>
-
-</div>
-
-<div class="key">
-
-<div class="key-label">
-LİSANS ANAHTARI
-</div>
-
-<div class="key-value">
-${escapeHtml(licenseKey||"Lisans anahtarı oluşturulmadı")}
-</div>
-
-</div>
-
-<div class="buttons">
-
-<button
-class="btn primary"
-onclick="copyKey('${escapeJs(licenseKey)}')">
-LİSANS ANAHTARINI KOPYALA
-</button>
-
-<a
-href="/siparislerim.html"
-class="btn secondary">
-SİPARİŞLERİME GİT
-</a>
-
-</div>
-
-<div class="notice">
-
-<strong>Satın alınan paneli teslim alma:</strong><br><br>
-
-Bu siparişin lisans anahtarı hesabınıza tanımlanmıştır.
-Gerçek panel ZIP dosyasının indirilebilmesi için
-ilgili panel dosyasının sunucuya eklenmesi gerekir.
-Lisans anahtarı hazırdır ve siparişiniz hesabınızda kayıtlıdır.
-
-</div>
-
-</div>
-
-</div>
-`;
-
-}catch(e){
-
-document.getElementById("content").innerHTML=`
-<div class="card error">
-<h2>Sipariş yüklenemedi</h2>
-<p style="margin-top:10px">
-${escapeHtml(e.message)}
-</p>
-<br>
-<a href="/siparislerim.html" class="btn primary">
-SİPARİŞLERİME GİT
-</a>
-</div>`;
-
-}
-
-}
+/* =========================================================
+   COPY
+========================================================= */
 
 function copyKey(key){
 
-if(!key){
-alert("Kopyalanacak lisans anahtarı bulunamadı.");
-return;
+    if(!key){
+
+        alert(
+            "Kopyalanacak lisans anahtarı bulunamadı."
+        );
+
+        return;
+
+    }
+
+
+    navigator.clipboard
+        .writeText(key)
+
+        .then(function(){
+
+            alert(
+                "Lisans anahtarı kopyalandı."
+            );
+
+        })
+
+        .catch(function(){
+
+            alert(
+                "Kopyalama başarısız oldu."
+            );
+
+        });
+
 }
 
-navigator.clipboard.writeText(key)
-.then(()=>{
-alert("Lisans anahtarı kopyalandı.");
-})
-.catch(()=>{
-alert("Kopyalama başarısız oldu.");
-});
 
-}
+/* =========================================================
+   FORMAT
+========================================================= */
 
 function format(n){
-return Number(n).toLocaleString("tr-TR",{
-minimumFractionDigits:2,
-maximumFractionDigits:2
-});
+
+    return Number(n)
+        .toLocaleString(
+            "tr-TR",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        );
+
 }
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
 
 function escapeHtml(str){
-return String(str??"").replace(/[&<>"']/g,m=>({
-"&":"&amp;",
-"<":"&lt;",
-">":"&gt;",
-'"':"&quot;",
-"'":"&#039;"
-}[m]));
+
+    return String(
+        str ?? ""
+    ).replace(
+        /[&<>"']/g,
+        function(m){
+
+            return {
+
+                "&":"&amp;",
+                "<":"&lt;",
+                ">":"&gt;",
+                '"':"&quot;",
+                "'":"&#039;"
+
+            }[m];
+
+        }
+    );
+
 }
 
+
+/* =========================================================
+   ESCAPE JS
+========================================================= */
+
 function escapeJs(str){
-return String(str??"")
-.replace(/\\/g,"\\\\")
-.replace(/'/g,"\\'")
-.replace(/\n/g,"\\n")
-.replace(/\r/g,"\\r");
+
+    return String(
+        str ?? ""
+    )
+    .replace(
+        /\\/g,
+        "\\\\"
+    )
+    .replace(
+        /'/g,
+        "\\'"
+    )
+    .replace(
+        /\n/g,
+        "\\n"
+    )
+    .replace(
+        /\r/g,
+        "\\r"
+    );
+
 }
+
+
+/* =========================================================
+   SAYFA AÇILIR AÇILMAZ HEADER
+========================================================= */
+
+updateAuthHeader();
 
 </script>
 
 </body>
 </html>
+```
