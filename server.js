@@ -606,7 +606,6 @@ function verifyPasswordResetToken(token) {
   }
 }
 
-
 async function sendPasswordResetEmail(user, resetUrl) {
   const gmailUser = String(
     process.env.GMAIL_USER || ""
@@ -644,6 +643,14 @@ async function sendPasswordResetEmail(user, resetUrl) {
     );
   }
 
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: gmailUser,
+      pass: gmailPassword
+    }
+  });
+
   const html = `
 <!DOCTYPE html>
 <html lang="tr">
@@ -666,6 +673,7 @@ margin:40px auto;
 background:#ffffff;
 border-radius:16px;
 padding:32px;
+box-shadow:0 8px 30px rgba(0,0,0,.08);
 ">
 
 <h1 style="color:#111827;">
@@ -699,10 +707,11 @@ href="${resetUrl}"
 style="
 display:inline-block;
 background:#2563eb;
-color:white;
+color:#ffffff;
 text-decoration:none;
 padding:14px 24px;
 border-radius:10px;
+font-size:16px;
 font-weight:bold;
 "
 >
@@ -713,19 +722,25 @@ font-weight:bold;
 
 <p style="
 font-size:14px;
+line-height:1.6;
 color:#6b7280;
 ">
-Bu bağlantı 30 dakika geçerlidir.
+Bu bağlantı güvenlik nedeniyle 30 dakika geçerlidir.
 </p>
 
 <p style="
 font-size:14px;
+line-height:1.6;
 color:#6b7280;
 ">
 Bu işlemi siz yapmadıysanız bu e-postayı dikkate almayabilirsiniz.
 </p>
 
-<hr>
+<hr style="
+border:0;
+border-top:1px solid #e5e7eb;
+margin:30px 0;
+">
 
 <p style="
 font-size:13px;
@@ -741,7 +756,7 @@ PanelMarket
 `;
 
   try {
-    const info = await gmailTransporter.sendMail({
+    const info = await transporter.sendMail({
       from,
       to: String(user.email),
       subject: "PanelMarket - Şifre Sıfırlama",
@@ -759,7 +774,6 @@ PanelMarket
     return info;
 
   } catch (error) {
-
     console.error(
       "GMAIL PASSWORD RESET ERROR:",
       {
@@ -776,7 +790,6 @@ PanelMarket
     );
   }
 }
-
   const html = `
 <!DOCTYPE html>
 <html lang="tr">
