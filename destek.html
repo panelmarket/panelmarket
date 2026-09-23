@@ -1,245 +1,514 @@
 <!doctype html>
 <html lang="tr">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+>
 
 <title>Destek - PanelMarket</title>
 
-<link rel="stylesheet" href="/style.css">
+<link
+    rel="stylesheet"
+    href="/style.css"
+>
 
 <style>
+
+/* =========================================
+   GENEL
+========================================= */
 
 body{
     background:#070a0f;
     color:#f5f7fb;
 }
 
-.support-page{
-    width:min(1050px,94%);
-    margin:55px auto 90px;
-}
 
-.support-top{
-    text-align:center;
-    margin-bottom:35px;
-}
+/* =========================================
+   HEADER
+========================================= */
 
-.support-badge{
-    display:inline-block;
-    padding:7px 12px;
-    border-radius:8px;
-    background:rgba(22,119,255,.10);
-    border:1px solid rgba(22,119,255,.25);
-    color:#5eacff;
-    font-size:11px;
-    font-weight:900;
-    margin-bottom:15px;
-}
-
-.support-top h1{
-    font-size:38px;
-    margin-bottom:10px;
-}
-
-.support-top p{
-    color:#8995a7;
-    font-size:14px;
-    line-height:1.7;
-}
-
-
-/* DESTEK KARTLARI */
-
-.support-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:16px;
-}
-
-.support-card{
-    background:#0d131b;
-    border:1px solid #1c2633;
-    border-radius:18px;
-    padding:25px;
-}
-
-.support-icon{
-    width:50px;
-    height:50px;
-    display:grid;
-    place-items:center;
-    border-radius:13px;
-    background:#101923;
-    border:1px solid #1f2c3b;
-    font-size:23px;
-    margin-bottom:17px;
-}
-
-.support-card h2{
-    font-size:18px;
-    margin-bottom:9px;
-}
-
-.support-card p{
-    color:#8995a7;
-    font-size:12px;
-    line-height:1.7;
-    min-height:65px;
-}
-
-.support-button{
-    display:inline-block;
-    margin-top:17px;
-    padding:11px 14px;
-    border-radius:9px;
-    background:#1677ff;
-    color:#fff;
-    font-size:11px;
-    font-weight:900;
-}
-
-.support-button:hover{
-    background:#2a87ff;
-}
-
-
-/* FORM */
-
-.support-form{
-    margin-top:18px;
-    background:#0d131b;
-    border:1px solid #1c2633;
-    border-radius:18px;
-    padding:28px;
-}
-
-.support-form h2{
-    font-size:22px;
-    margin-bottom:7px;
-}
-
-.support-description{
-    color:#8995a7;
-    font-size:12px;
-    margin-bottom:25px;
-}
-
-.form-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:15px;
-}
-
-.form-group{
-    margin-bottom:16px;
-}
-
-.form-group.full{
-    grid-column:1 / -1;
-}
-
-.form-group label{
-    display:block;
-    color:#cbd5e1;
-    font-size:12px;
-    font-weight:800;
-    margin-bottom:7px;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea{
-    width:100%;
-    padding:13px;
-    border-radius:9px;
-    border:1px solid #273241;
-    background:#080d13;
-    color:#fff;
-    outline:none;
-    font-family:inherit;
-    font-size:13px;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus{
-    border-color:#1677ff;
-}
-
-.form-group textarea{
-    min-height:150px;
-    resize:vertical;
-}
-
-.submit-button{
-    width:100%;
-    padding:14px;
-    border:0;
-    border-radius:9px;
-    background:#1677ff;
-    color:#fff;
-    cursor:pointer;
-    font-size:12px;
-    font-weight:900;
-}
-
-.submit-button:hover{
-    background:#2a87ff;
-}
-
-.submit-button:disabled{
-    opacity:.6;
-    cursor:not-allowed;
-}
-
-.result{
-    display:none;
-    margin-top:15px;
-    padding:13px;
-    border-radius:9px;
-    font-size:12px;
-}
-
-
-/* HEADER BUTONLARI */
-
-.support-header-buttons{
+.header-buttons{
     display:flex;
     align-items:center;
     gap:10px;
 }
 
-.support-logout-button{
-    border:0;
-    cursor:pointer;
-    font-family:inherit;
+
+/* Hesabım */
+
+.account-button{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    min-height:44px;
+
+    padding:0 18px;
+
+    border-radius:9px;
+
+    text-decoration:none;
+
+    white-space:nowrap;
 }
 
 
-/* MOBİL */
+/* Çıkış */
+
+.logout-button{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    min-height:44px;
+
+    padding:0 18px;
+
+    border:0;
+    border-radius:9px;
+
+    background:#1677ff;
+    color:#fff;
+
+    font-family:inherit;
+    font-size:12px;
+    font-weight:900;
+
+    cursor:pointer;
+
+    white-space:nowrap;
+
+    transition:.2s;
+}
+
+.logout-button:hover{
+    background:#2a87ff;
+}
+
+.logout-button:active{
+    transform:translateY(1px);
+}
+
+
+/* =========================================
+   DESTEK SAYFASI
+========================================= */
+
+.support-page{
+
+    width:min(1050px,94%);
+
+    margin:55px auto 90px;
+
+}
+
+
+/* =========================================
+   BAŞLIK
+========================================= */
+
+.support-top{
+
+    text-align:center;
+
+    margin-bottom:35px;
+
+}
+
+
+.support-badge{
+
+    display:inline-block;
+
+    padding:7px 12px;
+
+    border-radius:8px;
+
+    background:rgba(22,119,255,.10);
+
+    border:1px solid rgba(22,119,255,.25);
+
+    color:#5eacff;
+
+    font-size:11px;
+
+    font-weight:900;
+
+    margin-bottom:15px;
+
+}
+
+
+.support-top h1{
+
+    font-size:38px;
+
+    margin-bottom:10px;
+
+}
+
+
+.support-top p{
+
+    color:#8995a7;
+
+    font-size:14px;
+
+    line-height:1.7;
+
+}
+
+
+/* =========================================
+   DESTEK KARTLARI
+========================================= */
+
+.support-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:16px;
+
+}
+
+
+.support-card{
+
+    background:#0d131b;
+
+    border:1px solid #1c2633;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    transition:.2s;
+
+}
+
+
+.support-card:hover{
+
+    border-color:#315277;
+
+    transform:translateY(-2px);
+
+}
+
+
+.support-icon{
+
+    width:50px;
+
+    height:50px;
+
+    display:grid;
+
+    place-items:center;
+
+    border-radius:13px;
+
+    background:#101923;
+
+    border:1px solid #1f2c3b;
+
+    font-size:23px;
+
+    margin-bottom:17px;
+
+}
+
+
+.support-card h2{
+
+    font-size:18px;
+
+    margin-bottom:9px;
+
+}
+
+
+.support-card p{
+
+    color:#8995a7;
+
+    font-size:12px;
+
+    line-height:1.7;
+
+    min-height:65px;
+
+}
+
+
+.support-button{
+
+    display:inline-block;
+
+    margin-top:17px;
+
+    padding:11px 14px;
+
+    border-radius:9px;
+
+    background:#1677ff;
+
+    color:#fff;
+
+    font-size:11px;
+
+    font-weight:900;
+
+    text-decoration:none;
+
+}
+
+
+.support-button:hover{
+
+    background:#2a87ff;
+
+}
+
+
+/* =========================================
+   DESTEK FORMU
+========================================= */
+
+.support-form{
+
+    margin-top:18px;
+
+    background:#0d131b;
+
+    border:1px solid #1c2633;
+
+    border-radius:18px;
+
+    padding:28px;
+
+}
+
+
+.support-form h2{
+
+    font-size:22px;
+
+    margin-bottom:7px;
+
+}
+
+
+.support-description{
+
+    color:#8995a7;
+
+    font-size:12px;
+
+    margin-bottom:25px;
+
+}
+
+
+.form-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:15px;
+
+}
+
+
+.form-group{
+
+    margin-bottom:16px;
+
+}
+
+
+.form-group.full{
+
+    grid-column:1 / -1;
+
+}
+
+
+.form-group label{
+
+    display:block;
+
+    color:#cbd5e1;
+
+    font-size:12px;
+
+    font-weight:800;
+
+    margin-bottom:7px;
+
+}
+
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+
+    width:100%;
+
+    padding:13px;
+
+    border-radius:9px;
+
+    border:1px solid #273241;
+
+    background:#080d13;
+
+    color:#fff;
+
+    outline:none;
+
+    font-family:inherit;
+
+    font-size:13px;
+
+    box-sizing:border-box;
+
+}
+
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+
+    border-color:#1677ff;
+
+}
+
+
+.form-group textarea{
+
+    min-height:150px;
+
+    resize:vertical;
+
+}
+
+
+.submit-button{
+
+    width:100%;
+
+    padding:14px;
+
+    border:0;
+
+    border-radius:9px;
+
+    background:#1677ff;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    font-size:12px;
+
+    font-weight:900;
+
+}
+
+
+.submit-button:hover{
+
+    background:#2a87ff;
+
+}
+
+
+.submit-button:disabled{
+
+    opacity:.6;
+
+    cursor:not-allowed;
+
+}
+
+
+.result{
+
+    display:none;
+
+    margin-top:15px;
+
+    padding:13px;
+
+    border-radius:9px;
+
+    font-size:12px;
+
+}
+
+
+/* =========================================
+   MOBİL
+========================================= */
 
 @media(max-width:800px){
 
-    .support-grid{
-        grid-template-columns:1fr;
+    .header-buttons{
+
+        gap:7px;
+
     }
+
+
+    .account-button,
+    .logout-button{
+
+        min-height:42px;
+
+        padding:0 13px;
+
+        font-size:11px;
+
+    }
+
+
+    .support-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
 
     .form-grid{
+
         grid-template-columns:1fr;
+
     }
+
 
     .form-group.full{
+
         grid-column:auto;
+
     }
+
 
     .support-top h1{
-        font-size:30px;
-    }
 
-    .support-header-buttons{
-        gap:7px;
+        font-size:30px;
+
     }
 
 }
@@ -248,18 +517,23 @@ body{
 
 </head>
 
+
 <body>
 
 
-<!-- =========================
+<!-- =========================================
      HEADER
-========================= -->
+========================================= -->
 
 <header>
 
 <div class="header">
 
-<a class="logo" href="/index.html">
+
+<a
+    class="logo"
+    href="/index.html"
+>
 
 <span class="logo-icon">
 P
@@ -287,158 +561,234 @@ Destek
 </nav>
 
 
-<div class="header-buttons support-header-buttons">
+<div class="header-buttons">
+
 
 <a
-class="btn outline"
-href="/hesabim.html">
+    class="btn outline account-button"
+    href="/hesabim.html"
+>
+
 Hesabım
+
 </a>
 
+
 <button
-class="btn blue support-logout-button"
-type="button"
-onclick="logoutUser()">
+    class="logout-button"
+    type="button"
+    onclick="logoutUser()"
+>
 
 ÇIKIŞ YAP
 
 </button>
 
+
 </div>
+
 
 </div>
 
 </header>
 
 
-<!-- =========================
-     DESTEK SAYFASI
-========================= -->
+
+<!-- =========================================
+     DESTEK
+========================================= -->
 
 <main class="support-page">
 
 
 <div class="support-top">
 
+
 <span class="support-badge">
+
 PANELMARKET DESTEK
+
 </span>
 
+
 <h1>
+
 Size nasıl yardımcı olabiliriz?
+
 </h1>
 
+
 <p>
+
 PanelMarket hesabınız, siparişleriniz,
 lisanslarınız veya ürünleriniz hakkında
-destek almak için aşağıdaki seçenekleri kullanabilirsiniz.
+destek almak için aşağıdaki seçenekleri
+kullanabilirsiniz.
+
 </p>
+
 
 </div>
 
 
-<!-- DESTEK SEÇENEKLERİ -->
+
+<!-- =========================================
+     DESTEK KARTLARI
+========================================= -->
 
 <div class="support-grid">
 
 
+<!-- E-POSTA -->
+
 <div class="support-card">
 
+
 <div class="support-icon">
+
 ✉️
+
 </div>
 
+
 <h2>
+
 E-posta Desteği
+
 </h2>
 
+
 <p>
+
 Sorununuzu detaylı şekilde bize
 e-posta yoluyla gönderebilirsiniz.
+
 </p>
 
+
 <a
-class="support-button"
-href="mailto:panelmarketdestek@gmail.com">
+    class="support-button"
+    href="mailto:panelmarketdestek@gmail.com"
+>
 
 E-POSTA GÖNDER
 
 </a>
 
+
 </div>
 
+
+
+<!-- SİPARİŞ -->
 
 <div class="support-card">
 
+
 <div class="support-icon">
+
 📦
+
 </div>
 
+
 <h2>
+
 Sipariş Desteği
+
 </h2>
 
+
 <p>
+
 Siparişlerinizi, lisanslarınızı ve
 teslimat bilgilerinizi görüntüleyin.
+
 </p>
 
+
 <a
-class="support-button"
-href="/siparislerim.html">
+    class="support-button"
+    href="/siparislerim.html"
+>
 
 SİPARİŞLERİM
 
 </a>
 
+
 </div>
 
+
+
+<!-- HESAP -->
 
 <div class="support-card">
 
+
 <div class="support-icon">
+
 👤
+
 </div>
 
+
 <h2>
+
 Hesap Desteği
+
 </h2>
 
+
 <p>
+
 Hesabınız ve giriş işlemleriniz
 hakkında yardım alın.
+
 </p>
 
+
 <a
-class="support-button"
-href="/hesabim.html">
+    class="support-button"
+    href="/hesabim.html"
+>
 
 HESABIM
 
 </a>
 
-</div>
-
 
 </div>
 
 
-<!-- DESTEK TALEBİ -->
+</div>
+
+
+
+<!-- =========================================
+     DESTEK TALEBİ
+========================================= -->
 
 <div class="support-form">
 
+
 <h2>
+
 Destek Talebi Oluştur
+
 </h2>
 
+
 <p class="support-description">
+
 Sorununuzu aşağıdaki forma yazın.
+
 </p>
 
 
 <form
-id="supportForm"
-onsubmit="sendSupport(event)"
+    id="supportForm"
+    onsubmit="sendSupport(event)"
 >
 
 
@@ -447,140 +797,207 @@ onsubmit="sendSupport(event)"
 
 <div class="form-group">
 
+
 <label>
+
 Adınız
+
 </label>
 
+
 <input
-type="text"
-id="supportName"
-placeholder="Adınız"
-required>
+    type="text"
+    id="supportName"
+    placeholder="Adınız"
+    required
+>
+
 
 </div>
+
 
 
 <div class="form-group">
 
+
 <label>
+
 E-posta
+
 </label>
 
+
 <input
-type="email"
-id="supportEmail"
-placeholder="E-posta adresiniz"
-required>
+    type="email"
+    id="supportEmail"
+    placeholder="E-posta adresiniz"
+    required
+>
+
 
 </div>
 
 
+
 <div class="form-group full">
 
+
 <label>
+
 Konu
+
 </label>
 
+
 <select
-id="supportSubject"
-required>
+    id="supportSubject"
+    required
+>
+
 
 <option value="">
+
 Konu seçin
+
 </option>
+
 
 <option value="Sipariş">
+
 Sipariş
+
 </option>
+
 
 <option value="Lisans">
+
 Lisans
+
 </option>
+
 
 <option value="Ödeme">
+
 Ödeme
+
 </option>
+
 
 <option value="Hesap">
+
 Hesap
+
 </option>
+
 
 <option value="Giriş">
+
 Giriş problemi
+
 </option>
 
+
 <option value="Diğer">
+
 Diğer
+
 </option>
+
 
 </select>
 
+
 </div>
+
 
 
 <div class="form-group full">
 
+
 <label>
+
 Mesajınız
+
 </label>
 
+
 <textarea
-id="supportMessage"
-placeholder="Sorununuzu açıklayın..."
-required></textarea>
+    id="supportMessage"
+    placeholder="Sorununuzu açıklayın..."
+    required
+></textarea>
+
 
 </div>
 
 
 </div>
+
 
 
 <button
-type="submit"
-class="submit-button"
-id="supportSubmit">
+    type="submit"
+    class="submit-button"
+    id="supportSubmit"
+>
 
 DESTEK TALEBİ GÖNDER
 
 </button>
 
 
+
 <div
-id="supportResult"
-class="result">
-</div>
+    id="supportResult"
+    class="result"
+></div>
 
 
 </form>
 
+
 </div>
+
 
 </main>
 
+
+
+<!-- =========================================
+     FOOTER
+========================================= -->
 
 <footer>
 
 <div class="footer">
 
-<span>
-© 2026 PanelMarket
-</span>
 
 <span>
-Yazılım Panelleri • Lisans • Destek
+
+© 2026 PanelMarket
+
 </span>
+
+
+<span>
+
+Yazılım Panelleri • Lisans • Destek
+
+</span>
+
 
 </div>
 
 </footer>
 
 
+
 <script>
 
 
-/* =================================
+/* =========================================
    ÇIKIŞ YAP
-================================= */
+========================================= */
 
 async function logoutUser(){
 
@@ -597,7 +1014,10 @@ async function logoutUser(){
 
 
         const headers = {
-            "Accept":"application/json"
+
+            "Accept":
+                "application/json"
+
         };
 
 
@@ -612,10 +1032,15 @@ async function logoutUser(){
         await fetch(
             "/api/logout",
             {
+
                 method:"POST",
+
                 headers:headers,
+
                 credentials:"include",
+
                 cache:"no-store"
+
             }
         );
 
@@ -629,6 +1054,7 @@ async function logoutUser(){
 
 
     }finally{
+
 
         try{
 
@@ -666,9 +1092,10 @@ async function logoutUser(){
 }
 
 
-/* =================================
+
+/* =========================================
    DESTEK TALEBİ
-================================= */
+========================================= */
 
 async function sendSupport(event){
 
@@ -731,6 +1158,7 @@ async function sendSupport(event){
 
     try{
 
+
         const token =
             localStorage.getItem(
                 "panelmarket_token"
@@ -764,9 +1192,13 @@ async function sendSupport(event){
             await fetch(
                 "/api/support",
                 {
+
                     method:"POST",
+
                     headers:headers,
+
                     credentials:"include",
+
                     cache:"no-store",
 
                     body:JSON.stringify({
@@ -794,8 +1226,11 @@ async function sendSupport(event){
         if(!response.ok){
 
             throw new Error(
+
                 data.error ||
+
                 "Destek talebi gönderilemedi."
+
             );
 
         }
@@ -804,14 +1239,18 @@ async function sendSupport(event){
         result.style.display =
             "block";
 
+
         result.style.background =
             "rgba(40,210,120,.1)";
+
 
         result.style.border =
             "1px solid rgba(40,210,120,.25)";
 
+
         result.style.color =
             "#73e6a3";
+
 
         result.textContent =
             "Destek talebiniz başarıyla gönderildi.";
@@ -826,17 +1265,22 @@ async function sendSupport(event){
 
     }catch(error){
 
+
         result.style.display =
             "block";
+
 
         result.style.background =
             "rgba(255,60,60,.1)";
 
+
         result.style.border =
             "1px solid rgba(255,60,60,.3)";
 
+
         result.style.color =
             "#ff9b9b";
+
 
         result.textContent =
             error.message ||
@@ -845,8 +1289,10 @@ async function sendSupport(event){
 
     }finally{
 
+
         button.disabled =
             false;
+
 
         button.textContent =
             "DESTEK TALEBİ GÖNDER";
@@ -857,5 +1303,7 @@ async function sendSupport(event){
 
 </script>
 
+
 </body>
+
 </html>
