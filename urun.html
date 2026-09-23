@@ -119,78 +119,237 @@ header{
 }
 
 
-/* INDEX.HTML'DEKİ .btn */
+/*
+   HEADER BUTONLARINI ÖZEL OLARAK SABİTLE
+   AŞAĞIDAKİ GENEL .btn CSS'İ EZEMEZ
+*/
 
-#headerButtons .btn{
-    box-sizing:border-box;
+#headerButtons a.btn,
+#headerButtons button.btn{
 
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
+    box-sizing:border-box !important;
 
-    min-height:42px;
-    height:42px;
+    display:inline-flex !important;
 
-    padding:11px 16px;
+    align-items:center !important;
+    justify-content:center !important;
 
-    border-radius:9px;
+    width:auto !important;
 
-    font-size:12px;
-    font-weight:800;
+    min-width:0 !important;
 
-    line-height:1;
+    min-height:42px !important;
+    height:42px !important;
 
-    white-space:nowrap;
+    padding:11px 16px !important;
 
-    text-decoration:none;
-}
+    margin:0 !important;
 
+    border-radius:9px !important;
 
-/* INDEX.HTML - OUTLINE */
-
-#headerButtons .btn.outline{
-    border:1px solid #273241;
-    background:transparent;
-    color:#fff;
-}
-
-
-/* INDEX.HTML - BLUE */
-
-#headerButtons .btn.blue{
-    border:1px solid #1677ff;
-    background:#1677ff;
-    color:#fff;
-}
-
-
-/* ÇIKIŞ YAP - INDEX.HTML İLE AYNI */
-
-#headerButtons #userButtons button.btn.blue{
-    border:1px solid #1677ff !important;
-    background:#1677ff !important;
-    color:#fff !important;
-
-    font-family:inherit;
+    font-family:Inter,Arial,sans-serif !important;
 
     font-size:12px !important;
+
     font-weight:800 !important;
 
-    line-height:1;
+    line-height:1 !important;
 
-    cursor:pointer;
+    letter-spacing:normal !important;
 
-    appearance:none;
-    -webkit-appearance:none;
+    white-space:nowrap !important;
+
+    text-decoration:none !important;
+
+    text-transform:none !important;
+
+    box-shadow:none !important;
+
+    opacity:1 !important;
+
+    transition:none !important;
 }
 
 
-/* HOVER */
+/* =========================================
+   GİRİŞ YAP
+========================================= */
 
-#headerButtons .btn.blue:hover{
-    border-color:#1677ff;
-    background:#1677ff;
-    color:#fff;
+#headerButtons a.btn.outline{
+
+    background:transparent !important;
+
+    background-color:transparent !important;
+
+    border:1px solid #273241 !important;
+
+    color:#fff !important;
+
+}
+
+
+/* =========================================
+   KAYIT OL
+   INDEX.HTML MAVİ BUTONU
+========================================= */
+
+#headerButtons a.btn.blue{
+
+    background:#1677ff !important;
+
+    background-color:#1677ff !important;
+
+    border:1px solid #1677ff !important;
+
+    color:#fff !important;
+
+}
+
+
+/* =========================================
+   HESABIM
+========================================= */
+
+#headerButtons #userButtons a.btn.outline{
+
+    background:transparent !important;
+
+    background-color:transparent !important;
+
+    border:1px solid #273241 !important;
+
+    color:#fff !important;
+
+}
+
+
+/* =========================================
+   ÇIKIŞ YAP
+   INDEX.HTML "KAYIT OL" İLE AYNI
+========================================= */
+
+#headerButtons #userButtons button.btn.blue{
+
+    box-sizing:border-box !important;
+
+    display:inline-flex !important;
+
+    align-items:center !important;
+
+    justify-content:center !important;
+
+    width:auto !important;
+
+    min-width:0 !important;
+
+    min-height:42px !important;
+
+    height:42px !important;
+
+    padding:11px 16px !important;
+
+    margin:0 !important;
+
+    border-radius:9px !important;
+
+    border:1px solid #1677ff !important;
+
+    background:#1677ff !important;
+
+    background-color:#1677ff !important;
+
+    color:#fff !important;
+
+    font-family:Inter,Arial,sans-serif !important;
+
+    font-size:12px !important;
+
+    font-weight:800 !important;
+
+    line-height:1 !important;
+
+    letter-spacing:normal !important;
+
+    white-space:nowrap !important;
+
+    text-decoration:none !important;
+
+    text-transform:none !important;
+
+    box-shadow:none !important;
+
+    opacity:1 !important;
+
+    cursor:pointer !important;
+
+    appearance:none !important;
+
+    -webkit-appearance:none !important;
+
+    outline:none !important;
+
+}
+
+
+/* ÇIKIŞ YAP HOVER */
+
+#headerButtons #userButtons button.btn.blue:hover{
+
+    background:#1677ff !important;
+
+    background-color:#1677ff !important;
+
+    border-color:#1677ff !important;
+
+    color:#fff !important;
+
+}
+
+
+/* ÇIKIŞ YAP ACTIVE */
+
+#headerButtons #userButtons button.btn.blue:active{
+
+    background:#1677ff !important;
+
+    background-color:#1677ff !important;
+
+    border-color:#1677ff !important;
+
+    color:#fff !important;
+
+}
+
+
+/* ÇIKIŞ YAP FOCUS */
+
+#headerButtons #userButtons button.btn.blue:focus{
+
+    background:#1677ff !important;
+
+    background-color:#1677ff !important;
+
+    border-color:#1677ff !important;
+
+    color:#fff !important;
+
+    outline:none !important;
+
+}
+
+
+/* KAYIT OL HOVER */
+
+#headerButtons a.btn.blue:hover{
+
+    background:#1677ff !important;
+
+    background-color:#1677ff !important;
+
+    border-color:#1677ff !important;
+
+    color:#fff !important;
+
 }
 
 
@@ -203,14 +362,15 @@ header{
         gap:8px;
     }
 
-    #headerButtons .btn{
+    #headerButtons a.btn,
+    #headerButtons button.btn{
 
-        min-height:40px;
-        height:40px;
+        min-height:40px !important;
+        height:40px !important;
 
-        padding:10px 13px;
+        padding:10px 13px !important;
 
-        font-size:12px;
+        font-size:12px !important;
 
     }
 
