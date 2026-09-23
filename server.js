@@ -22,7 +22,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
   auth: { persistSession: false, autoRefreshToken: false }
 });
 
-app.use(express.json({ limit: "2mb" }));
+app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 const products = [
@@ -2979,6 +2979,7 @@ app.post("/api/admin/products", requireAuth, requireAdmin, async (req, res) => {
       sort_order: Number.isFinite(sortOrder)
         ? sortOrder
         : 0
+      image_url: String(req.body.image_url || "").trim()
     };
 
     console.log(
