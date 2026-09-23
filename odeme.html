@@ -141,7 +141,7 @@ header{
 
 
 /* =========================================
-   ÇIKIŞ YAP
+   ÇIKIŞ
 ========================================= */
 
 #userButtons button.btn.blue.logout-button{
@@ -174,7 +174,7 @@ header{
     appearance:none !important;
     -webkit-appearance:none !important;
     outline:none !important;
-    transition:none !important;
+    transition:none !important
 }
 
 #userButtons button.btn.blue.logout-button:hover,
@@ -190,11 +190,11 @@ header{
 
 
 /* =========================================
-   ANA SAYFA
+   ANA CONTAINER
 ========================================= */
 
 .container{
-    width:min(1050px,94%);
+    width:min(1100px,94%);
     margin:45px auto 90px
 }
 
@@ -219,7 +219,7 @@ header{
 
 .grid{
     display:grid;
-    grid-template-columns:1fr 380px;
+    grid-template-columns:1fr 400px;
     gap:20px
 }
 
@@ -265,22 +265,291 @@ header{
     margin-top:7px
 }
 
+.balance-status{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    margin-top:9px;
+    color:#79e5a5;
+    font-size:11px;
+    font-weight:700
+}
+
+.balance-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#32d278;
+    box-shadow:0 0 10px rgba(50,210,120,.6)
+}
+
+
+/* =========================================
+   KART BİLGİLERİ
+========================================= */
+
+.payment-section{
+    margin-top:28px
+}
+
+.payment-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:14px
+}
+
+.payment-title h2{
+    margin:0
+}
+
+.secure-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 9px;
+    border-radius:8px;
+    border:1px solid #263444;
+    background:#0a1119;
+    color:#8fa0b4;
+    font-size:10px;
+    font-weight:800;
+    white-space:nowrap
+}
+
+.card-preview{
+    position:relative;
+    width:100%;
+    min-height:205px;
+    border-radius:20px;
+    padding:24px;
+    overflow:hidden;
+    background:
+        radial-gradient(
+            circle at 85% 15%,
+            rgba(115,71,255,.5),
+            transparent 38%
+        ),
+        radial-gradient(
+            circle at 10% 90%,
+            rgba(22,119,255,.45),
+            transparent 40%
+        ),
+        linear-gradient(
+            135deg,
+            #111d2c,
+            #0a111a
+        );
+    border:1px solid #2b3c52;
+    box-shadow:
+        0 18px 45px rgba(0,0,0,.25),
+        inset 0 1px 0 rgba(255,255,255,.04)
+}
+
+.card-brand{
+    display:flex;
+    justify-content:space-between;
+    align-items:center
+}
+
+.card-brand-name{
+    font-size:15px;
+    font-weight:900;
+    letter-spacing:.5px
+}
+
+.card-chip{
+    width:42px;
+    height:30px;
+    border-radius:7px;
+    background:
+        linear-gradient(
+            135deg,
+            #c8d1dc,
+            #737f8d
+        );
+    position:relative;
+    overflow:hidden
+}
+
+.card-chip:before,
+.card-chip:after{
+    content:"";
+    position:absolute;
+    background:rgba(40,50,60,.35)
+}
+
+.card-chip:before{
+    width:100%;
+    height:1px;
+    top:50%;
+    left:0
+}
+
+.card-chip:after{
+    width:1px;
+    height:100%;
+    top:0;
+    left:50%
+}
+
+.card-number-preview{
+    margin-top:38px;
+    font-size:21px;
+    letter-spacing:3px;
+    font-weight:800;
+    word-spacing:4px
+}
+
+.card-bottom{
+    position:absolute;
+    left:24px;
+    right:24px;
+    bottom:22px;
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+    gap:20px
+}
+
+.card-preview-label{
+    font-size:8px;
+    color:#8290a2;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    margin-bottom:4px
+}
+
+.card-preview-value{
+    font-size:12px;
+    font-weight:800;
+    text-transform:uppercase;
+    max-width:190px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap
+}
+
+.card-form{
+    margin-top:16px;
+    padding:17px;
+    border-radius:14px;
+    border:1px solid #1d2937;
+    background:#0a1017
+}
+
+.form-label{
+    display:block;
+    color:#8d9aab;
+    font-size:11px;
+    font-weight:800;
+    margin-bottom:7px
+}
+
+.card-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px
+}
+
+.card-field{
+    margin-bottom:13px
+}
+
+.card-field:last-child{
+    margin-bottom:0
+}
+
+.card-input{
+    width:100%;
+    height:47px;
+    background:#080d13;
+    border:1px solid #253140;
+    border-radius:10px;
+    padding:0 13px;
+    color:#fff;
+    outline:none;
+    font-size:13px
+}
+
+.card-input:focus{
+    border-color:#1677ff;
+    box-shadow:0 0 0 3px rgba(22,119,255,.08)
+}
+
+.card-input::placeholder{
+    color:#536174
+}
+
+.card-security{
+    margin-top:13px;
+    color:#647387;
+    font-size:10px;
+    line-height:1.5
+}
+
 
 /* =========================================
    ÜRÜN
 ========================================= */
 
 .product-box{
-    padding:17px;
+    display:grid;
+    grid-template-columns:105px 1fr;
+    gap:15px;
+    align-items:center;
+    padding:15px;
     border-radius:12px;
     border:1px solid #1d2937;
     background:#0a1017;
     margin-bottom:20px
 }
 
+.product-image{
+    width:105px;
+    height:95px;
+    border-radius:13px;
+    overflow:hidden;
+    border:1px solid #253344;
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(22,119,255,.25),
+            transparent 60%
+        ),
+        #080e15;
+    display:flex;
+    align-items:center;
+    justify-content:center
+}
+
+.product-image img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:contain;
+    border-radius:inherit
+}
+
+.image-fallback{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#607087;
+    font-size:36px
+}
+
+.product-info{
+    min-width:0
+}
+
 .product-name{
     font-size:17px;
-    font-weight:900
+    font-weight:900;
+    word-break:break-word
 }
 
 .product-license{
@@ -289,10 +558,18 @@ header{
     margin-top:7px
 }
 
+.product-price-label{
+    color:#657286;
+    font-size:10px;
+    margin-top:10px;
+    text-transform:uppercase;
+    letter-spacing:.4px
+}
+
 .amount{
-    font-size:28px;
+    font-size:25px;
     font-weight:900;
-    margin-top:10px
+    margin-top:3px
 }
 
 
@@ -458,6 +735,49 @@ footer{
 
 }
 
+@media(max-width:600px){
+
+    .container{
+        width:92%;
+        margin-top:30px
+    }
+
+    .title h1{
+        font-size:30px
+    }
+
+    .card{
+        padding:18px
+    }
+
+    .product-box{
+        grid-template-columns:90px 1fr
+    }
+
+    .product-image{
+        width:90px;
+        height:82px
+    }
+
+    .card-preview{
+        min-height:185px;
+        padding:20px
+    }
+
+    .card-number-preview{
+        margin-top:32px;
+        font-size:17px;
+        letter-spacing:2px
+    }
+
+    .card-bottom{
+        left:20px;
+        right:20px;
+        bottom:18px
+    }
+
+}
+
 @media(max-width:700px){
 
     #guestButtons,
@@ -586,7 +906,7 @@ Hesabım
 </h1>
 
 <p>
-Siparişinizi tamamlamak için bakiye durumunuzu kontrol edin.
+Siparişinizi tamamlamak için ödeme ve bakiye bilgilerinizi kontrol edin.
 </p>
 
 </div>
@@ -600,6 +920,10 @@ Siparişinizi tamamlamak için bakiye durumunuzu kontrol edin.
 
 <div class="grid">
 
+
+<!-- =========================================
+     SOL TARAF
+========================================= -->
 
 <div class="card">
 
@@ -619,6 +943,14 @@ Mevcut Bakiye
     id="balance"
 >
 ₺0,00
+</div>
+
+<div class="balance-status">
+
+<span class="balance-dot"></span>
+
+Hesap bakiyesi aktif
+
 </div>
 
 </div>
@@ -651,14 +983,204 @@ BAKİYE YÜKLE
 
 <div class="notice">
 
-Bu demo sistemde bakiye yükleme işlemi
-sunucu üzerindeki test bakiyesine eklenir.
-Gerçek ödeme altyapısı ayrıca bağlanabilir.
+Bakiye hesabınıza sunucu üzerinden eklenir.
+Sipariş oluşturulurken mevcut bakiye tekrar
+kontrol edilir.
+
+</div>
+
+
+<!-- =========================================
+     KART BİLGİLERİ
+========================================= -->
+
+<div class="payment-section">
+
+<div class="payment-title">
+
+<h2>
+Kart Bilgileri
+</h2>
+
+<div class="secure-badge">
+🔒 Güvenli ödeme
+</div>
+
+</div>
+
+
+<div class="card-preview">
+
+<div class="card-brand">
+
+<div class="card-brand-name">
+PanelMarket
+</div>
+
+<div class="card-chip"></div>
+
+</div>
+
+
+<div
+    id="previewCardNumber"
+    class="card-number-preview"
+>
+•••• •••• •••• ••••
+</div>
+
+
+<div class="card-bottom">
+
+<div>
+
+<div class="card-preview-label">
+Kart Sahibi
+</div>
+
+<div
+    id="previewCardName"
+    class="card-preview-value"
+>
+AD SOYAD
+</div>
+
+</div>
+
+
+<div>
+
+<div class="card-preview-label">
+Son Kullanma
+</div>
+
+<div
+    id="previewExpiry"
+    class="card-preview-value"
+>
+MM/YY
+</div>
+
+</div>
 
 </div>
 
 </div>
 
+
+<div class="card-form">
+
+
+<div class="card-field">
+
+<label
+    class="form-label"
+    for="cardName"
+>
+Kart Üzerindeki Ad Soyad
+</label>
+
+<input
+    id="cardName"
+    class="card-input"
+    type="text"
+    autocomplete="cc-name"
+    placeholder="AD SOYAD"
+    maxlength="80"
+>
+
+</div>
+
+
+<div class="card-field">
+
+<label
+    class="form-label"
+    for="cardNumber"
+>
+Kart Numarası
+</label>
+
+<input
+    id="cardNumber"
+    class="card-input"
+    type="text"
+    inputmode="numeric"
+    autocomplete="cc-number"
+    placeholder="1234 5678 9012 3456"
+    maxlength="19"
+>
+
+</div>
+
+
+<div class="card-row">
+
+<div class="card-field">
+
+<label
+    class="form-label"
+    for="cardExpiry"
+>
+Son Kullanma Tarihi
+</label>
+
+<input
+    id="cardExpiry"
+    class="card-input"
+    type="text"
+    inputmode="numeric"
+    autocomplete="cc-exp"
+    placeholder="MM/YY"
+    maxlength="5"
+>
+
+</div>
+
+
+<div class="card-field">
+
+<label
+    class="form-label"
+    for="cardCvv"
+>
+CVV
+</label>
+
+<input
+    id="cardCvv"
+    class="card-input"
+    type="password"
+    inputmode="numeric"
+    autocomplete="cc-csc"
+    placeholder="•••"
+    maxlength="4"
+>
+
+</div>
+
+</div>
+
+
+<div class="card-security">
+
+Kart bilgileriniz bu sayfada saklanmaz.
+Gerçek karttan ödeme alınması için ayrıca
+ödeme sağlayıcısı bağlantısı gereklidir.
+
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<!-- =========================================
+     SAĞ TARAF
+========================================= -->
 
 <div class="card">
 
@@ -671,6 +1193,32 @@ Sipariş Özeti
 
 
 <div class="row">
+
+<span>
+Ürün
+</span>
+
+<strong id="productTotal">
+₺0,00
+</strong>
+
+</div>
+
+
+<div class="row">
+
+<span>
+Ödeme yöntemi
+</span>
+
+<strong>
+Bakiye
+</strong>
+
+</div>
+
+
+<div class="row total">
 
 <span>
 Toplam
@@ -701,6 +1249,14 @@ SİPARİŞİ OLUŞTUR
 SEPETE DÖN
 </a>
 
+
+<div class="notice">
+
+Sipariş oluşturulduğunda hesap bakiyeniz
+sunucu tarafından kontrol edilir. Yeterli
+bakiye yoksa işlem tamamlanmaz.
+
+</div>
 
 </div>
 
@@ -868,7 +1424,6 @@ async function apiFetch(
 
 /* =========================================
    LİSANS ID BUL
-   GENİŞ UYUMLULUK
 ========================================= */
 
 function getLicenseId(){
@@ -879,10 +1434,6 @@ function getLicenseId(){
 
     }
 
-
-    /*
-     * 1. Doğrudan licenseId
-     */
 
     const directIds = [
 
@@ -923,10 +1474,6 @@ function getLicenseId(){
 
     }
 
-
-    /*
-     * 2. license nesnesi
-     */
 
     if(
         cart.license &&
@@ -971,10 +1518,6 @@ function getLicenseId(){
     }
 
 
-    /*
-     * 3. selectedLicense nesnesi
-     */
-
     if(
         cart.selectedLicense &&
         typeof cart.selectedLicense === "object"
@@ -1016,10 +1559,6 @@ function getLicenseId(){
     }
 
 
-    /*
-     * 4. selected_license nesnesi
-     */
-
     if(
         cart.selected_license &&
         typeof cart.selected_license === "object"
@@ -1060,10 +1599,6 @@ function getLicenseId(){
 
     }
 
-
-    /*
-     * 5. Ayrı localStorage lisans kaydı
-     */
 
     try{
 
@@ -1206,7 +1741,7 @@ function getLicenseName(){
 
 
 /* =========================================
-   SEPET LİSANS BİLGİSİNİ GÜNCELLE
+   LİSANS NORMALİZE
 ========================================= */
 
 function normalizeCartLicense(){
@@ -1225,11 +1760,6 @@ function normalizeCartLicense(){
     const licenseName =
         getLicenseName();
 
-
-    /*
-     * Eski veya farklı yapıdan gelen
-     * lisans bilgilerini tek forma getir.
-     */
 
     if(licenseName){
 
@@ -1259,30 +1789,276 @@ function normalizeCartLicense(){
 
 
 /* =========================================
-   CART CONTROL
+   ÜRÜN GÖRSELİ
 ========================================= */
 
-if(!cart){
+function getCartImageUrl(){
 
-    document.getElementById(
-        "orderBox"
-    ).innerHTML =
-        "<div class='notice'>Sepetinizde ürün bulunmuyor.</div>";
+    if(!cart){
 
+        return "";
 
-    document.getElementById(
-        "total"
-    ).textContent =
-        "₺0,00";
+    }
 
 
-    document.getElementById(
-        "buyButton"
-    ).disabled = true;
+    return String(
 
-}else{
+        cart.image_url ||
 
-    normalizeCartLicense();
+        cart.imageUrl ||
+
+        cart.image ||
+
+        cart.thumbnail ||
+
+        ""
+
+    ).trim();
+
+}
+
+
+function createProductImage(
+    imageUrl,
+    productName
+){
+
+    const url =
+        String(
+            imageUrl || ""
+        ).trim();
+
+
+    if(!url){
+
+        return `
+            <div class="image-fallback">
+                ▣
+            </div>
+        `;
+
+    }
+
+
+    return `
+
+        <img
+            src="${escapeHtml(url)}"
+            alt="${escapeHtml(
+                productName ||
+                "Ürün"
+            )}"
+            onerror="
+                this.style.display='none';
+                if(this.nextElementSibling){
+                    this.nextElementSibling.style.display='flex';
+                }
+            "
+        >
+
+        <div
+            class="image-fallback"
+            style="display:none"
+        >
+            ▣
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================
+   GERÇEK ÜRÜN BİLGİSİNİ GETİR
+========================================= */
+
+async function loadRealCartProduct(){
+
+    if(!cart){
+
+        return;
+
+    }
+
+
+    if(
+        cart.productId === undefined ||
+        cart.productId === null ||
+        String(cart.productId).trim() === ""
+    ){
+
+        return;
+
+    }
+
+
+    /*
+     * Sepette zaten görsel varsa
+     * tekrar API çağrısı yapma.
+     */
+
+    if(getCartImageUrl()){
+
+        return;
+
+    }
+
+
+    try{
+
+        const res =
+            await fetch(
+                "/api/products/" +
+                encodeURIComponent(
+                    cart.productId
+                ) +
+                "?t=" +
+                Date.now(),
+                {
+                    method:"GET",
+
+                    headers:{
+                        "Accept":
+                            "application/json"
+                    },
+
+                    credentials:"include",
+
+                    cache:"no-store"
+                }
+            );
+
+
+        if(!res.ok){
+
+            return;
+
+        }
+
+
+        const data =
+            await res.json()
+                .catch(
+                    ()=>null
+                );
+
+
+        const product =
+            data?.product ||
+            data?.data ||
+            data;
+
+
+        if(!product){
+
+            return;
+
+        }
+
+
+        const imageUrl =
+            String(
+
+                product.image_url ||
+
+                product.imageUrl ||
+
+                product.image ||
+
+                product.thumbnail ||
+
+                ""
+
+            ).trim();
+
+
+        const productName =
+            product.name ||
+
+            product.productName ||
+
+            product.title ||
+
+            "";
+
+
+        if(imageUrl){
+
+            cart.image_url =
+                imageUrl;
+
+        }
+
+
+        if(
+            !cart.productName &&
+            productName
+        ){
+
+            cart.productName =
+                productName;
+
+        }
+
+
+        try{
+
+            localStorage.setItem(
+                "panelmarket_cart",
+                JSON.stringify(cart)
+            );
+
+        }catch(error){
+
+            console.warn(
+                "Sepet güncellenemedi:",
+                error
+            );
+
+        }
+
+
+        renderOrderBox();
+
+
+    }catch(error){
+
+        console.warn(
+            "Gerçek ürün bilgisi alınamadı:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   SİPARİŞ KUTUSU
+========================================= */
+
+function renderOrderBox(){
+
+    if(!cart){
+
+        document.getElementById(
+            "orderBox"
+        ).innerHTML =
+            "<div class='notice'>Sepetinizde ürün bulunmuyor.</div>";
+
+        document.getElementById(
+            "total"
+        ).textContent =
+            "₺0,00";
+
+        document.getElementById(
+            "productTotal"
+        ).textContent =
+            "₺0,00";
+
+        return;
+
+    }
 
 
     const price =
@@ -1291,8 +2067,20 @@ if(!cart){
         );
 
 
+    const productName =
+        cart.productName ||
+
+        cart.name ||
+
+        "Ürün";
+
+
     const licenseName =
         getLicenseName();
+
+
+    const imageUrl =
+        getCartImageUrl();
 
 
     document.getElementById(
@@ -1301,22 +2089,48 @@ if(!cart){
 
         <div class="product-box">
 
-            <div class="product-name">
-                ${escapeHtml(
-                    cart.productName ||
-                    "Ürün"
+            <div class="product-image">
+
+                ${createProductImage(
+                    imageUrl,
+                    productName
                 )}
+
             </div>
 
-            <div class="product-license">
-                Lisans:
-                ${escapeHtml(
-                    licenseName
-                )}
-            </div>
 
-            <div class="amount">
-                ₺${format(price)}
+            <div class="product-info">
+
+                <div class="product-name">
+
+                    ${escapeHtml(
+                        productName
+                    )}
+
+                </div>
+
+
+                <div class="product-license">
+
+                    Lisans:
+                    ${escapeHtml(
+                        licenseName
+                    )}
+
+                </div>
+
+
+                <div class="product-price-label">
+                    Ürün Fiyatı
+                </div>
+
+
+                <div class="amount">
+
+                    ₺${format(price)}
+
+                </div>
+
             </div>
 
         </div>
@@ -1330,6 +2144,35 @@ if(!cart){
         "₺" + format(price);
 
 
+    document.getElementById(
+        "productTotal"
+    ).textContent =
+        "₺" + format(price);
+
+}
+
+
+/* =========================================
+   CART CONTROL
+========================================= */
+
+if(!cart){
+
+    renderOrderBox();
+
+
+    document.getElementById(
+        "buyButton"
+    ).disabled = true;
+
+}else{
+
+    normalizeCartLicense();
+
+    renderOrderBox();
+
+    loadRealCartProduct();
+
     loadAccount();
 
 }
@@ -1342,7 +2185,9 @@ if(!cart){
 async function loadAccount(){
 
     if(loadingAccount){
+
         return;
+
     }
 
 
@@ -1408,13 +2253,15 @@ async function loadAccount(){
 
 
 /* =========================================
-   TOP UP
+   BAKİYE YÜKLE
 ========================================= */
 
 async function topup(){
 
     if(toppingUp){
+
         return;
+
     }
 
 
@@ -1553,7 +2400,9 @@ async function topup(){
 async function createOrder(){
 
     if(creatingOrder){
+
         return;
+
     }
 
 
@@ -1568,10 +2417,6 @@ async function createOrder(){
 
     }
 
-
-    /*
-     * Ürün ID
-     */
 
     if(
         cart.productId === undefined ||
@@ -1589,10 +2434,6 @@ async function createOrder(){
     }
 
 
-    /*
-     * LİSANS
-     */
-
     const licenseId =
         getLicenseId();
 
@@ -1600,11 +2441,6 @@ async function createOrder(){
     const licenseName =
         getLicenseName();
 
-
-    /*
-     * Burada eski sepetlerdeki
-     * licenseId eksikliğini ayrıca kontrol ediyoruz.
-     */
 
     if(
         licenseId === null ||
@@ -1679,11 +2515,6 @@ async function createOrder(){
 
 
     try{
-
-        /*
-         * SUNUCUYA LİSANS BİLGİLERİNİ
-         * GENİŞ UYUMLU ŞEKİLDE GÖNDER.
-         */
 
         const orderBody = {
 
@@ -1772,10 +2603,6 @@ async function createOrder(){
         }
 
 
-        /*
-         * Sipariş başarılı.
-         */
-
         localStorage.removeItem(
             "panelmarket_cart"
         );
@@ -1830,6 +2657,253 @@ async function createOrder(){
         }
 
     }
+
+}
+
+
+/* =========================================
+   KART NUMARASI FORMAT
+========================================= */
+
+function formatCardNumber(value){
+
+    return String(
+        value || ""
+    )
+    .replace(
+        /\D/g,
+        ""
+    )
+    .slice(
+        0,
+        16
+    )
+    .replace(
+        /(.{4})/g,
+        "$1 "
+    )
+    .trim();
+
+}
+
+
+/* =========================================
+   KART ÖNİZLEME
+========================================= */
+
+const cardName =
+    document.getElementById(
+        "cardName"
+    );
+
+const cardNumber =
+    document.getElementById(
+        "cardNumber"
+    );
+
+const cardExpiry =
+    document.getElementById(
+        "cardExpiry"
+    );
+
+const cardCvv =
+    document.getElementById(
+        "cardCvv"
+    );
+
+
+if(cardName){
+
+    cardName.addEventListener(
+        "input",
+        function(){
+
+            const value =
+                this.value
+                    .trim()
+                    .toUpperCase();
+
+
+            document.getElementById(
+                "previewCardName"
+            ).textContent =
+                value ||
+                "AD SOYAD";
+
+        }
+    );
+
+}
+
+
+if(cardNumber){
+
+    cardNumber.addEventListener(
+        "input",
+        function(){
+
+            const formatted =
+                formatCardNumber(
+                    this.value
+                );
+
+
+            this.value =
+                formatted;
+
+
+            const raw =
+                formatted.replace(
+                    /\s/g,
+                    ""
+                );
+
+
+            let preview =
+                "•••• •••• •••• ••••";
+
+
+            if(raw.length > 0){
+
+                const groups = [];
+
+                for(
+                    let i = 0;
+                    i < raw.length;
+                    i += 4
+                ){
+
+                    const part =
+                        raw.slice(
+                            i,
+                            i + 4
+                        );
+
+
+                    if(
+                        i < 12 &&
+                        raw.length < 16
+                    ){
+
+                        groups.push(
+                            part.replace(
+                                /./g,
+                                "•"
+                            )
+                        );
+
+                    }else if(i < 12){
+
+                        groups.push(
+                            "••••"
+                        );
+
+                    }else{
+
+                        groups.push(
+                            part
+                        );
+
+                    }
+
+                }
+
+
+                preview =
+                    groups.join(" ");
+
+
+                while(
+                    groups.length < 4
+                ){
+
+                    groups.push(
+                        "••••"
+                    );
+
+                }
+
+
+                preview =
+                    groups.join(" ");
+
+            }
+
+
+            document.getElementById(
+                "previewCardNumber"
+            ).textContent =
+                preview;
+
+        }
+    );
+
+}
+
+
+if(cardExpiry){
+
+    cardExpiry.addEventListener(
+        "input",
+        function(){
+
+            let value =
+                this.value
+                    .replace(
+                        /\D/g,
+                        ""
+                    )
+                    .slice(
+                        0,
+                        4
+                    );
+
+
+            if(value.length > 2){
+
+                value =
+                    value.slice(0,2) +
+                    "/" +
+                    value.slice(2);
+
+            }
+
+
+            this.value =
+                value;
+
+
+            document.getElementById(
+                "previewExpiry"
+            ).textContent =
+                value ||
+                "MM/YY";
+
+        }
+    );
+
+}
+
+
+if(cardCvv){
+
+    cardCvv.addEventListener(
+        "input",
+        function(){
+
+            this.value =
+                this.value
+                    .replace(
+                        /\D/g,
+                        ""
+                    )
+                    .slice(
+                        0,
+                        4
+                    );
+
+        }
+    );
 
 }
 
