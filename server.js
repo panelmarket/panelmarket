@@ -1061,134 +1061,77 @@ async function sendPasswordResetEmail(user, resetUrl) {
     }
   );
 
-  const html = `
+  const textBody = `
+Merhaba,
+
+PanelMarket hesabınız için bir şifre sıfırlama isteği aldık.
+
+Şifrenizi yenilemek için aşağıdaki bağlantıyı kullanabilirsiniz:
+
+${resetUrl}
+
+Bu bağlantı güvenlik nedeniyle 30 dakika geçerlidir.
+
+Bu isteği siz yapmadıysanız herhangi bir işlem yapmanıza gerek yoktur.
+
+PanelMarket
+`;
+
+const html = `
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1.0"
->
-<title>PanelMarket Şifre Sıfırlama</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PanelMarket şifre sıfırlama</title>
 </head>
 
-<body
-style="
-margin:0;
-padding:0;
-background:#f5f7fb;
-font-family:Arial,Helvetica,sans-serif;
-"
->
+<body style="margin:0;padding:0;background:#f6f7f9;font-family:Arial,Helvetica,sans-serif;color:#202124;">
 
-<div
-style="
-max-width:600px;
-margin:40px auto;
-background:#ffffff;
-border-radius:16px;
-padding:32px;
-box-shadow:0 8px 30px rgba(0,0,0,.08);
-"
->
+<div style="max-width:560px;margin:0 auto;padding:32px 18px;">
 
-<h1
-style="
-margin:0 0 20px;
-font-size:28px;
-color:#111827;
-"
->
+<div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:10px;padding:28px;">
+
+<h2 style="margin:0 0 20px;font-size:22px;font-weight:600;color:#202124;">
 PanelMarket
-</h1>
-
-<h2
-style="
-margin:0 0 16px;
-color:#111827;
-"
->
-Şifre Sıfırlama
 </h2>
 
-<p
-style="
-font-size:16px;
-line-height:1.6;
-color:#4b5563;
-"
->
-Hesabınız için şifre sıfırlama isteği aldık.
+<p style="margin:0 0 16px;font-size:15px;line-height:1.6;">
+Merhaba,
 </p>
 
-<p
-style="
-font-size:16px;
-line-height:1.6;
-color:#4b5563;
-"
->
-Yeni şifrenizi belirlemek için aşağıdaki butona tıklayın:
+<p style="margin:0 0 16px;font-size:15px;line-height:1.6;">
+PanelMarket hesabınız için bir şifre sıfırlama isteği aldık.
 </p>
 
-<div style="margin:30px 0;">
+<p style="margin:0 0 22px;font-size:15px;line-height:1.6;">
+Şifrenizi yenilemek için aşağıdaki bağlantıyı kullanabilirsiniz:
+</p>
 
+<p style="margin:0 0 24px;">
 <a
 href="${resetUrl}"
-style="
-display:inline-block;
-background:#2563eb;
-color:#ffffff;
-text-decoration:none;
-padding:14px 24px;
-border-radius:10px;
-font-size:16px;
-font-weight:bold;
-"
+style="display:inline-block;padding:11px 18px;background:#2563eb;color:#ffffff;text-decoration:none;border-radius:7px;font-size:14px;font-weight:600;"
 >
-Şifremi Sıfırla
+Şifremi sıfırla
 </a>
+</p>
 
-</div>
-
-<p
-style="
-font-size:14px;
-line-height:1.6;
-color:#6b7280;
-"
->
+<p style="margin:0 0 12px;font-size:13px;line-height:1.6;color:#5f6368;">
 Bu bağlantı güvenlik nedeniyle 30 dakika geçerlidir.
 </p>
 
-<p
-style="
-font-size:14px;
-line-height:1.6;
-color:#6b7280;
-"
->
-Bu işlemi siz yapmadıysanız bu e-postayı dikkate almayabilirsiniz.
+<p style="margin:0;font-size:13px;line-height:1.6;color:#5f6368;">
+Bu isteği siz yapmadıysanız herhangi bir işlem yapmanıza gerek yoktur.
 </p>
 
-<hr
-style="
-border:0;
-border-top:1px solid #e5e7eb;
-margin:30px 0;
-"
->
-
-<p
-style="
-font-size:13px;
-color:#9ca3af;
-margin:0;
-"
->
+<div style="margin-top:26px;padding-top:18px;border-top:1px solid #eeeeee;">
+<p style="margin:0;font-size:12px;color:#80868b;">
 PanelMarket
 </p>
+</div>
+
+</div>
 
 </div>
 
