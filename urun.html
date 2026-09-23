@@ -1,12 +1,25 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
 <title>Sepet - PanelMarket</title>
 
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
 body{
     font-family:Inter,Arial,sans-serif;
@@ -14,8 +27,21 @@ body{
     color:#f5f7fb;
 }
 
-a{text-decoration:none;color:inherit}
-button,input,select{font-family:inherit}
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+button,
+input,
+select{
+    font-family:inherit;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
 
 header{
     position:sticky;
@@ -50,8 +76,14 @@ header{
     border-radius:12px;
     display:grid;
     place-items:center;
-    background:linear-gradient(135deg,#1677ff,#7347ff);
-    box-shadow:0 8px 30px rgba(22,119,255,.25);
+    background:linear-gradient(
+        135deg,
+        #1677ff,
+        #7347ff
+    );
+    box-shadow:
+        0 8px 30px
+        rgba(22,119,255,.25);
 }
 
 .nav{
@@ -68,25 +100,105 @@ header{
     color:#fff;
 }
 
+
+/* =========================================
+   HEADER BUTONLARI
+   INDEX.HTML İLE AYNI
+========================================= */
+
 .header-buttons{
     display:flex;
-    gap:9px;
+    align-items:center;
 }
 
-.header-btn{
+#guestButtons,
+#userButtons{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+#guestButtons .header-btn,
+#userButtons .header-btn{
+
+    box-sizing:border-box;
+
+    display:inline-flex;
+
+    align-items:center;
+    justify-content:center;
+
+    min-height:42px;
+    height:42px;
+
     padding:11px 16px;
+
     border-radius:9px;
+
     font-size:12px;
     font-weight:800;
+
+    line-height:1;
+
+    white-space:nowrap;
 }
 
-.login{
+#guestButtons .login,
+#userButtons .login{
+
     border:1px solid #273241;
+
 }
 
-.register{
+#guestButtons .register,
+#userButtons .register{
+
+    border:1px solid #1677ff;
+
     background:#1677ff;
+
+    color:#fff;
+
 }
+
+#userButtons button.header-btn{
+
+    font-family:inherit;
+
+    cursor:pointer;
+
+    appearance:none;
+    -webkit-appearance:none;
+
+}
+
+@media(max-width:700px){
+
+    #guestButtons,
+    #userButtons{
+
+        gap:8px;
+
+    }
+
+    #guestButtons .header-btn,
+    #userButtons .header-btn{
+
+        min-height:40px;
+        height:40px;
+
+        padding:10px 13px;
+
+        font-size:12px;
+
+    }
+
+}
+
+
+/* =========================================
+   SAYFA
+========================================= */
 
 .container{
     width:min(1100px,94%);
@@ -107,29 +219,51 @@ header{
     color:#8995a7;
 }
 
+
+/* =========================================
+   SEPET
+========================================= */
+
 .cart{
+
     display:grid;
-    grid-template-columns:1fr 350px;
+
+    grid-template-columns:
+        1fr 350px;
+
     gap:20px;
+
 }
 
 .card{
+
     background:#0d131b;
+
     border:1px solid #1c2633;
+
     border-radius:18px;
+
     padding:25px;
+
 }
 
 .product{
+
     display:flex;
+
     align-items:center;
+
     gap:20px;
+
 }
 
 .product-image{
+
     width:115px;
     height:95px;
+
     border-radius:15px;
+
     background:
         radial-gradient(
             circle at 50% 45%,
@@ -137,290 +271,520 @@ header{
             transparent 60%
         ),
         #09101a;
+
     border:1px solid #1d2b3b;
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
+
     overflow:hidden;
+
     flex-shrink:0;
+
 }
 
 .product-image img{
+
     width:100%;
     height:100%;
+
     display:block;
+
     object-fit:cover;
+
     border-radius:inherit;
+
 }
 
 .image-fallback{
+
     font-size:40px;
+
 }
 
 .product-info{
+
     flex:1;
+
 }
 
 .category{
+
     color:#5eacff;
+
     font-size:12px;
+
     font-weight:800;
+
     margin-bottom:7px;
+
 }
 
 .product-name{
+
     font-size:21px;
+
     font-weight:900;
+
 }
 
 .license{
+
     margin-top:9px;
+
     color:#8995a7;
+
     font-size:13px;
+
 }
 
 .price{
+
     text-align:right;
+
 }
 
 .price strong{
+
     font-size:22px;
+
 }
 
+
+/* =========================================
+   BOŞ
+========================================= */
+
 .empty{
+
     text-align:center;
+
     padding:55px 20px;
+
 }
 
 .empty-icon{
+
     font-size:48px;
+
     margin-bottom:15px;
+
 }
 
 .empty h2{
+
     margin-bottom:8px;
+
 }
 
 .empty p{
+
     color:#8995a7;
+
     margin-bottom:22px;
+
 }
 
+
+/* =========================================
+   BUTONLAR
+========================================= */
+
 .btn{
+
     border:0;
+
     cursor:pointer;
+
     padding:14px 20px;
+
     border-radius:10px;
+
     font-size:13px;
+
     font-weight:900;
+
 }
 
 .primary{
+
     background:#1677ff;
+
     color:#fff;
+
 }
 
 .primary:hover{
+
     background:#2b87ff;
+
 }
 
 .secondary{
+
     background:#101720;
+
     border:1px solid #263445;
+
     color:#fff;
+
 }
 
 .summary h2{
+
     font-size:20px;
+
     margin-bottom:22px;
+
 }
 
 .row{
+
     display:flex;
+
     justify-content:space-between;
+
     padding:13px 0;
+
     color:#8995a7;
+
     font-size:14px;
+
     border-bottom:1px solid #18212c;
+
     gap:15px;
+
 }
 
 .row span:last-child{
+
     text-align:right;
+
 }
 
 .row.total{
+
     color:#fff;
+
     border:0;
+
     padding-top:20px;
+
     font-size:17px;
+
     font-weight:900;
+
 }
 
 .total strong{
+
     color:#fff;
+
     font-size:24px;
+
 }
 
 .actions{
+
     display:flex;
+
     flex-direction:column;
+
     gap:10px;
+
     margin-top:20px;
+
 }
 
 .actions .btn{
+
     text-align:center;
+
 }
 
 .notice{
+
     margin-top:18px;
+
     padding:13px;
+
     border-radius:10px;
+
     background:rgba(22,119,255,.08);
+
     border:1px solid rgba(22,119,255,.2);
+
     color:#9bb8df;
+
     font-size:12px;
+
     line-height:1.5;
+
 }
 
 .loading{
+
     text-align:center;
+
     padding:55px 20px;
+
     color:#8995a7;
+
 }
 
+
+/* =========================================
+   FOOTER
+========================================= */
+
 footer{
+
     border-top:1px solid #1c2531;
+
     padding:30px 3%;
+
     text-align:center;
+
     color:#657184;
+
     font-size:12px;
+
 }
+
+
+/* =========================================
+   MOBİL
+========================================= */
 
 @media(max-width:800px){
 
     .nav{
+
         display:none;
+
     }
 
     .cart{
+
         grid-template-columns:1fr;
+
     }
+
 }
 
 @media(max-width:600px){
 
     .product{
+
         align-items:flex-start;
+
     }
 
     .product-image{
+
         width:80px;
         height:75px;
+
     }
 
     .price strong{
+
         font-size:18px;
+
     }
 
     .card{
+
         padding:18px;
+
     }
 
     .product-name{
+
         font-size:17px;
+
     }
+
 }
 
 @media(max-width:450px){
 
     .product{
+
         gap:12px;
+
     }
 
     .product-image{
+
         width:72px;
         height:68px;
+
     }
 
     .product-info{
+
         min-width:0;
+
     }
 
     .product-name{
+
         word-break:break-word;
+
     }
 
     .price strong{
+
         font-size:16px;
+
     }
+
 }
+
 </style>
+
 </head>
 
+
 <body>
+
+
+<!-- =========================================
+     HEADER
+========================================= -->
 
 <header>
 
 <div class="header">
 
-<a href="/index.html" class="logo">
-    <span class="logo-icon">P</span>
-    <span>PanelMarket</span>
+
+<a
+    href="/index.html"
+    class="logo"
+>
+
+    <span class="logo-icon">
+        P
+    </span>
+
+    <span>
+        PanelMarket
+    </span>
+
 </a>
 
+
 <nav class="nav">
-    <a href="/index.html">Ana Sayfa</a>
-    <a href="/siparislerim.html">Siparişlerim</a>
-    <a href="/hesabim.html">Hesabım</a>
+
+    <a href="/index.html">
+        Ana Sayfa
+    </a>
+
+    <a href="/siparislerim.html">
+        Siparişlerim
+    </a>
+
+    <a href="/hesabim.html">
+        Hesabım
+    </a>
+
 </nav>
 
-<div class="header-buttons">
 
-    <div id="guestButtons" style="display:flex;gap:9px;">
-        <a href="/login.html" class="header-btn login">
-            GİRİŞ YAP
+<div
+    class="header-buttons"
+    id="headerButtons"
+>
+
+
+    <!-- GİRİŞ YAPILMAMIŞ -->
+
+    <div
+        id="guestButtons"
+        style="
+            display:flex;
+            gap:10px;
+            align-items:center;
+        "
+    >
+
+        <a
+            class="header-btn login"
+            href="/login.html"
+        >
+            Giriş Yap
         </a>
 
-        <a href="/register.html" class="header-btn register">
-            KAYIT OL
+        <a
+            class="header-btn register"
+            href="/register.html"
+        >
+            Kayıt Ol
         </a>
+
     </div>
 
-    <div id="userButtons" style="display:none;gap:9px;">
-        <a href="/hesabim.html" class="header-btn login">
-            HESABIM
+
+    <!-- GİRİŞ YAPILMIŞ -->
+
+    <div
+        id="userButtons"
+        style="
+            display:none;
+            gap:10px;
+            align-items:center;
+        "
+    >
+
+        <a
+            class="header-btn login"
+            href="/hesabim.html"
+        >
+            Hesabım
         </a>
 
         <button
-            type="button"
             class="header-btn register"
+            type="button"
             onclick="logoutUser()"
-            style="border:0;color:#fff;cursor:pointer;"
         >
-            ÇIKIŞ YAP
+            Çıkış Yap
         </button>
+
     </div>
 
+
 </div>
+
 
 </div>
 
 </header>
 
 
+<!-- =========================================
+     İÇERİK
+========================================= -->
+
 <main class="container">
+
 
 <div class="page-title">
 
-    <h1>Sepetim</h1>
+    <h1>
+        Sepetim
+    </h1>
 
     <p>
         Satın almak istediğiniz ürünü kontrol edin.
     </p>
 
 </div>
+
 
 <div id="content">
 
@@ -430,29 +794,85 @@ footer{
 
 </div>
 
+
 </main>
 
 
 <footer>
+
     © 2026 PanelMarket — Güvenli yazılım alışverişi
+
 </footer>
 
 
 <script>
 
+
 const content =
     document.getElementById("content");
 
-    /* =====================================================
+
+/* =========================================
+   HTML GÜVENLİĞİ
+========================================= */
+
+function escapeHtml(value){
+
+    return String(value ?? "").replace(
+        /[&<>"']/g,
+        function(m){
+
+            return {
+
+                "&":"&amp;",
+                "<":"&lt;",
+                ">":"&gt;",
+                '"':"&quot;",
+                "'":"&#039;"
+
+            }[m];
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   FİYAT
+========================================= */
+
+function format(value){
+
+    return Number(
+        value || 0
+    ).toLocaleString(
+        "tr-TR",
+        {
+            minimumFractionDigits:2,
+            maximumFractionDigits:2
+        }
+    );
+
+}
+
+
+/* =========================================
    OTURUM KONTROLÜ
-===================================================== */
+   INDEX.HTML İLE AYNI
+========================================= */
 
 async function checkLogin(){
 
     const token =
-        localStorage.getItem("panelmarket_token") ||
-        sessionStorage.getItem("panelmarket_token") ||
+        localStorage.getItem(
+            "panelmarket_token"
+        ) ||
+        sessionStorage.getItem(
+            "panelmarket_token"
+        ) ||
         "";
+
 
     try{
 
@@ -460,25 +880,35 @@ async function checkLogin(){
             "Accept":"application/json"
         };
 
+
         if(token){
+
             headers.Authorization =
                 "Bearer " + token;
+
         }
 
-        const response = await fetch(
-            "/api/auth/me?t=" + Date.now(),
-            {
-                method:"GET",
-                headers,
-                credentials:"include",
-                cache:"no-store"
-            }
-        );
+
+        const response =
+            await fetch(
+                "/api/auth/me?t=" + Date.now(),
+                {
+                    method:"GET",
+
+                    headers,
+
+                    credentials:"include",
+
+                    cache:"no-store"
+                }
+            );
+
 
         const data =
             await response
                 .json()
                 .catch(()=>({}));
+
 
         if(
             response.ok &&
@@ -489,11 +919,16 @@ async function checkLogin(){
 
             showLoggedIn();
 
+
             try{
+
                 localStorage.setItem(
                     "panelmarket_user",
-                    JSON.stringify(data.user)
+                    JSON.stringify(
+                        data.user
+                    )
                 );
+
             }catch{}
 
         }else{
@@ -502,6 +937,7 @@ async function checkLogin(){
 
         }
 
+
     }catch(error){
 
         console.error(
@@ -509,17 +945,23 @@ async function checkLogin(){
             error
         );
 
+
         const savedUser =
             localStorage.getItem(
                 "panelmarket_user"
             );
+
 
         const savedToken =
             localStorage.getItem(
                 "panelmarket_token"
             );
 
-        if(savedUser && savedToken){
+
+        if(
+            savedUser &&
+            savedToken
+        ){
 
             showLoggedIn();
 
@@ -530,8 +972,13 @@ async function checkLogin(){
         }
 
     }
+
 }
 
+
+/* =========================================
+   GİRİŞ YAPILMIŞ
+========================================= */
 
 function showLoggedIn(){
 
@@ -540,20 +987,34 @@ function showLoggedIn(){
             "guestButtons"
         );
 
+
     const userButtons =
         document.getElementById(
             "userButtons"
         );
 
+
     if(guestButtons){
-        guestButtons.style.display = "none";
+
+        guestButtons.style.display =
+            "none";
+
     }
+
 
     if(userButtons){
-        userButtons.style.display = "flex";
+
+        userButtons.style.display =
+            "flex";
+
     }
+
 }
 
+
+/* =========================================
+   GİRİŞ YAPILMAMIŞ
+========================================= */
 
 function showLoggedOut(){
 
@@ -562,20 +1023,34 @@ function showLoggedOut(){
             "guestButtons"
         );
 
+
     const userButtons =
         document.getElementById(
             "userButtons"
         );
 
+
     if(guestButtons){
-        guestButtons.style.display = "flex";
+
+        guestButtons.style.display =
+            "flex";
+
     }
+
 
     if(userButtons){
-        userButtons.style.display = "none";
+
+        userButtons.style.display =
+            "none";
+
     }
+
 }
 
+
+/* =========================================
+   ÇIKIŞ
+========================================= */
 
 async function logoutUser(){
 
@@ -590,24 +1065,33 @@ async function logoutUser(){
             ) ||
             "";
 
+
         const headers = {
             "Accept":"application/json"
         };
 
+
         if(token){
+
             headers.Authorization =
                 "Bearer " + token;
+
         }
+
 
         await fetch(
             "/api/logout",
             {
                 method:"POST",
+
                 headers,
+
                 credentials:"include",
+
                 cache:"no-store"
             }
         );
+
 
     }catch(error){
 
@@ -616,74 +1100,45 @@ async function logoutUser(){
             error
         );
 
+
     }finally{
 
-        localStorage.removeItem(
-            "panelmarket_token"
-        );
 
-        localStorage.removeItem(
-            "panelmarket_user"
-        );
+        try{
 
-        sessionStorage.removeItem(
-            "panelmarket_token"
-        );
+            localStorage.removeItem(
+                "panelmarket_token"
+            );
 
-        sessionStorage.removeItem(
-            "panelmarket_user"
-        );
+            localStorage.removeItem(
+                "panelmarket_user"
+            );
+
+            sessionStorage.removeItem(
+                "panelmarket_token"
+            );
+
+            sessionStorage.removeItem(
+                "panelmarket_user"
+            );
+
+        }catch{}
+
 
         showLoggedOut();
 
+
         window.location.href =
             "/index.html";
+
     }
+
 }
 
 
-/* =====================================================
-   HTML GÜVENLİĞİ
-===================================================== */
-
-function escapeHtml(value){
-
-    return String(value ?? "").replace(
-        /[&<>"']/g,
-        function(m){
-
-            return {
-                "&":"&amp;",
-                "<":"&lt;",
-                ">":"&gt;",
-                '"':"&quot;",
-                "'":"&#039;"
-            }[m];
-
-        }
-    );
-}
-
-
-/* =====================================================
-   FİYAT
-===================================================== */
-
-function format(value){
-
-    return Number(value || 0).toLocaleString(
-        "tr-TR",
-        {
-            minimumFractionDigits:2,
-            maximumFractionDigits:2
-        }
-    );
-}
-
-
-/* =====================================================
+/* =========================================
    SEPETİ TEMİZLE
-===================================================== */
+========================================= */
 
 function clearCart(){
 
@@ -692,13 +1147,13 @@ function clearCart(){
     );
 
     location.reload();
+
 }
 
 
-/* =====================================================
+/* =========================================
    ÜRÜN GÖRSELİ
-   RESİM YÜKLENEMEZSE ▣ GÖSTER
-===================================================== */
+========================================= */
 
 function createProductImage(
     imageUrl,
@@ -706,26 +1161,39 @@ function createProductImage(
 ){
 
     const url =
-        String(imageUrl || "").trim();
+        String(
+            imageUrl || ""
+        ).trim();
+
 
     if(!url){
 
         return `
+
             <div class="image-fallback">
                 ▣
             </div>
+
         `;
 
     }
 
+
     return `
+
         <img
+
             src="${escapeHtml(url)}"
-            alt="${escapeHtml(productName || "Ürün")}"
+
+            alt="${escapeHtml(
+                productName || "Ürün"
+            )}"
+
             onerror="
                 this.style.display='none';
                 this.nextElementSibling.style.display='block';
             "
+
         >
 
         <div
@@ -734,25 +1202,32 @@ function createProductImage(
         >
             ▣
         </div>
+
     `;
+
 }
 
 
-/* =====================================================
-   SEPETİ YÜKLE
-===================================================== */
+/* =========================================
+   SEPET
+========================================= */
 
 async function loadCart(){
 
+
     let cart = null;
+
 
     try{
 
         cart = JSON.parse(
+
             localStorage.getItem(
                 "panelmarket_cart"
             ) || "null"
+
         );
+
 
     }catch(error){
 
@@ -761,15 +1236,20 @@ async function loadCart(){
             error
         );
 
+
         localStorage.removeItem(
             "panelmarket_cart"
         );
 
+
         cart = null;
+
     }
 
 
-    /* SEPET BOŞ */
+    /* =====================================
+       SEPET BOŞ
+    ===================================== */
 
     if(!cart){
 
@@ -801,17 +1281,25 @@ async function loadCart(){
         `;
 
         return;
+
     }
 
 
     let price =
-        Number(cart.price || 0);
+        Number(
+            cart.price || 0
+        );
+
 
     let productName =
-        cart.productName || "Ürün";
+        cart.productName ||
+        "Ürün";
+
 
     let licenseName =
-        cart.licenseName || "1 Site";
+        cart.licenseName ||
+        "1 Site";
+
 
     let imageUrl =
         cart.image_url ||
@@ -819,12 +1307,9 @@ async function loadCart(){
         "";
 
 
-    /* =================================================
-       EN ÖNEMLİ KISIM
-
-       LOCALSTORAGE'DA GÖRSEL OLMASA BİLE
-       ÜRÜNÜ API'DEN TEKRAR ÇEKİYORUZ.
-    ================================================= */
+    /* =====================================
+       ÜRÜNÜ API'DEN TEKRAR ÇEK
+    ===================================== */
 
     if(cart.productId){
 
@@ -832,21 +1317,32 @@ async function loadCart(){
 
             const response =
                 await fetch(
+
                     "/api/products/" +
+
                     encodeURIComponent(
                         cart.productId
                     ) +
+
                     "?t=" +
+
                     Date.now(),
+
                     {
+
                         method:"GET",
+
                         headers:{
                             "Accept":
                                 "application/json"
                         },
+
                         credentials:"include",
+
                         cache:"no-store"
+
                     }
+
                 );
 
 
@@ -864,22 +1360,16 @@ async function loadCart(){
                 product.id
             ){
 
-                /* ÜRÜN ADI */
-
                 productName =
                     product.name ||
                     productName;
 
-
-                /* GÖRSEL */
 
                 imageUrl =
                     product.image_url ||
                     product.imageUrl ||
                     imageUrl;
 
-
-                /* FİYAT */
 
                 if(
                     cart.price === undefined ||
@@ -895,24 +1385,32 @@ async function loadCart(){
                 }
 
 
-                /* GÖRSELİ ESKİ SEPETE DE KAYDET */
+                /* Görseli sepete kaydet */
 
                 cart.image_url =
                     imageUrl;
 
+
                 cart.productName =
                     productName;
+
 
                 try{
 
                     localStorage.setItem(
+
                         "panelmarket_cart",
-                        JSON.stringify(cart)
+
+                        JSON.stringify(
+                            cart
+                        )
+
                     );
 
                 }catch(error){}
 
             }
+
 
         }catch(error){
 
@@ -926,14 +1424,16 @@ async function loadCart(){
     }
 
 
-    /* =================================================
-       EKRANI OLUŞTUR
-    ================================================= */
+    /* =====================================
+       SEPETİ GÖSTER
+    ===================================== */
 
     content.innerHTML = `
 
         <div class="cart">
 
+
+            <!-- ÜRÜN -->
 
             <div class="card">
 
@@ -953,14 +1453,18 @@ async function loadCart(){
                     <div class="product-info">
 
                         <div class="category">
+
                             PanelMarket Yazılım
+
                         </div>
 
 
                         <div class="product-name">
+
                             ${escapeHtml(
                                 productName
                             )}
+
                         </div>
 
 
@@ -969,9 +1473,11 @@ async function loadCart(){
                             Lisans:
 
                             <strong>
+
                                 ${escapeHtml(
                                     licenseName
                                 )}
+
                             </strong>
 
                         </div>
@@ -982,7 +1488,9 @@ async function loadCart(){
                     <div class="price">
 
                         <strong>
+
                             ₺${format(price)}
+
                         </strong>
 
                     </div>
@@ -993,7 +1501,10 @@ async function loadCart(){
             </div>
 
 
+            <!-- SİPARİŞ ÖZETİ -->
+
             <div class="card summary">
+
 
                 <h2>
                     Sipariş Özeti
@@ -1020,9 +1531,11 @@ async function loadCart(){
                     </span>
 
                     <span>
+
                         ${escapeHtml(
                             licenseName
                         )}
+
                     </span>
 
                 </div>
@@ -1048,7 +1561,9 @@ async function loadCart(){
                     </span>
 
                     <strong>
+
                         ₺${format(price)}
+
                     </strong>
 
                 </div>
@@ -1101,17 +1616,22 @@ async function loadCart(){
         </div>
 
     `;
+
 }
 
 
-/* =====================================================
+/* =========================================
    BAŞLAT
-===================================================== */
+========================================= */
 
 checkLogin();
+
 loadCart();
+
 
 </script>
 
+
 </body>
+
 </html>
