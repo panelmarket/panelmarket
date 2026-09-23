@@ -94,13 +94,8 @@ header{
 
 
 /* =========================================
-   DESTEK.HTML / INDEX.HTML İLE AYNI BUTONLAR
+   DESTEK.HTML İLE BİREBİR AYNI
 ========================================= */
-
-.header-buttons{
-    display:flex;
-    align-items:center;
-}
 
 #headerButtons{
     display:flex;
@@ -117,61 +112,27 @@ header{
 #guestButtons .btn,
 #userButtons .btn{
     box-sizing:border-box;
-
     display:inline-flex;
     align-items:center;
     justify-content:center;
-
     min-height:42px;
     height:42px;
-
     padding:11px 16px;
-
     border-radius:9px;
-
     font-size:12px;
     font-weight:800;
-
     line-height:1;
     white-space:nowrap;
-
-    cursor:pointer;
-
-    border:0;
-    text-decoration:none;
-
-    transition:
-        background .2s ease,
-        border-color .2s ease,
-        transform .15s ease,
-        box-shadow .2s ease;
 }
 
 #guestButtons .btn.outline,
 #userButtons .btn.outline{
     border:1px solid #273241;
-    background:transparent;
-    color:#fff;
-}
-
-#guestButtons .btn.outline:hover,
-#userButtons .btn.outline:hover{
-    background:#111923;
-    border-color:#344357;
 }
 
 #guestButtons .btn.blue,
 #userButtons .btn.blue{
     border:1px solid #1677ff;
-    background:#1677ff;
-    color:#fff;
-}
-
-#guestButtons .btn.blue:hover,
-#userButtons .btn.blue:hover{
-    background:#2a87ff;
-    border-color:#2a87ff;
-    box-shadow:0 8px 25px rgba(22,119,255,.25);
 }
 
 #userButtons button.btn{
@@ -430,17 +391,13 @@ h1{
         text-align:center
     }
 
-    #guestButtons,
-    #userButtons{
-        gap:8px;
+    .header-buttons{
+        gap:6px
     }
 
-    #guestButtons .btn,
-    #userButtons .btn{
-        min-height:40px;
-        height:40px;
-        padding:10px 13px;
-        font-size:12px;
+    .btn{
+        padding:10px 12px;
+        font-size:11px
     }
 
 }
@@ -499,7 +456,7 @@ Destek
 >
 
 
-<!-- GİRİŞ YAPILMAMIŞ -->
+<!-- ÇIKIŞ YAPILMIŞ -->
 
 <div
     id="guestButtons"
@@ -507,15 +464,15 @@ Destek
 >
 
 <a
-    href="/login.html"
     class="btn outline"
+    href="/login.html"
 >
 Giriş Yap
 </a>
 
 <a
-    href="/register.html"
     class="btn blue"
+    href="/register.html"
 >
 Kayıt Ol
 </a>
@@ -531,8 +488,8 @@ Kayıt Ol
 >
 
 <a
-    href="/hesabim.html"
     class="btn outline"
+    href="/hesabim.html"
 >
 Hesabım
 </a>
