@@ -80,24 +80,84 @@ header{
     color:#fff;
 }
 
+/* =========================================
+   INDEX.HTML İLE AYNI HEADER BUTONLARI
+========================================= */
+
 .header-buttons{
     display:flex;
-    gap:9px;
+    align-items:center;
+    gap:10px;
 }
 
 .header-btn{
+    box-sizing:border-box;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    min-height:42px;
+    height:42px;
+
     padding:11px 16px;
+
     border-radius:9px;
+
     font-size:12px;
     font-weight:800;
+    line-height:1;
+
+    white-space:nowrap;
+
+    text-decoration:none;
 }
 
-.register{
-    background:#1677ff;
-}
-
+/* GİRİŞ YAP */
 .login-link{
     border:1px solid #273241;
+    background:transparent;
+    color:#f5f7fb;
+}
+
+/* KAYIT OL */
+.register{
+    border:1px solid #1677ff;
+    background:#1677ff;
+    color:#fff;
+}
+
+/* Hover */
+.login-link:hover{
+    color:#fff;
+}
+
+.register:hover{
+    background:#298cff;
+    border-color:#298cff;
+}
+
+
+/* =========================================
+   MOBİL
+========================================= */
+
+@media(max-width:700px){
+
+    .header-buttons{
+        gap:8px;
+    }
+
+    .header-btn{
+        min-height:40px;
+        height:40px;
+        padding:10px 13px;
+        font-size:12px;
+    }
+
+    .header-buttons .login-link{
+        display:none;
+    }
+
 }
 
 .main{
