@@ -131,7 +131,7 @@ function publicUser(user) {
   return { id:user.id, name:user.name || "", email:user.email || "", balance:money(user.balance), isAdmin:user.is_admin === true, is_admin:user.is_admin === true };
 }
 function formatProduct(p) {
-  return {
+  const product = {
     id: p.id,
     name: p.name,
     category: p.category || "",
@@ -150,6 +150,47 @@ function formatProduct(p) {
     ),
     image_url: p.image_url || ""
   };
+
+  /*
+   * PANELMARKET STANDART LİSANSLARI
+   *
+   * ÖNEMLİ:
+   * id değerleri /api/orders tarafında
+   * kullanılan gerçek lisans ID'leriyle
+   * birebir aynı olmalıdır.
+   */
+  const licenseCatalog = {};
+
+  for (const [licenseId, license] of Object.entries(licenses)) {
+    licenseCatalog[licenseId] = {
+      id: licenseId,
+      licenseId: licenseId,
+      name: license.name,
+      licenseName: license.name,
+      price: calculatePrice(product, licenseId)
+    };
+  }
+
+  /*
+   * Frontend'in farklı sistemlerle uyumlu
+   * çalışması için lisans bilgilerini
+   * birden fazla standart alanda veriyoruz.
+   */
+  product.licenses = licenseCatalog;
+
+  product.licenseOptions = Object.values(licenseCatalog);
+
+  /*
+   * Varsayılan lisans.
+   * Kullanıcı ürün sayfasından lisans seçmezse
+   * 1 Site kullanılabilir.
+   */
+  product.licenseId = "1-site";
+  product.license_id = "1-site";
+  product.licenseName = licenses["1-site"].name;
+  product.license_name = licenses["1-site"].name;
+
+  return product;
 }
 function formatOrder(o) {
   return { id:o.id, userId:o.user_id, orderNumber:o.order_number, productId:o.product_id, productName:o.product_name, licenseId:o.license_id, licenseName:o.license_name, amount:money(o.amount), status:o.status, deliveryStatus:o.delivery_status, licenseKey:o.license_key, createdAt:o.created_at };
@@ -543,6 +584,112 @@ app.get("/api/products/:id", async (req,res) => {
     return res.status(500).json({
       ok: false,
       error: "Ürün alınamadı."
+    });
+
+  }
+});
+
+app.get("/api/products/:id", async (req, res) => {
+  try {
+
+    const product =
+      await getProductById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        ok: false,
+        error: "Ürün bulunamadı."
+      });
+    }
+
+    /*
+     * Lisansları hem obje hem de array
+     * olarak hazırlıyoruz.
+     *
+     * Böylece eski ve yeni urun.html
+     * sürümleriyle uyumlu olur.
+     */
+
+    const licensesObject = {};
+    const licensesArray = [];
+
+    for (
+      const [licenseId, license]
+      of Object.entries(licenses)
+    ) {
+
+      const item = {
+        id: licenseId,
+        licenseId: licenseId,
+        license_id: licenseId,
+
+        name: license.name,
+        licenseName: license.name,
+        license_name: license.name,
+
+        multiplier: license.multiplier,
+
+        price: calculatePrice(
+          product,
+          licenseId
+        )
+      };
+
+      licensesObject[licenseId] = item;
+      licensesArray.push(item);
+    }
+
+    /*
+     * Ürün içine lisansları ekle.
+     */
+    const responseProduct = {
+      ...product,
+
+      licenses: licensesObject,
+
+      licenseOptions: licensesArray,
+
+      licenseId: "1-site",
+      license_id: "1-site",
+
+      licenseName:
+        licenses["1-site"].name,
+
+      license_name:
+        licenses["1-site"].name
+    };
+
+    console.log(
+      "PRODUCT DETAIL LICENSE DEBUG:",
+      {
+        productId: responseProduct.id,
+
+        licenseIds:
+          licensesArray.map(
+            license => license.id
+          ),
+
+        licenseNames:
+          licensesArray.map(
+            license => license.name
+          )
+      }
+    );
+
+    return res.json(responseProduct);
+
+  } catch (e) {
+
+    console.error(
+      "PRODUCT DETAIL ERROR:",
+      e
+    );
+
+    return res.status(500).json({
+      ok: false,
+      error: "Ürün alınamadı.",
+      databaseError:
+        e?.message || null
     });
 
   }
