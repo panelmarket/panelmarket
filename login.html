@@ -33,6 +33,7 @@ input{
     font-family:inherit;
 }
 
+
 /* =========================================
    HEADER
 ========================================= */
@@ -48,6 +49,7 @@ header{
     width:min(1200px,94%);
     height:100%;
     margin:auto;
+
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -56,7 +58,9 @@ header{
 .logo{
     display:flex;
     align-items:center;
+
     gap:11px;
+
     font-size:21px;
     font-weight:900;
 }
@@ -64,10 +68,14 @@ header{
 .logo-icon{
     width:40px;
     height:40px;
+
     border-radius:12px;
+
     display:grid;
     place-items:center;
+
     background:linear-gradient(135deg,#1677ff,#7347ff);
+
     box-shadow:0 8px 30px rgba(22,119,255,.25);
 }
 
@@ -87,7 +95,7 @@ header{
 
 
 /* =========================================
-   INDEX.HTML İLE AYNI BUTONLAR
+   INDEX.HTML İLE AYNI HEADER BUTONLARI
 ========================================= */
 
 .header-buttons{
@@ -95,14 +103,7 @@ header{
     align-items:center;
 }
 
-#guestButtons,
-#userButtons{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-.header-btn{
+.header-buttons .btn{
     box-sizing:border-box;
 
     display:inline-flex;
@@ -116,8 +117,10 @@ header{
 
     border-radius:9px;
 
+    font-family:inherit;
     font-size:12px;
     font-weight:800;
+
     line-height:1;
 
     white-space:nowrap;
@@ -126,29 +129,36 @@ header{
     margin:0;
 }
 
+
 /* GİRİŞ YAP */
 
-.login-link{
+.header-buttons .btn.outline{
     border:1px solid #273241;
+
     background:transparent;
+
     color:#f5f7fb;
 }
 
+
 /* KAYIT OL */
 
-.register{
+.header-buttons .btn.blue{
     border:1px solid #1677ff;
+
     background:#1677ff;
+
     color:#fff;
 }
 
-/* Hover */
 
-.login-link:hover{
+/* HOVER */
+
+.header-buttons .btn.outline:hover{
     color:#fff;
 }
 
-.register:hover{
+.header-buttons .btn.blue:hover{
     background:#298cff;
     border-color:#298cff;
 }
@@ -160,9 +170,11 @@ header{
 
 .main{
     flex:1;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     padding:55px 20px 75px;
 }
 
@@ -184,6 +196,7 @@ header{
         #0d131b;
 
     border:1px solid #1c2633;
+
     border-radius:22px;
 
     padding:35px;
@@ -193,6 +206,7 @@ header{
 
 .login-card::before{
     content:"";
+
     position:absolute;
 
     top:-100px;
@@ -231,6 +245,7 @@ header{
 
 .login-title{
     position:relative;
+
     text-align:center;
 }
 
@@ -274,6 +289,7 @@ label{
     padding:0 15px;
 
     border-radius:10px;
+
     border:1px solid #253140;
 
     outline:none;
@@ -292,7 +308,10 @@ label{
 
 .input:focus{
     border-color:#1677ff;
-    box-shadow:0 0 0 3px rgba(22,119,255,.08);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(22,119,255,.08);
 }
 
 .password-box{
@@ -312,6 +331,7 @@ label{
     transform:translateY(-50%);
 
     border:0;
+
     background:transparent;
 
     color:#718096;
@@ -328,6 +348,7 @@ label{
 
 .options{
     display:flex;
+
     justify-content:space-between;
     align-items:center;
 
@@ -338,6 +359,7 @@ label{
 
 .remember{
     display:flex;
+
     align-items:center;
 
     gap:8px;
@@ -364,9 +386,11 @@ label{
     height:50px;
 
     border:0;
+
     border-radius:10px;
 
     background:#1677ff;
+
     color:#fff;
 
     cursor:pointer;
@@ -379,12 +403,15 @@ label{
 
 .login-button:hover{
     background:#2a87ff;
+
     transform:translateY(-1px);
 }
 
 .login-button:disabled{
     opacity:.6;
+
     cursor:not-allowed;
+
     transform:none;
 }
 
@@ -425,6 +452,7 @@ label{
     text-align:center;
 
     margin-top:25px;
+
     padding-top:23px;
 
     border-top:1px solid #19222d;
@@ -436,6 +464,7 @@ label{
 
 .register-area a{
     color:#5eacff;
+
     font-weight:900;
 }
 
@@ -459,6 +488,7 @@ label{
     text-align:center;
 
     font-size:11px;
+
     line-height:1.5;
 }
 
@@ -489,7 +519,7 @@ footer{
         gap:8px;
     }
 
-    .header-btn{
+    .header-buttons .btn{
         min-height:40px;
         height:40px;
 
@@ -498,7 +528,7 @@ footer{
         font-size:12px;
     }
 
-    .header-buttons .login-link{
+    .header-buttons .btn.outline{
         display:none;
     }
 
@@ -518,42 +548,63 @@ footer{
 
 <body>
 
+
 <header>
 
 <div class="header">
 
+
 <a href="/index.html" class="logo">
+
     <span class="logo-icon">P</span>
+
     <span>PanelMarket</span>
+
 </a>
 
+
 <nav class="nav">
-    <a href="/index.html">Ana Sayfa</a>
-    <a href="/siparislerim.html">Siparişlerim</a>
-    <a href="/hesabim.html">Hesabım</a>
+
+    <a href="/index.html">
+        Ana Sayfa
+    </a>
+
+    <a href="/siparislerim.html">
+        Siparişlerim
+    </a>
+
+    <a href="/hesabim.html">
+        Hesabım
+    </a>
+
 </nav>
+
+
+<!-- INDEX.HTML İLE AYNI BUTON YAPISI -->
 
 <div class="header-buttons">
 
-<a
-    href="/login.html"
-    class="header-btn login-link"
->
-    GİRİŞ YAP
-</a>
+    <a
+        href="/login.html"
+        class="btn outline"
+    >
+        Giriş Yap
+    </a>
 
-<a
-    href="/register.html"
-    class="header-btn register"
->
-    KAYIT OL
-</a>
+    <a
+        href="/register.html"
+        class="btn blue"
+    >
+        Kayıt Ol
+    </a>
 
 </div>
+
 
 </div>
 
 </header>
+
 
 
 <main class="main">
@@ -562,31 +613,44 @@ footer{
 
 <div class="login-card">
 
+
 <div class="login-logo">
     P
 </div>
 
+
 <div class="login-title">
 
-<h1>Hoş Geldiniz</h1>
+<h1>
+    Hoş Geldiniz
+</h1>
 
 <p>
-PanelMarket hesabınıza giriş yaparak
-ürünlerinize ve siparişlerinize ulaşın.
+    PanelMarket hesabınıza giriş yaparak
+    ürünlerinize ve siparişlerinize ulaşın.
 </p>
 
 </div>
 
 
-<form class="form" id="loginForm">
 
-<div id="message" class="message"></div>
+<form
+    class="form"
+    id="loginForm"
+>
+
+
+<div
+    id="message"
+    class="message"
+></div>
+
 
 
 <div class="form-group">
 
 <label for="email">
-E-POSTA
+    E-POSTA
 </label>
 
 <input
@@ -601,11 +665,13 @@ E-POSTA
 </div>
 
 
+
 <div class="form-group">
 
 <label for="password">
-ŞİFRE
+    ŞİFRE
 </label>
+
 
 <div class="password-box">
 
@@ -617,6 +683,7 @@ E-POSTA
     placeholder="Şifrenizi girin"
     required
 >
+
 
 <button
     type="button"
@@ -631,7 +698,9 @@ E-POSTA
 </div>
 
 
+
 <div class="options">
+
 
 <label class="remember">
 
@@ -640,9 +709,12 @@ E-POSTA
     id="remember"
 >
 
-<span>Beni hatırla</span>
+<span>
+    Beni hatırla
+</span>
 
 </label>
+
 
 <a
     href="#"
@@ -652,7 +724,9 @@ E-POSTA
     Şifremi unuttum
 </a>
 
+
 </div>
+
 
 
 <button
@@ -663,23 +737,29 @@ E-POSTA
     GİRİŞ YAP
 </button>
 
+
 </form>
+
 
 
 <div class="register-area">
 
-Hesabınız yok mu?
+    Hesabınız yok mu?
 
-<a href="/register.html">
-    Hemen kayıt olun
-</a>
+    <a href="/register.html">
+        Hemen kayıt olun
+    </a>
 
 </div>
+
 
 
 <div class="security">
-🔒 Hesabınız güvenli bağlantı üzerinden korunmaktadır.
+
+    🔒 Hesabınız güvenli bağlantı üzerinden korunmaktadır.
+
 </div>
+
 
 </div>
 
@@ -688,9 +768,13 @@ Hesabınız yok mu?
 </main>
 
 
+
 <footer>
+
 © 2026 PanelMarket — Güvenli yazılım alışverişi
+
 </footer>
+
 
 
 <script>
@@ -701,20 +785,26 @@ Hesabınız yok mu?
 const form =
     document.getElementById("loginForm");
 
+
 const emailInput =
     document.getElementById("email");
+
 
 const passwordInput =
     document.getElementById("password");
 
+
 const button =
     document.getElementById("loginButton");
+
 
 const message =
     document.getElementById("message");
 
+
 const remember =
     document.getElementById("remember");
+
 
 const tokenKey =
     "panelmarket_token";
@@ -725,7 +815,10 @@ const tokenKey =
 ========================================================= */
 
 const savedEmail =
-    localStorage.getItem("panelmarket_saved_email");
+    localStorage.getItem(
+        "panelmarket_saved_email"
+    );
+
 
 if(savedEmail){
 
@@ -794,13 +887,16 @@ async function(e){
 
     e.preventDefault();
 
+
     const email =
         emailInput.value
         .trim()
         .toLowerCase();
 
+
     const password =
         passwordInput.value;
+
 
     if(!email || !password){
 
@@ -813,8 +909,10 @@ async function(e){
 
     }
 
+
     button.disabled =
         true;
+
 
     button.textContent =
         "GİRİŞ YAPILIYOR...";
@@ -822,11 +920,9 @@ async function(e){
 
     try{
 
+
         /* =================================================
            ESKİ TOKEN TEMİZLE
-
-           Yeni giriş ile eski hesabın oturumu
-           birbirine karışmasın.
         ================================================= */
 
         try{
@@ -857,6 +953,7 @@ async function(e){
         }
 
 
+
         /* =================================================
            LOGIN API
         ================================================= */
@@ -865,14 +962,17 @@ async function(e){
             await fetch(
                 "/api/login",
                 {
+
                     method:"POST",
 
                     headers:{
+
                         "Content-Type":
                             "application/json",
 
                         "Accept":
                             "application/json"
+
                     },
 
                     credentials:"include",
@@ -891,7 +991,9 @@ async function(e){
             );
 
 
+
         let data = {};
+
 
         try{
 
@@ -905,15 +1007,21 @@ async function(e){
         }
 
 
+
         if(!response.ok){
 
             throw new Error(
+
                 data.error ||
+
                 data.message ||
+
                 "E-posta veya şifre hatalı."
+
             );
 
         }
+
 
 
         /* =================================================
@@ -930,6 +1038,7 @@ async function(e){
         }
 
 
+
         /* =================================================
            KULLANICI BİLGİLERİ
         ================================================= */
@@ -937,11 +1046,17 @@ async function(e){
         if(data.user){
 
             localStorage.setItem(
+
                 "panelmarket_user",
-                JSON.stringify(data.user)
+
+                JSON.stringify(
+                    data.user
+                )
+
             );
 
         }
+
 
 
         /* =================================================
@@ -964,15 +1079,21 @@ async function(e){
         }
 
 
+
         /* =================================================
            ADMIN KONTROLÜ
         ================================================= */
 
         const isAdmin =
+
             data.is_admin === true ||
+
             data.isAdmin === true ||
+
             data.user?.is_admin === true ||
+
             data.user?.isAdmin === true;
+
 
 
         /* =================================================
@@ -982,9 +1103,13 @@ async function(e){
         if(isAdmin){
 
             showMessage(
+
                 "Admin girişi başarılı. Yönetim paneli açılıyor...",
+
                 "success"
+
             );
+
 
             setTimeout(
                 function(){
@@ -997,9 +1122,11 @@ async function(e){
                 500
             );
 
+
             return;
 
         }
+
 
 
         /* =================================================
@@ -1007,9 +1134,13 @@ async function(e){
         ================================================= */
 
         showMessage(
+
             "Giriş başarılı. Hesabınız açılıyor...",
+
             "success"
+
         );
+
 
         setTimeout(
             function(){
@@ -1025,19 +1156,27 @@ async function(e){
 
     }catch(error){
 
+
         console.error(
             "LOGIN ERROR:",
             error
         );
 
+
         showMessage(
+
             error.message ||
+
             "Giriş yapılamadı.",
+
             "error"
+
         );
+
 
         button.disabled =
             false;
+
 
         button.textContent =
             "GİRİŞ YAP";
@@ -1045,6 +1184,7 @@ async function(e){
     }
 
 });
+
 
 
 /* =========================================================
@@ -1059,55 +1199,77 @@ async function(e){
 
     e.preventDefault();
 
+
     const email =
         emailInput.value
         .trim()
         .toLowerCase();
 
+
+
     if(!email){
 
         showMessage(
+
             "Şifre sıfırlamak için önce e-posta adresinizi yazın.",
+
             "error"
+
         );
 
+
         emailInput.focus();
+
 
         return;
 
     }
 
 
+
     const forgotButton =
         this;
 
+
     forgotButton.style.pointerEvents =
         "none";
+
 
     forgotButton.style.opacity =
         "0.6";
 
 
+
     showMessage(
+
         "Şifre sıfırlama bağlantısı gönderiliyor...",
+
         "success"
+
     );
+
 
 
     try{
 
+
         const response =
             await fetch(
+
                 "/api/forgot-password",
+
                 {
+
                     method:"POST",
 
                     headers:{
+
                         "Content-Type":
                             "application/json",
 
                         "Accept":
                             "application/json"
+
                     },
 
                     credentials:"include",
@@ -1115,13 +1277,20 @@ async function(e){
                     cache:"no-store",
 
                     body:JSON.stringify({
+
                         email:email
+
                     })
+
                 }
+
             );
 
 
+
         let data = {};
+
+
 
         try{
 
@@ -1135,39 +1304,59 @@ async function(e){
         }
 
 
+
         if(!response.ok){
 
             throw new Error(
+
                 data.error ||
+
                 data.message ||
+
                 "Şifre sıfırlama isteği gönderilemedi."
+
             );
 
         }
 
 
+
         showMessage(
+
             data.message ||
+
             "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.",
+
             "success"
+
         );
 
 
     }catch(error){
 
+
         console.error(
+
             "FORGOT PASSWORD ERROR:",
+
             error
+
         );
 
+
         showMessage(
+
             error.message ||
+
             "Şifre sıfırlama işlemi başarısız oldu.",
+
             "error"
+
         );
 
 
     }finally{
+
 
         forgotButton.style.pointerEvents =
             "";
@@ -1180,6 +1369,7 @@ async function(e){
 });
 
 </script>
+
 
 </body>
 </html>
