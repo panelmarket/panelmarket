@@ -30,82 +30,12 @@ body{
 
 
 /* =========================================
-   HEADER
-========================================= */
-
-.header-buttons{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-
-/* Hesabım */
-
-.account-button{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-
-    min-height:44px;
-
-    padding:0 18px;
-
-    border-radius:9px;
-
-    text-decoration:none;
-
-    white-space:nowrap;
-}
-
-
-/* Çıkış */
-
-.logout-button{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-
-    min-height:44px;
-
-    padding:0 18px;
-
-    border:0;
-    border-radius:9px;
-
-    background:#1677ff;
-    color:#fff;
-
-    font-family:inherit;
-    font-size:12px;
-    font-weight:900;
-
-    cursor:pointer;
-
-    white-space:nowrap;
-
-    transition:.2s;
-}
-
-.logout-button:hover{
-    background:#2a87ff;
-}
-
-.logout-button:active{
-    transform:translateY(1px);
-}
-
-
-/* =========================================
    DESTEK SAYFASI
 ========================================= */
 
 .support-page{
-
     width:min(1050px,94%);
-
     margin:55px auto 90px;
-
 }
 
 
@@ -114,54 +44,31 @@ body{
 ========================================= */
 
 .support-top{
-
     text-align:center;
-
     margin-bottom:35px;
-
 }
-
 
 .support-badge{
-
     display:inline-block;
-
     padding:7px 12px;
-
     border-radius:8px;
-
     background:rgba(22,119,255,.10);
-
     border:1px solid rgba(22,119,255,.25);
-
     color:#5eacff;
-
     font-size:11px;
-
     font-weight:900;
-
     margin-bottom:15px;
-
 }
-
 
 .support-top h1{
-
     font-size:38px;
-
     margin-bottom:10px;
-
 }
 
-
 .support-top p{
-
     color:#8995a7;
-
     font-size:14px;
-
     line-height:1.7;
-
 }
 
 
@@ -170,113 +77,62 @@ body{
 ========================================= */
 
 .support-grid{
-
     display:grid;
-
-    grid-template-columns:
-        repeat(3,1fr);
-
+    grid-template-columns:repeat(3,1fr);
     gap:16px;
-
 }
-
 
 .support-card{
-
     background:#0d131b;
-
     border:1px solid #1c2633;
-
     border-radius:18px;
-
     padding:25px;
-
     transition:.2s;
-
 }
-
 
 .support-card:hover{
-
     border-color:#315277;
-
     transform:translateY(-2px);
-
 }
-
 
 .support-icon{
-
     width:50px;
-
     height:50px;
-
     display:grid;
-
     place-items:center;
-
     border-radius:13px;
-
     background:#101923;
-
     border:1px solid #1f2c3b;
-
     font-size:23px;
-
     margin-bottom:17px;
-
 }
-
 
 .support-card h2{
-
     font-size:18px;
-
     margin-bottom:9px;
-
 }
-
 
 .support-card p{
-
     color:#8995a7;
-
     font-size:12px;
-
     line-height:1.7;
-
     min-height:65px;
-
 }
-
 
 .support-button{
-
     display:inline-block;
-
     margin-top:17px;
-
     padding:11px 14px;
-
     border-radius:9px;
-
     background:#1677ff;
-
     color:#fff;
-
     font-size:11px;
-
     font-weight:900;
-
     text-decoration:none;
-
 }
 
-
 .support-button:hover{
-
     background:#2a87ff;
-
 }
 
 
@@ -285,177 +141,99 @@ body{
 ========================================= */
 
 .support-form{
-
     margin-top:18px;
-
     background:#0d131b;
-
     border:1px solid #1c2633;
-
     border-radius:18px;
-
     padding:28px;
-
 }
-
 
 .support-form h2{
-
     font-size:22px;
-
     margin-bottom:7px;
-
 }
-
 
 .support-description{
-
     color:#8995a7;
-
     font-size:12px;
-
     margin-bottom:25px;
-
 }
-
 
 .form-grid{
-
     display:grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
+    grid-template-columns:1fr 1fr;
     gap:15px;
-
 }
-
 
 .form-group{
-
     margin-bottom:16px;
-
 }
-
 
 .form-group.full{
-
     grid-column:1 / -1;
-
 }
-
 
 .form-group label{
-
     display:block;
-
     color:#cbd5e1;
-
     font-size:12px;
-
     font-weight:800;
-
     margin-bottom:7px;
-
 }
-
 
 .form-group input,
 .form-group select,
 .form-group textarea{
-
     width:100%;
-
     padding:13px;
-
     border-radius:9px;
-
     border:1px solid #273241;
-
     background:#080d13;
-
     color:#fff;
-
     outline:none;
-
     font-family:inherit;
-
     font-size:13px;
-
     box-sizing:border-box;
-
 }
-
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus{
-
     border-color:#1677ff;
-
 }
-
 
 .form-group textarea{
-
     min-height:150px;
-
     resize:vertical;
-
 }
-
 
 .submit-button{
-
     width:100%;
-
     padding:14px;
-
     border:0;
-
     border-radius:9px;
-
     background:#1677ff;
-
     color:#fff;
-
     cursor:pointer;
-
     font-size:12px;
-
     font-weight:900;
-
 }
-
 
 .submit-button:hover{
-
     background:#2a87ff;
-
 }
-
 
 .submit-button:disabled{
-
     opacity:.6;
-
     cursor:not-allowed;
-
 }
 
-
 .result{
-
     display:none;
-
     margin-top:15px;
-
     padding:13px;
-
     border-radius:9px;
-
     font-size:12px;
-
 }
 
 
@@ -465,50 +243,24 @@ body{
 
 @media(max-width:800px){
 
-    .header-buttons{
-
-        gap:7px;
-
-    }
-
-
-    .account-button,
-    .logout-button{
-
-        min-height:42px;
-
-        padding:0 13px;
-
-        font-size:11px;
-
-    }
-
-
     .support-grid{
-
         grid-template-columns:1fr;
-
     }
-
 
     .form-grid{
-
         grid-template-columns:1fr;
-
     }
-
 
     .form-group.full{
-
         grid-column:auto;
-
     }
 
-
     .support-top h1{
-
         font-size:30px;
+    }
 
+    .header-buttons{
+        gap:7px;
     }
 
 }
@@ -532,7 +284,7 @@ body{
 
 <a
     class="logo"
-    href="/index.html"
+    href="/"
 >
 
 <span class="logo-icon">
@@ -561,11 +313,19 @@ Destek
 </nav>
 
 
-<div class="header-buttons">
+<!--
+    INDEX.HTML'DEKİ BUTONLARIN
+    AYNISI KULLANILIYOR
+-->
+
+<div
+    class="header-buttons"
+    id="headerButtons"
+>
 
 
 <a
-    class="btn outline account-button"
+    class="btn outline"
     href="/hesabim.html"
 >
 
@@ -575,12 +335,12 @@ Hesabım
 
 
 <button
-    class="logout-button"
+    class="btn blue"
     type="button"
     onclick="logoutUser()"
 >
 
-ÇIKIŞ YAP
+Çıkış Yap
 
 </button>
 
@@ -595,7 +355,7 @@ Hesabım
 
 
 <!-- =========================================
-     DESTEK
+     DESTEK İÇERİĞİ
 ========================================= -->
 
 <main class="support-page">
@@ -639,8 +399,6 @@ kullanabilirsiniz.
 <div class="support-grid">
 
 
-<!-- E-POSTA -->
-
 <div class="support-card">
 
 
@@ -680,8 +438,6 @@ E-POSTA GÖNDER
 
 
 
-<!-- SİPARİŞ -->
-
 <div class="support-card">
 
 
@@ -720,8 +476,6 @@ SİPARİŞLERİM
 </div>
 
 
-
-<!-- HESAP -->
 
 <div class="support-card">
 
@@ -934,7 +688,6 @@ Mesajınız
 </div>
 
 
-
 <button
     type="submit"
     class="submit-button"
@@ -944,7 +697,6 @@ Mesajınız
 DESTEK TALEBİ GÖNDER
 
 </button>
-
 
 
 <div
@@ -1014,10 +766,7 @@ async function logoutUser(){
 
 
         const headers = {
-
-            "Accept":
-                "application/json"
-
+            "Accept":"application/json"
         };
 
 
@@ -1032,15 +781,10 @@ async function logoutUser(){
         await fetch(
             "/api/logout",
             {
-
                 method:"POST",
-
                 headers:headers,
-
                 credentials:"include",
-
                 cache:"no-store"
-
             }
         );
 
@@ -1192,23 +936,16 @@ async function sendSupport(event){
             await fetch(
                 "/api/support",
                 {
-
                     method:"POST",
-
                     headers:headers,
-
                     credentials:"include",
-
                     cache:"no-store",
 
                     body:JSON.stringify({
 
                         name:name,
-
                         email:email,
-
                         subject:subject,
-
                         message:message
 
                     })
@@ -1226,11 +963,8 @@ async function sendSupport(event){
         if(!response.ok){
 
             throw new Error(
-
                 data.error ||
-
                 "Destek talebi gönderilemedi."
-
             );
 
         }
@@ -1239,18 +973,14 @@ async function sendSupport(event){
         result.style.display =
             "block";
 
-
         result.style.background =
             "rgba(40,210,120,.1)";
-
 
         result.style.border =
             "1px solid rgba(40,210,120,.25)";
 
-
         result.style.color =
             "#73e6a3";
-
 
         result.textContent =
             "Destek talebiniz başarıyla gönderildi.";
@@ -1269,18 +999,14 @@ async function sendSupport(event){
         result.style.display =
             "block";
 
-
         result.style.background =
             "rgba(255,60,60,.1)";
-
 
         result.style.border =
             "1px solid rgba(255,60,60,.3)";
 
-
         result.style.color =
             "#ff9b9b";
-
 
         result.textContent =
             error.message ||
@@ -1292,7 +1018,6 @@ async function sendSupport(event){
 
         button.disabled =
             false;
-
 
         button.textContent =
             "DESTEK TALEBİ GÖNDER";
