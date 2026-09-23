@@ -12,7 +12,6 @@
 
 <title>Sepet - PanelMarket</title>
 
-
 <style>
 
 *{
@@ -102,65 +101,7 @@ header{
 
 
 /* =========================================
-   GİRİŞ YAPILDIĞINDA ÇIKIŞ YAP
-   EKRAN GÖRÜNTÜSÜNDEKİ GİBİ
-========================================= */
-
-#headerButtons .logout-btn{
-
-    width:96px !important;
-    height:44px !important;
-
-    min-width:96px !important;
-    min-height:44px !important;
-
-    padding:0 !important;
-    margin:0 !important;
-
-    display:inline-flex !important;
-
-    align-items:center !important;
-    justify-content:center !important;
-
-    border:0 !important;
-    border-radius:10px !important;
-
-    background:#0866e8 !important;
-    color:#fff !important;
-
-    font-family:Inter,Arial,sans-serif !important;
-
-    font-size:12px !important;
-    font-weight:800 !important;
-
-    line-height:1 !important;
-
-    cursor:pointer !important;
-
-    box-shadow:none !important;
-
-    outline:none !important;
-
-    appearance:none !important;
-    -webkit-appearance:none !important;
-}
-
-#headerButtons .logout-btn:hover,
-#headerButtons .logout-btn:focus,
-#headerButtons .logout-btn:active{
-
-    background:#0866e8 !important;
-    color:#fff !important;
-
-    border:0 !important;
-    outline:none !important;
-
-    box-shadow:none !important;
-}
-    
-/* =========================================
    HEADER BUTONLARI
-   INDEX.HTML İLE AYNI
 ========================================= */
 
 .header-buttons{
@@ -172,17 +113,14 @@ header{
 #userButtons{
     display:flex;
     align-items:center;
-    gap:10px;
 }
 
 
-/*
-   HEADER BUTONLARINI ÖZEL OLARAK SABİTLE
-   AŞAĞIDAKİ GENEL .btn CSS'İ EZEMEZ
-*/
+/* =========================================
+   GİRİŞ YAP / KAYIT OL
+========================================= */
 
-#headerButtons a.btn,
-#headerButtons button.btn{
+#headerButtons a.btn{
 
     box-sizing:border-box !important;
 
@@ -228,9 +166,7 @@ header{
 }
 
 
-/* =========================================
-   GİRİŞ YAP
-========================================= */
+/* GİRİŞ YAP */
 
 #headerButtons a.btn.outline{
 
@@ -245,10 +181,7 @@ header{
 }
 
 
-/* =========================================
-   KAYIT OL
-   INDEX.HTML MAVİ BUTONU
-========================================= */
+/* KAYIT OL */
 
 #headerButtons a.btn.blue{
 
@@ -264,56 +197,34 @@ header{
 
 
 /* =========================================
-   HESABIM
-========================================= */
-
-#headerButtons #userButtons a.btn.outline{
-
-    background:transparent !important;
-
-    background-color:transparent !important;
-
-    border:1px solid #273241 !important;
-
-    color:#fff !important;
-
-}
-
-
-/* =========================================
    ÇIKIŞ YAP
-   INDEX.HTML "KAYIT OL" İLE AYNI
+   INDEX.HTML GİBİ
 ========================================= */
 
-#headerButtons #userButtons button.btn.blue{
+#headerButtons .logout-button{
 
     box-sizing:border-box !important;
 
     display:inline-flex !important;
 
     align-items:center !important;
-
     justify-content:center !important;
 
-    width:auto !important;
+    width:96px !important;
+    min-width:96px !important;
 
-    min-width:0 !important;
+    height:44px !important;
+    min-height:44px !important;
 
-    min-height:42px !important;
-
-    height:42px !important;
-
-    padding:11px 16px !important;
-
+    padding:0 !important;
     margin:0 !important;
 
-    border-radius:9px !important;
+    border:0 !important;
 
-    border:1px solid #1677ff !important;
+    border-radius:10px !important;
 
-    background:#1677ff !important;
-
-    background-color:#1677ff !important;
+    background:#0866e8 !important;
+    background-color:#0866e8 !important;
 
     color:#fff !important;
 
@@ -345,67 +256,57 @@ header{
 
     outline:none !important;
 
+    transition:none !important;
 }
 
 
-/* ÇIKIŞ YAP HOVER */
+/* ÇIKIŞ HOVER */
 
-#headerButtons #userButtons button.btn.blue:hover{
+#headerButtons .logout-button:hover{
 
-    background:#1677ff !important;
+    background:#0866e8 !important;
 
-    background-color:#1677ff !important;
-
-    border-color:#1677ff !important;
+    background-color:#0866e8 !important;
 
     color:#fff !important;
 
-}
+    border:0 !important;
 
-
-/* ÇIKIŞ YAP ACTIVE */
-
-#headerButtons #userButtons button.btn.blue:active{
-
-    background:#1677ff !important;
-
-    background-color:#1677ff !important;
-
-    border-color:#1677ff !important;
-
-    color:#fff !important;
+    box-shadow:none !important;
 
 }
 
 
-/* ÇIKIŞ YAP FOCUS */
+/* ÇIKIŞ ACTIVE */
 
-#headerButtons #userButtons button.btn.blue:focus{
+#headerButtons .logout-button:active{
 
-    background:#1677ff !important;
+    background:#0866e8 !important;
 
-    background-color:#1677ff !important;
-
-    border-color:#1677ff !important;
+    background-color:#0866e8 !important;
 
     color:#fff !important;
+
+    border:0 !important;
+
+}
+
+
+/* ÇIKIŞ FOCUS */
+
+#headerButtons .logout-button:focus{
+
+    background:#0866e8 !important;
+
+    background-color:#0866e8 !important;
+
+    color:#fff !important;
+
+    border:0 !important;
 
     outline:none !important;
 
-}
-
-
-/* KAYIT OL HOVER */
-
-#headerButtons a.btn.blue:hover{
-
-    background:#1677ff !important;
-
-    background-color:#1677ff !important;
-
-    border-color:#1677ff !important;
-
-    color:#fff !important;
+    box-shadow:none !important;
 
 }
 
@@ -414,13 +315,11 @@ header{
 
 @media(max-width:700px){
 
-    #guestButtons,
-    #userButtons{
+    #guestButtons{
         gap:8px;
     }
 
-    #headerButtons a.btn,
-    #headerButtons button.btn{
+    #headerButtons a.btn{
 
         min-height:40px !important;
         height:40px !important;
@@ -428,6 +327,16 @@ header{
         padding:10px 13px !important;
 
         font-size:12px !important;
+
+    }
+
+    #headerButtons .logout-button{
+
+        width:96px !important;
+        min-width:96px !important;
+
+        height:42px !important;
+        min-height:42px !important;
 
     }
 
@@ -939,7 +848,9 @@ footer{
 >
 
 
-    <!-- GİRİŞ YAPILMAMIŞ -->
+    <!-- =====================================
+         GİRİŞ YAPILMAMIŞ
+    ====================================== -->
 
     <div
         id="guestButtons"
@@ -963,22 +874,25 @@ footer{
     </div>
 
 
-    <!-- GİRİŞ YAPILMIŞ -->
+    <!-- =====================================
+         GİRİŞ YAPILMIŞ
+         SADECE ÇIKIŞ YAP
+    ====================================== -->
 
     <div
-    id="userButtons"
-    style="display:none;align-items:center;"
->
-
-    <button
-        class="logout-btn"
-        type="button"
-        onclick="logoutUser()"
+        id="userButtons"
+        style="display:none;align-items:center;"
     >
-        Çıkış Yap
-    </button>
 
-</div>
+        <button
+            class="logout-button"
+            type="button"
+            onclick="logoutUser()"
+        >
+            Çıkış Yap
+        </button>
+
+    </div>
 
 
 </div>
