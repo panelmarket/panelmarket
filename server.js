@@ -7230,7 +7230,12 @@ async function getReviewVoteCounts(reviewIds) {
     .select("review_id,vote_type")
     .in("review_id", reviewIds);
 
-  if (error) throw error;
+  // Oy tablosu henüz oluşturulmamışsa değerlendirmelerin
+  // tamamının yüklenmesini engelleme. Oylar 0 kabul edilir.
+  if (error) {
+    console.error("REVIEW VOTES GET ERROR:", error);
+    return new Map();
+  }
 
   const map = new Map();
   for (const row of data || []) {
@@ -7296,7 +7301,11 @@ async function attachViewerVotes(tree, userId) {
     .eq("user_id", userId)
     .in("review_id", all.map(x => x.id));
 
-  if (error) throw error;
+  // Oy tablosu yoksa değerlendirme listesi yine gösterilsin.
+  if (error) {
+    console.error("REVIEW VOTES VIEWER ERROR:", error);
+    return tree;
+  }
 
   const map = new Map((data || []).map(x => [x.review_id, x.vote_type]));
   for (const item of all) item.viewerVote = map.get(item.id) || null;
@@ -7348,7 +7357,13 @@ app.get("/api/reviews/:productId", async (req, res) => {
     });
   } catch (error) {
     console.error("REVIEWS GET ERROR:", error);
-    return res.status(500).json({ ok: false, error: "Değerlendirmeler alınamadı." });
+    const detail = String(error?.message || error?.details || "").trim();
+    return res.status(500).json({
+      ok: false,
+      error: detail
+        ? "Değerlendirmeler alınamadı: " + detail
+        : "Değerlendirmeler alınamadı."
+    });
   }
 });
 
