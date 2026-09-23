@@ -202,12 +202,74 @@ async function requireAdmin(req, res, next) {
 }
 
 /* PUBLIC PRODUCTS */
-app.get("/api/products", async (req,res) => {
+/* =========================================
+   PUBLIC PRODUCTS
+   Supabase'deki tüm aktif ürünleri getirir
+========================================= */
+
+app.get("/api/products", async (req, res) => {
+
   try {
-    const { data, error } = await supabase.from("products").select("*").eq("active", true).order("sort_order", {ascending:true});
-    if (!error && data?.length) return res.json(data.map(formatProduct));
-  } catch (e) { console.error("PRODUCTS DB ERROR:",e.message); }
-  res.json(products.map(formatProduct));
+
+    const {
+      data,
+      error
+    } = await supabase
+      .from("products")
+      .select("*")
+      .eq("active", true)
+      .order("sort_order", {
+        ascending: true
+      });
+
+    if (error) {
+
+      console.error(
+        "PRODUCTS DB ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+        ok: false,
+        error: "Ürünler veritabanından alınamadı.",
+        databaseError:
+          error.message
+      });
+
+    }
+
+    const dbProducts =
+      Array.isArray(data)
+        ? data.map(formatProduct)
+        : [];
+
+    console.log(
+      "PUBLIC PRODUCTS:",
+      dbProducts.map(p => ({
+        id: p.id,
+        name: p.name,
+        active: p.active
+      }))
+    );
+
+    return res.json(dbProducts);
+
+  } catch (e) {
+
+    console.error(
+      "PRODUCTS DB EXCEPTION:",
+      e
+    );
+
+    return res.status(500).json({
+      ok: false,
+      error: "Ürünler alınamadı.",
+      databaseError:
+        e?.message || null
+    });
+
+  }
+
 });
 app.get("/api/products/:id", async (req,res) => {
   try {
