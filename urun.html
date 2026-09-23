@@ -3035,6 +3035,15 @@ function renderReviews(data){
 
 async function loadReviews(productId){
     try{
+        productId = String(productId || "").trim();
+        const list = document.getElementById("reviewsList");
+
+        if (!productId){
+            throw new Error("Ürün ID bulunamadı. Ürün sayfasını yenileyin.");
+        }
+
+        if (list) list.innerHTML = '<div class="reviews-empty">Değerlendirmeler yükleniyor...</div>';
+
         const response = await fetch("/api/reviews/" + encodeURIComponent(productId) + "?t=" + Date.now(), {
             headers: { "Accept":"application/json" },
             credentials:"include",
