@@ -610,221 +610,6 @@ function verifyPasswordResetToken(token) {
    ŞİFRE SIFIRLAMA E-POSTASI
    ========================================================= */
 
-async function sendPasswordResetEmail(user, resetUrl) {
-
-  const apiKey = String(
-    process.env.RESEND_API_KEY || ""
-  ).trim();
-
-  const from = String(
-    process.env.MAIL_FROM || ""
-  ).trim();
-
-  if (!apiKey) {
-    throw new Error(
-      "RESEND_API_KEY Render Environment Variables içinde bulunamadı."
-    );
-  }
-
-  if (!from) {
-    throw new Error(
-      "MAIL_FROM Render Environment Variables içinde bulunamadı."
-    );
-  }
-
-  if (!user?.email) {
-    throw new Error(
-      "Kullanıcının e-posta adresi bulunamadı."
-    );
-  }
-
-  /*
-     DİKKAT:
-     HTML artık JavaScript template string'i içinde.
-     Bu nedenle server.js syntax hatası vermez.
-  */
-
-  const html = `
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1.0"
->
-<title>PanelMarket - Şifre Sıfırlama</title>
-</head>
-
-<body style="
-  margin:0;
-  padding:0;
-  background:#f4f6f9;
-  font-family:Arial,Helvetica,sans-serif;
-">
-
-<div style="
-  padding:40px 15px;
-">
-
-<div style="
-  width:100%;
-  max-width:560px;
-  margin:0 auto;
-  background:#ffffff;
-  border:1px solid #e5e7eb;
-  border-radius:18px;
-  overflow:hidden;
-">
-
-<div style="
-  padding:25px 30px;
-  background:#0d131b;
-  color:#ffffff;
-">
-
-<div style="
-  font-size:25px;
-  font-weight:800;
-">
-PanelMarket
-</div>
-
-</div>
-
-<div style="
-  padding:32px;
-">
-
-<h2 style="
-  margin:0 0 15px;
-  color:#111827;
-">
-Şifre Sıfırlama
-</h2>
-
-<p style="
-  margin:0 0 15px;
-  color:#4b5563;
-  line-height:1.7;
-">
-PanelMarket hesabınız için
-şifre sıfırlama isteği aldık.
-</p>
-
-<p style="
-  margin:0 0 25px;
-  color:#4b5563;
-  line-height:1.7;
-">
-Yeni şifrenizi oluşturmak için
-aşağıdaki butona tıklayın.
-</p>
-
-<div style="
-  margin:30px 0;
-">
-
-<a
-  href="${resetUrl}"
-  style="
-    display:inline-block;
-    padding:14px 24px;
-    background:#1677ff;
-    color:#ffffff;
-    text-decoration:none;
-    border-radius:10px;
-    font-weight:700;
-  "
->
-Şifremi Sıfırla
-</a>
-
-</div>
-
-<p style="
-  margin:0 0 10px;
-  color:#6b7280;
-  font-size:13px;
-  line-height:1.6;
-">
-Bu bağlantı 30 dakika boyunca
-geçerlidir.
-</p>
-
-<p style="
-  margin:0;
-  color:#6b7280;
-  font-size:13px;
-  line-height:1.6;
-">
-Bu isteği siz yapmadıysanız
-e-postayı dikkate almayabilirsiniz.
-</p>
-
-</div>
-</div>
-</div>
-
-</body>
-</html>
-`;
-
-  const response = await fetch(
-    "https://api.resend.com/emails",
-    {
-      method: "POST",
-
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-
-      body: JSON.stringify({
-        from,
-        to: [String(user.email)],
-        subject: "PanelMarket - Şifre Sıfırlama",
-        html
-      })
-    }
-  );
-
-  const responseText = await response.text();
-
-  let result = {};
-
-  try {
-    result = JSON.parse(responseText);
-  } catch {
-    result = {
-      raw: responseText
-    };
-  }
-
-  if (!response.ok) {
-    console.error(
-      "RESEND PASSWORD RESET ERROR:",
-      {
-        status: response.status,
-        result
-      }
-    );
-
-    throw new Error(
-      result?.message ||
-      result?.error ||
-      `E-posta gönderilemedi. HTTP ${response.status}`
-    );
-  }
-
-  return result;
-}
-
-
-/* =========================================================
-   ŞİFREMİ UNUTTUM
-   ========================================================= */
-
 app.post(
   "/api/forgot-password",
   async (req, res) => {
@@ -841,12 +626,14 @@ app.post(
         !email ||
         !email.includes("@")
       ) {
+
         return res.status(400).json({
           ok: false,
           success: false,
           error:
             "Geçerli bir e-posta adresi girin."
         });
+
       }
 
       console.log(
@@ -857,18 +644,15 @@ app.post(
       const user =
         await findUserByEmail(email);
 
-      /*
-         Kullanıcı bulunmasa bile
-         aynı cevabı döndür.
-      */
-
       if (!user) {
+
         return res.status(200).json({
           ok: true,
           success: true,
           message:
             "Eğer bu e-posta kayıtlıysa şifre sıfırlama bağlantısı gönderildi."
         });
+
       }
 
       const token =
@@ -878,7 +662,7 @@ app.post(
         `${PUBLIC_BASE_URL}/reset-password.html?token=${encodeURIComponent(token)}`;
 
       console.log(
-        "PASSWORD RESET URL CREATED FOR:",
+        "PASSWORD RESET URL CREATED:",
         user.email
       );
 
@@ -910,16 +694,14 @@ app.post(
         ok: false,
         success: false,
         error:
-          "Şifre sıfırlama e-postası gönderilemedi.",
-        detail:
-          process.env.NODE_ENV === "production"
-            ? undefined
-            : e?.message
+          e?.message ||
+          "Şifre sıfırlama e-postası gönderilemedi."
       });
+
     }
+
   }
 );
-
 
 /* =========================================================
    RESET TOKEN KONTROLÜ
