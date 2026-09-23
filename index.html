@@ -6,6 +6,75 @@
 <title>PanelMarket</title>
 
 <link rel="stylesheet" href="/style.css">
+
+<style>
+/* =========================================
+   HEADER BUTONLARI - AYNI ORANTI
+========================================= */
+
+#headerButtons{
+  display:flex;
+  align-items:center;
+}
+
+#guestButtons,
+#userButtons{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+#guestButtons .btn,
+#userButtons .btn{
+  box-sizing:border-box;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  height:42px;
+  padding:11px 16px;
+  border-radius:9px;
+  font-size:12px;
+  font-weight:800;
+  line-height:1;
+  white-space:nowrap;
+}
+
+#guestButtons .btn.outline,
+#userButtons .btn.outline{
+  border:1px solid #273241;
+}
+
+#guestButtons .btn.blue,
+#userButtons .btn.blue{
+  border:1px solid #1677ff;
+}
+
+#userButtons button.btn{
+  font-family:inherit;
+  cursor:pointer;
+  appearance:none;
+  -webkit-appearance:none;
+}
+
+@media (max-width:700px){
+
+  #guestButtons,
+  #userButtons{
+    gap:8px;
+  }
+
+  #guestButtons .btn,
+  #userButtons .btn{
+    min-height:40px;
+    height:40px;
+    padding:10px 13px;
+    font-size:12px;
+  }
+
+}
+</style>
+
 </head>
 
 <body>
@@ -35,6 +104,7 @@
 
     </nav>
 
+
     <div
       class="header-buttons"
       id="headerButtons"
@@ -42,7 +112,10 @@
 
       <!-- Giriş yapılmamış kullanıcı -->
 
-      <div id="guestButtons">
+      <div
+        id="guestButtons"
+        style="display:flex;gap:10px;align-items:center;"
+      >
 
         <a
           class="btn outline"
@@ -439,6 +512,7 @@ async function checkLogin(){
         "panelmarket_user"
       );
 
+
     const savedToken =
       localStorage.getItem(
         "panelmarket_token"
@@ -470,6 +544,7 @@ function showLoggedIn(){
     document.getElementById(
       "guestButtons"
     );
+
 
   const userButtons =
     document.getElementById(
@@ -505,6 +580,7 @@ function showLoggedOut(){
     document.getElementById(
       "guestButtons"
     );
+
 
   const userButtons =
     document.getElementById(
@@ -606,6 +682,7 @@ async function logoutUser(){
 
     showLoggedOut();
 
+
     window.location.href =
       "/index.html";
 
@@ -673,8 +750,10 @@ function render(){
   const queryInput =
     document.getElementById("q");
 
+
   const categoryInput =
     document.getElementById("cat");
+
 
   const products =
     document.getElementById("products");
@@ -800,6 +879,7 @@ function render(){
 
 
           <div class="bottom">
+
 
             <div>
 
