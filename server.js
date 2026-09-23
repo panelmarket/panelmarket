@@ -634,20 +634,19 @@ function verifyPasswordResetToken(token) {
    GMAIL ŞİFRE SIFIRLAMA E-POSTASI
    ========================================================= */
 
-async function sendPasswordResetEmail(
-  user,
-  resetUrl
-) {
+async function sendPasswordResetEmail(user, resetUrl) {
 
   const gmailUser =
-    String(
-      process.env.GMAIL_USER || ""
-    ).trim();
+    String(process.env.GMAIL_USER || "").trim();
 
-  const gmailPassword =
-    String(
-      process.env.GMAIL_APP_PASSWORD || ""
-    ).trim();
+  const googleClientId =
+    String(process.env.GOOGLE_CLIENT_ID || "").trim();
+
+  const googleClientSecret =
+    String(process.env.GOOGLE_CLIENT_SECRET || "").trim();
+
+  const googleRefreshToken =
+    String(process.env.GOOGLE_REFRESH_TOKEN || "").trim();
 
   const from =
     String(
@@ -661,9 +660,21 @@ async function sendPasswordResetEmail(
     );
   }
 
-  if (!gmailPassword) {
+  if (!googleClientId) {
     throw new Error(
-      "GMAIL_APP_PASSWORD Render Environment Variables içinde bulunamadı."
+      "GOOGLE_CLIENT_ID Render Environment Variables içinde bulunamadı."
+    );
+  }
+
+  if (!googleClientSecret) {
+    throw new Error(
+      "GOOGLE_CLIENT_SECRET Render Environment Variables içinde bulunamadı."
+    );
+  }
+
+  if (!googleRefreshToken) {
+    throw new Error(
+      "GOOGLE_REFRESH_TOKEN Render Environment Variables içinde bulunamadı."
     );
   }
 
@@ -689,15 +700,6 @@ async function sendPasswordResetEmail(
     }
   );
 
-  const transporter =
-    nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: gmailUser,
-        pass: gmailPassword
-      }
-    });
-
   const html = `
 <!DOCTYPE html>
 <html lang="tr">
@@ -711,9 +713,7 @@ async function sendPasswordResetEmail(
   content="width=device-width,initial-scale=1.0"
 >
 
-<title>
-PanelMarket Şifre Sıfırlama
-</title>
+<title>PanelMarket Şifre Sıfırlama</title>
 
 </head>
 
@@ -843,51 +843,97 @@ PanelMarket
 
   try {
 
-    const info =
-      await transporter.sendMail({
-        from,
-        to: String(user.email),
-        subject:
-          "PanelMarket - Şifre Sıfırlama",
-        html
+    const { google } = await import("googleapis");
+
+    const oauth2Client =
+      new google.auth.OAuth2(
+        googleClientId,
+        googleClientSecret
+      );
+
+    oauth2Client.setCredentials({
+      refresh_token: googleRefreshToken
+    });
+
+    const gmail =
+      google.gmail({
+        version: "v1",
+        auth: oauth2Client
       });
+
+    function encodeMimeHeader(value) {
+
+      return /[^\x00-\x7F]/.test(value)
+        ? `=?UTF-8?B?${Buffer
+            .from(value, "utf8")
+            .toString("base64")}?=`
+        : value;
+    }
+
+    const mimeMessage = [
+      `From: ${from}`,
+      `To: ${String(user.email)}`,
+      `Subject: ${encodeMimeHeader(
+        "PanelMarket - Şifre Sıfırlama"
+      )}`,
+      "MIME-Version: 1.0",
+      'Content-Type: text/html; charset="UTF-8"',
+      "Content-Transfer-Encoding: 8bit",
+      "",
+      html
+    ].join("\r\n");
+
+    const raw =
+      Buffer
+        .from(mimeMessage, "utf8")
+        .toString("base64url");
+
+    const result =
+      await gmail.users.messages.send({
+        userId: "me",
+        requestBody: {
+          raw
+        }
+      });
+
+    const messageId =
+      result?.data?.id || null;
 
     console.log(
       "PASSWORD RESET EMAIL SENT:",
       {
         to: user.email,
-        messageId:
-          info.messageId
+        messageId
       }
     );
 
-    return info;
+    return {
+      messageId,
+      provider: "gmail-api"
+    };
 
   } catch (error) {
 
     console.error(
-      "GMAIL PASSWORD RESET ERROR:",
+      "GMAIL API PASSWORD RESET ERROR:",
       {
-        message:
-          error?.message,
-        code:
-          error?.code,
-        command:
-          error?.command,
+        message: error?.message,
+        code: error?.code,
         response:
-          error?.response
+          error?.response?.data ||
+          error?.response ||
+          null
       }
     );
 
     throw new Error(
-      `Gmail e-posta hatası: ${
+      `Gmail API e-posta hatası: ${
         error?.message ||
-        "Bilinmeyen Gmail hatası"
+        "Bilinmeyen Gmail API hatası"
       }`
     );
   }
 }
-
 
 /* =========================================================
    ŞİFRE SIFIRLAMA E-POSTASI İSTEĞİ
@@ -2103,7 +2149,19 @@ app.get("/api/debug/supabase-info", async (req, res) => {
 
 /* STATIC */
 app.use(express.static(__dirname,{extensions:["html"]}));
-const pages=["index","urun","sepet","odeme","siparislerim","hesabim","teslimat","login","register","admin"];
+const pages=[
+  "index",
+  "urun",
+  "sepet",
+  "odeme",
+  "siparislerim",
+  "hesabim",
+  "teslimat",
+  "login",
+  "register",
+  "admin",
+  "reset-password"
+];
 for(const page of pages)app.get(`/${page}.html`,(req,res)=>res.sendFile(path.join(__dirname,`${page}.html`)));
 app.get("/",(req,res)=>res.sendFile(path.join(__dirname,"index.html")));
 app.use((req,res)=>{if(req.path.startsWith("/api/"))return res.status(404).json({ok:false,error:"API adresi bulunamadı."});res.status(404).send(`<!doctype html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PanelMarket - 404</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#070a0f;color:#fff;font-family:Arial,sans-serif}.box{text-align:center;padding:45px;border:1px solid #1d2835;border-radius:22px;background:#0d131b}a{display:inline-block;margin-top:20px;padding:13px 22px;border-radius:10px;background:#1677ff;color:#fff;text-decoration:none;font-weight:800}</style></head><body><div class="box"><h1>Sayfa bulunamadı</h1><p>Aradığınız PanelMarket sayfası mevcut değil.</p><a href="/">Ana Sayfaya Dön</a></div></body></html>`);});
