@@ -2976,11 +2976,86 @@ app.post("/api/admin/products", requireAuth, requireAdmin, async (req, res) => {
       update_period: update,
       support,
       active,
-      sort_order: Number.isFinite(sortOrder)
-        ? sortOrder
-        : 0
-      image_url: String(req.body.image_url || "").trim()
-    };
+      /* YENİ ÜRÜN */
+const row = {
+  id,
+  name,
+  category,
+  description,
+  price,
+  old_price: oldPrice,
+  badge,
+  delivery,
+  update_period: update,
+  support,
+  active,
+  sort_order: Number.isFinite(sortOrder)
+    ? sortOrder
+    : 0,
+  image_url: String(req.body.image_url || "").trim()
+};
+
+console.log(
+  "ADMIN PRODUCT CREATE:",
+  {
+    id: row.id,
+    name: row.name,
+    category: row.category,
+    price: row.price,
+    image_url: row.image_url
+  }
+);
+
+const {
+  data,
+  error
+} = await supabase
+  .from("products")
+  .insert(row)
+  .select("*")
+  .single();
+
+if (error) {
+  console.error(
+    "ADMIN PRODUCT INSERT ERROR:",
+    error
+  );
+
+  return res.status(500).json({
+    ok: false,
+    error: "Ürün veritabanına eklenemedi.",
+    databaseError: error.message,
+    databaseCode: error.code || null,
+    databaseDetails: error.details || null,
+    databaseHint: error.hint || null
+  });
+}
+
+console.log(
+  "ADMIN PRODUCT CREATED:",
+  data?.id
+);
+
+return res.status(201).json({
+  ok: true,
+  success: true,
+  product: data
+});
+
+} catch (e) {
+
+  console.error(
+    "ADMIN PRODUCT CREATE ERROR:",
+    e
+  );
+
+  return res.status(500).json({
+    ok: false,
+    error: "Ürün oluşturulamadı.",
+    databaseError: e?.message || null
+  });
+}
+});
 
     console.log(
       "ADMIN PRODUCT CREATE:",
@@ -3042,8 +3117,98 @@ app.post("/api/admin/products", requireAuth, requireAdmin, async (req, res) => {
     });
   }
 });
-app.put("/api/admin/products/:id",requireAuth,requireAdmin,async(req,res)=>{try{const patch={};for(const [k,v] of Object.entries({name:req.body.name,category:req.body.category,description:req.body.description,badge:req.body.badge,delivery:req.body.delivery,update_period:req.body.update,support:req.body.support}))if(v!==undefined)patch[k]=String(v);if(req.body.price!==undefined)patch.price=money(req.body.price);if(req.body.oldPrice!==undefined)patch.old_price=req.body.oldPrice===null?null:money(req.body.oldPrice);if(req.body.active!==undefined)patch.active=Boolean(req.body.active);if(req.body.sortOrder!==undefined)patch.sort_order=Number(req.body.sortOrder);const {data,error}=await supabase.from("products").update(patch).eq("id",req.params.id).select("*").single();if(error)throw error;res.json({success:true,product:data});}catch(e){res.status(500).json({error:"Ürün güncellenemedi."});}});
 app.patch("/api/admin/products/:id/status",requireAuth,requireAdmin,async(req,res)=>{try{const {data,error}=await supabase.from("products").update({active:Boolean(req.body.active)}).eq("id",req.params.id).select("*").single();if(error)throw error;res.json({success:true,product:data});}catch(e){res.status(500).json({error:"Ürün durumu güncellenemedi."});}});
+app.put(
+  "/api/admin/products/:id",
+  requireAuth,
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const patch = {};
+
+      const fields = {
+        name: req.body.name,
+        category: req.body.category,
+        description: req.body.description,
+        badge: req.body.badge,
+        delivery: req.body.delivery,
+        update_period: req.body.update,
+        support: req.body.support,
+        image_url: req.body.image_url
+      };
+
+      for (const [key, value] of Object.entries(fields)) {
+        if (value !== undefined) {
+          patch[key] = String(value);
+        }
+      }
+
+      if (req.body.price !== undefined) {
+        patch.price = money(req.body.price);
+      }
+
+      if (req.body.oldPrice !== undefined) {
+        patch.old_price =
+          req.body.oldPrice === null ||
+          req.body.oldPrice === ""
+            ? null
+            : money(req.body.oldPrice);
+      }
+
+      if (req.body.active !== undefined) {
+        patch.active = Boolean(req.body.active);
+      }
+
+      if (req.body.sortOrder !== undefined) {
+        patch.sort_order = Number(req.body.sortOrder);
+      }
+
+      const {
+        data,
+        error
+      } = await supabase
+        .from("products")
+        .update(patch)
+        .eq("id", req.params.id)
+        .select("*")
+        .single();
+
+      if (error) {
+        console.error(
+          "ADMIN PRODUCT UPDATE ERROR:",
+          error
+        );
+
+        return res.status(500).json({
+          ok: false,
+          error: "Ürün güncellenemedi.",
+          databaseError: error.message,
+          databaseCode: error.code || null,
+          databaseDetails: error.details || null,
+          databaseHint: error.hint || null
+        });
+      }
+
+      return res.json({
+        ok: true,
+        success: true,
+        product: data
+      });
+
+    } catch (e) {
+      console.error(
+        "ADMIN PRODUCT UPDATE EXCEPTION:",
+        e
+      );
+
+      return res.status(500).json({
+        ok: false,
+        error: "Ürün güncellenemedi.",
+        databaseError: e?.message || null
+      });
+    }
+  }
+);
 app.delete("/api/admin/products/:id",requireAuth,requireAdmin,async(req,res)=>{try{const {error}=await supabase.from("products").delete().eq("id",req.params.id);if(error)throw error;res.json({success:true});}catch(e){res.status(500).json({error:"Ürün silinemedi."});}});
 
 /* DEBUG */
