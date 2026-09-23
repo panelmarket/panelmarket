@@ -81,7 +81,7 @@ header{
 
 
 /* =========================================================
-   HEADER BUTONLARI - INDEX.HTML İLE AYNI
+   HEADER - LOGIN.HTML İLE AYNI
 ========================================================= */
 
 .header-buttons{
@@ -90,7 +90,7 @@ header{
     gap:10px;
 }
 
-.header-buttons .header-btn{
+.header-buttons .btn{
     box-sizing:border-box;
     display:inline-flex;
     align-items:center;
@@ -112,26 +112,25 @@ header{
     text-decoration:none;
 
     margin:0;
-    cursor:pointer;
 }
 
-.header-buttons .login{
+.header-buttons .btn.outline{
     border:1px solid #273241;
     background:transparent;
     color:#f5f7fb;
 }
 
-.header-buttons .register-btn{
+.header-buttons .btn.blue{
     border:1px solid #1677ff;
     background:#1677ff;
     color:#fff;
 }
 
-.header-buttons .login:hover{
+.header-buttons .btn.outline:hover{
     color:#fff;
 }
 
-.header-buttons .register-btn:hover{
+.header-buttons .btn.blue:hover{
     background:#298cff;
     border-color:#298cff;
 }
@@ -168,6 +167,7 @@ header{
 
     border:1px solid #1c2633;
     border-radius:22px;
+
     padding:35px;
 
     box-shadow:0 25px 80px rgba(0,0,0,.28);
@@ -176,14 +176,17 @@ header{
 .register-card::before{
     content:"";
     position:absolute;
+
     top:-100px;
     left:50%;
+
     transform:translateX(-50%);
 
     width:250px;
     height:180px;
 
     background:rgba(115,71,255,.10);
+
     filter:blur(55px);
 
     pointer-events:none;
@@ -192,6 +195,7 @@ header{
 .register-logo{
     width:58px;
     height:58px;
+
     margin:0 auto 20px;
 
     border-radius:17px;
@@ -235,7 +239,9 @@ header{
 label{
     display:block;
     margin-bottom:8px;
+
     color:#c7d0dc;
+
     font-size:12px;
     font-weight:800;
 }
@@ -248,6 +254,7 @@ label{
 
     border-radius:10px;
     border:1px solid #253140;
+
     outline:none;
 
     background:#080d13;
@@ -264,7 +271,9 @@ label{
 
 .input:focus{
     border-color:#1677ff;
-    box-shadow:0 0 0 3px rgba(22,119,255,.08);
+
+    box-shadow:
+        0 0 0 3px rgba(22,119,255,.08);
 }
 
 .password-box{
@@ -277,8 +286,10 @@ label{
 
 .show-password{
     position:absolute;
+
     right:10px;
     top:50%;
+
     transform:translateY(-50%);
 
     border:0;
@@ -300,7 +311,9 @@ label{
     margin-top:8px;
 
     display:flex;
+
     gap:5px;
+
     flex-wrap:wrap;
 }
 
@@ -310,6 +323,7 @@ label{
     border-radius:6px;
 
     background:#101720;
+
     border:1px solid #1e2a38;
 
     color:#667589;
@@ -319,12 +333,15 @@ label{
 
 .rule.ok{
     color:#73e6a3;
+
     border-color:rgba(50,210,120,.25);
+
     background:rgba(50,210,120,.06);
 }
 
 .terms{
     display:flex;
+
     align-items:flex-start;
 
     gap:9px;
@@ -334,12 +351,15 @@ label{
     color:#7f8c9e;
 
     font-size:11px;
+
     line-height:1.5;
 }
 
 .terms input{
     margin-top:2px;
+
     accent-color:#1677ff;
+
     flex:none;
 }
 
@@ -361,6 +381,7 @@ label{
     margin-bottom:17px;
 
     font-size:12px;
+
     line-height:1.5;
 }
 
@@ -370,6 +391,7 @@ label{
     color:#ff9b9b;
 
     background:rgba(255,60,60,.08);
+
     border:1px solid rgba(255,60,60,.25);
 }
 
@@ -379,6 +401,7 @@ label{
     color:#8ff0b4;
 
     background:rgba(40,210,120,.08);
+
     border:1px solid rgba(40,210,120,.25);
 }
 
@@ -387,14 +410,17 @@ label{
     height:50px;
 
     border:0;
+
     border-radius:10px;
 
     background:#1677ff;
+
     color:#fff;
 
     cursor:pointer;
 
     font-size:13px;
+
     font-weight:900;
 
     transition:.2s;
@@ -402,12 +428,15 @@ label{
 
 .register-button:hover{
     background:#2a87ff;
+
     transform:translateY(-1px);
 }
 
 .register-button:disabled{
     opacity:.6;
+
     cursor:not-allowed;
+
     transform:none;
 }
 
@@ -415,6 +444,7 @@ label{
     text-align:center;
 
     margin-top:23px;
+
     padding-top:22px;
 
     border-top:1px solid #19222d;
@@ -426,6 +456,7 @@ label{
 
 .login-area a{
     color:#5eacff;
+
     font-weight:900;
 }
 
@@ -441,6 +472,7 @@ label{
     border-radius:10px;
 
     background:rgba(22,119,255,.06);
+
     border:1px solid rgba(22,119,255,.14);
 
     color:#7f90a5;
@@ -448,6 +480,7 @@ label{
     text-align:center;
 
     font-size:11px;
+
     line-height:1.5;
 }
 
@@ -478,7 +511,7 @@ footer{
         gap:8px;
     }
 
-    .header-buttons .header-btn{
+    .header-buttons .btn{
         min-height:40px;
         height:40px;
 
@@ -505,9 +538,17 @@ footer{
 <div class="header">
 
 <a href="/index.html" class="logo">
-    <span class="logo-icon">P</span>
-    <span>PanelMarket</span>
+
+    <span class="logo-icon">
+        P
+    </span>
+
+    <span>
+        PanelMarket
+    </span>
+
 </a>
+
 
 <nav class="nav">
 
@@ -530,16 +571,16 @@ footer{
 
     <a
         href="/login.html"
-        class="header-btn login"
+        class="btn outline"
     >
-        GİRİŞ YAP
+        Giriş Yap
     </a>
 
     <a
         href="/register.html"
-        class="header-btn register-btn"
+        class="btn blue"
     >
-        KAYIT OL
+        Kayıt Ol
     </a>
 
 </div>
@@ -756,9 +797,7 @@ footer{
 
 <script>
 
-/* =========================================================
-   PANELMARKET REGISTER
-========================================================= */
+"use strict";
 
 const form =
     document.getElementById("registerForm");
@@ -785,10 +824,6 @@ const message =
     document.getElementById("message");
 
 
-/* =========================================================
-   MESAJ
-========================================================= */
-
 function showMessage(text,type){
 
     message.textContent = text;
@@ -799,355 +834,331 @@ function showMessage(text,type){
 }
 
 
-/* =========================================================
-   ŞİFRE GÖSTER / GİZLE
-========================================================= */
+/* ŞİFRE GÖSTER */
 
 document
 .getElementById("showPassword")
-.addEventListener("click",function(){
+.addEventListener(
+    "click",
+    function(){
 
-    if(passwordInput.type === "password"){
+        if(passwordInput.type === "password"){
 
-        passwordInput.type = "text";
+            passwordInput.type = "text";
 
-        this.textContent = "GİZLE";
+            this.textContent = "GİZLE";
 
-    }else{
+        }else{
 
-        passwordInput.type = "password";
+            passwordInput.type = "password";
 
-        this.textContent = "GÖSTER";
+            this.textContent = "GÖSTER";
+
+        }
 
     }
+);
 
-});
 
+/* ŞİFRE TEKRARI GÖSTER */
 
 document
 .getElementById("showConfirm")
-.addEventListener("click",function(){
+.addEventListener(
+    "click",
+    function(){
 
-    if(confirmInput.type === "password"){
+        if(confirmInput.type === "password"){
 
-        confirmInput.type = "text";
+            confirmInput.type = "text";
 
-        this.textContent = "GİZLE";
+            this.textContent = "GİZLE";
 
-    }else{
+        }else{
 
-        confirmInput.type = "password";
+            confirmInput.type = "password";
 
-        this.textContent = "GÖSTER";
+            this.textContent = "GÖSTER";
+
+        }
 
     }
+);
 
-});
 
-
-/* =========================================================
-   ŞİFRE KURALLARI
-========================================================= */
+/* ŞİFRE KURALLARI */
 
 passwordInput.addEventListener(
-"input",
-function(){
+    "input",
+    function(){
 
-    const value =
-        this.value;
+        const value = this.value;
 
+        document
+        .getElementById("lengthRule")
+        .classList.toggle(
+            "ok",
+            value.length >= 8
+        );
 
-    document
-    .getElementById("lengthRule")
-    .classList.toggle(
-        "ok",
-        value.length >= 8
-    );
+        document
+        .getElementById("numberRule")
+        .classList.toggle(
+            "ok",
+            /\d/.test(value)
+        );
 
+        document
+        .getElementById("letterRule")
+        .classList.toggle(
+            "ok",
+            /[A-Za-zÇĞİÖŞÜçğıöşü]/.test(value)
+        );
 
-    document
-    .getElementById("numberRule")
-    .classList.toggle(
-        "ok",
-        /\d/.test(value)
-    );
-
-
-    document
-    .getElementById("letterRule")
-    .classList.toggle(
-        "ok",
-        /[A-Za-zÇĞİÖŞÜçğıöşü]/.test(value)
-    );
-
-});
+    }
+);
 
 
-/* =========================================================
-   KAYIT
-========================================================= */
+/* KAYIT */
 
 form.addEventListener(
-"submit",
-async function(e){
+    "submit",
+    async function(e){
 
-    e.preventDefault();
+        e.preventDefault();
 
+        const name =
+            nameInput.value.trim();
 
-    const name =
-        nameInput.value.trim();
+        const email =
+            emailInput.value.trim().toLowerCase();
 
-    const email =
-        emailInput.value.trim().toLowerCase();
+        const password =
+            passwordInput.value;
 
-    const password =
-        passwordInput.value;
-
-    const confirm =
-        confirmInput.value;
-
-
-    /* AD */
-
-    if(name.length < 2){
-
-        showMessage(
-            "Ad soyad bilgisini doğru şekilde girin.",
-            "error"
-        );
-
-        nameInput.focus();
-
-        return;
-    }
+        const confirm =
+            confirmInput.value;
 
 
-    /* EMAIL */
+        if(name.length < 2){
 
-    if(!email || !email.includes("@")){
-
-        showMessage(
-            "Geçerli bir e-posta adresi girin.",
-            "error"
-        );
-
-        emailInput.focus();
-
-        return;
-    }
-
-
-    /* ŞİFRE */
-
-    if(password.length < 8){
-
-        showMessage(
-            "Şifreniz en az 8 karakter olmalıdır.",
-            "error"
-        );
-
-        passwordInput.focus();
-
-        return;
-    }
-
-
-    if(!/\d/.test(password)){
-
-        showMessage(
-            "Şifrenizde en az bir rakam bulunmalıdır.",
-            "error"
-        );
-
-        passwordInput.focus();
-
-        return;
-    }
-
-
-    if(!/[A-Za-zÇĞİÖŞÜçğıöşü]/.test(password)){
-
-        showMessage(
-            "Şifrenizde en az bir harf bulunmalıdır.",
-            "error"
-        );
-
-        passwordInput.focus();
-
-        return;
-    }
-
-
-    /* ŞİFRE TEKRARI */
-
-    if(password !== confirm){
-
-        showMessage(
-            "Şifreler eşleşmiyor.",
-            "error"
-        );
-
-        confirmInput.focus();
-
-        return;
-    }
-
-
-    /* KOŞULLAR */
-
-    if(!terms.checked){
-
-        showMessage(
-            "Devam etmek için kullanım koşullarını kabul edin.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    button.disabled = true;
-
-    button.textContent =
-        "HESAP OLUŞTURULUYOR...";
-
-
-    try{
-
-        /* ===============================================
-           SERVER'A KAYIT
-        =============================================== */
-
-        const response =
-            await fetch(
-                "/api/register",
-                {
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    credentials:"include",
-
-                    body:JSON.stringify({
-
-                        name:name,
-
-                        email:email,
-
-                        password:password
-
-                    })
-                }
+            showMessage(
+                "Ad soyad bilgisini doğru şekilde girin.",
+                "error"
             );
 
+            nameInput.focus();
 
-        let data = {};
+            return;
+        }
+
+
+        if(!email || !email.includes("@")){
+
+            showMessage(
+                "Geçerli bir e-posta adresi girin.",
+                "error"
+            );
+
+            emailInput.focus();
+
+            return;
+        }
+
+
+        if(password.length < 8){
+
+            showMessage(
+                "Şifreniz en az 8 karakter olmalıdır.",
+                "error"
+            );
+
+            passwordInput.focus();
+
+            return;
+        }
+
+
+        if(!/\d/.test(password)){
+
+            showMessage(
+                "Şifrenizde en az bir rakam bulunmalıdır.",
+                "error"
+            );
+
+            passwordInput.focus();
+
+            return;
+        }
+
+
+        if(!/[A-Za-zÇĞİÖŞÜçğıöşü]/.test(password)){
+
+            showMessage(
+                "Şifrenizde en az bir harf bulunmalıdır.",
+                "error"
+            );
+
+            passwordInput.focus();
+
+            return;
+        }
+
+
+        if(password !== confirm){
+
+            showMessage(
+                "Şifreler eşleşmiyor.",
+                "error"
+            );
+
+            confirmInput.focus();
+
+            return;
+        }
+
+
+        if(!terms.checked){
+
+            showMessage(
+                "Devam etmek için kullanım koşullarını kabul edin.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        button.disabled = true;
+
+        button.textContent =
+            "HESAP OLUŞTURULUYOR...";
+
 
         try{
 
-            data =
-                await response.json();
+            const response =
+                await fetch(
+                    "/api/register",
+                    {
+                        method:"POST",
+
+                        headers:{
+                            "Content-Type":
+                                "application/json",
+
+                            "Accept":
+                                "application/json"
+                        },
+
+                        credentials:"include",
+
+                        cache:"no-store",
+
+                        body:JSON.stringify({
+
+                            name:name,
+
+                            email:email,
+
+                            password:password
+
+                        })
+                    }
+                );
+
+
+            let data = {};
+
+            try{
+
+                data =
+                    await response.json();
+
+            }catch(error){
+
+                data = {};
+
+            }
+
+
+            if(!response.ok){
+
+                throw new Error(
+                    data.error ||
+                    data.message ||
+                    "Kayıt oluşturulamadı."
+                );
+
+            }
+
+
+            if(data.token){
+
+                localStorage.setItem(
+                    "panelmarket_token",
+                    data.token
+                );
+
+            }
+
+
+            if(data.user){
+
+                localStorage.setItem(
+                    "panelmarket_user",
+                    JSON.stringify(data.user)
+                );
+
+            }
+
+
+            localStorage.setItem(
+                "panelmarket_saved_email",
+                email
+            );
+
+
+            showMessage(
+                "Hesabınız başarıyla oluşturuldu. Ana sayfaya yönlendiriliyorsunuz...",
+                "success"
+            );
+
+
+            setTimeout(
+                function(){
+
+                    window.location.href =
+                        "/index.html";
+
+                },
+                900
+            );
+
 
         }catch(error){
 
-            data = {};
-
-        }
-
-
-        /* ===============================================
-           HATA
-        =============================================== */
-
-        if(!response.ok){
-
-            throw new Error(
-                data.error ||
-                "Kayıt oluşturulamadı."
+            console.error(
+                "REGISTER ERROR:",
+                error
             );
 
-        }
-
-
-        /* ===============================================
-           TOKEN
-        =============================================== */
-
-        if(data.token){
-
-            localStorage.setItem(
-                "panelmarket_token",
-                data.token
+            showMessage(
+                error.message ||
+                "Kayıt sırasında bir hata oluştu.",
+                "error"
             );
 
-        }
 
+            button.disabled = false;
 
-        /* ===============================================
-           KULLANICI
-        =============================================== */
-
-        if(data.user){
-
-            localStorage.setItem(
-                "panelmarket_user",
-                JSON.stringify(data.user)
-            );
+            button.textContent =
+                "HESAP OLUŞTUR";
 
         }
-
-
-        /* ===============================================
-           E-POSTAYI KAYDET
-        =============================================== */
-
-        localStorage.setItem(
-            "panelmarket_saved_email",
-            email
-        );
-
-
-        /* ===============================================
-           BAŞARILI
-        =============================================== */
-
-        showMessage(
-            "Hesabınız başarıyla oluşturuldu. Ana sayfaya yönlendiriliyorsunuz...",
-            "success"
-        );
-
-
-        setTimeout(
-        function(){
-
-            window.location.href =
-                "/index.html";
-
-        },
-        900
-        );
-
-
-    }catch(error){
-
-        showMessage(
-            error.message ||
-            "Kayıt sırasında bir hata oluştu.",
-            "error"
-        );
-
-
-        button.disabled = false;
-
-        button.textContent =
-            "HESAP OLUŞTUR";
 
     }
-
-});
+);
 
 </script>
 
