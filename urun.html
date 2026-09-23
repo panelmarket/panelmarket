@@ -11,7 +11,6 @@
 
 <title>PanelMarket - Ürün Detayı</title>
 
-
 <style>
 
 *{
@@ -93,21 +92,38 @@ header{
     color:#fff
 }
 
-.header-buttons{
-    display:flex;
-    gap:9px;
-    align-items:center
-}
-
 
 /* =========================================
-   INDEX.HTML İLE AYNI BUTONLAR
+   DESTEK.HTML / INDEX.HTML İLE AYNI BUTONLAR
 ========================================= */
 
-.btn{
+.header-buttons{
+    display:flex;
+    align-items:center;
+}
+
+#headerButtons{
+    display:flex;
+    align-items:center;
+}
+
+#guestButtons,
+#userButtons{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+#guestButtons .btn,
+#userButtons .btn{
+    box-sizing:border-box;
+
     display:inline-flex;
     align-items:center;
     justify-content:center;
+
+    min-height:42px;
+    height:42px;
 
     padding:11px 16px;
 
@@ -116,28 +132,53 @@ header{
     font-size:12px;
     font-weight:800;
 
-    cursor:pointer;
-
+    line-height:1;
     white-space:nowrap;
 
-    border:0;
+    cursor:pointer;
 
+    border:0;
     text-decoration:none;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .15s ease,
+        box-shadow .2s ease;
 }
 
-.btn.outline{
+#guestButtons .btn.outline,
+#userButtons .btn.outline{
     border:1px solid #273241;
     background:transparent;
     color:#fff;
 }
 
-.btn.blue{
+#guestButtons .btn.outline:hover,
+#userButtons .btn.outline:hover{
+    background:#111923;
+    border-color:#344357;
+}
+
+#guestButtons .btn.blue,
+#userButtons .btn.blue{
+    border:1px solid #1677ff;
     background:#1677ff;
     color:#fff;
 }
 
-.btn.blue:hover{
+#guestButtons .btn.blue:hover,
+#userButtons .btn.blue:hover{
     background:#2a87ff;
+    border-color:#2a87ff;
+    box-shadow:0 8px 25px rgba(22,119,255,.25);
+}
+
+#userButtons button.btn{
+    font-family:inherit;
+    cursor:pointer;
+    appearance:none;
+    -webkit-appearance:none;
 }
 
 
@@ -389,13 +430,17 @@ h1{
         text-align:center
     }
 
-    .header-buttons{
-        gap:6px
+    #guestButtons,
+    #userButtons{
+        gap:8px;
     }
 
-    .btn{
-        padding:10px 12px;
-        font-size:11px
+    #guestButtons .btn,
+    #userButtons .btn{
+        min-height:40px;
+        height:40px;
+        padding:10px 13px;
+        font-size:12px;
     }
 
 }
@@ -458,29 +503,22 @@ Destek
 
 <div
     id="guestButtons"
-    style="display:flex;gap:9px;align-items:center;"
+    style="display:flex;gap:10px;align-items:center;"
 >
-
 
 <a
     href="/login.html"
     class="btn outline"
 >
-
 Giriş Yap
-
 </a>
-
 
 <a
     href="/register.html"
     class="btn blue"
 >
-
 Kayıt Ol
-
 </a>
-
 
 </div>
 
@@ -489,30 +527,23 @@ Kayıt Ol
 
 <div
     id="userButtons"
-    style="display:none;gap:9px;align-items:center;"
+    style="display:none;gap:10px;align-items:center;"
 >
-
 
 <a
     href="/hesabim.html"
     class="btn outline"
 >
-
 Hesabım
-
 </a>
-
 
 <button
     class="btn blue"
     type="button"
     onclick="logoutUser()"
 >
-
 Çıkış Yap
-
 </button>
-
 
 </div>
 
@@ -533,9 +564,7 @@ Hesabım
     href="/index.html"
     class="back"
 >
-
 ← Ürünlere Dön
-
 </a>
 
 
@@ -572,16 +601,12 @@ Hesabım
     class="category"
     id="productCategory"
 >
-
 Admin Paneli
-
 </div>
 
 
 <h1 id="productName">
-
 Profesyonel Admin Paneli
-
 </h1>
 
 
@@ -589,10 +614,8 @@ Profesyonel Admin Paneli
     class="description"
     id="productDescription"
 >
-
 Kullanıcı, içerik, ayar ve sistem yönetimi
 için modern yönetim paneli.
-
 </p>
 
 
@@ -655,9 +678,7 @@ Site Lisansı
 
 
 <div class="license-title">
-
 Lisans Seçimi
-
 </div>
 
 
@@ -762,9 +783,7 @@ Sınırsız Site
     class="buy"
     id="addToCart"
 >
-
 SEPETE EKLE →
-
 </button>
 
 
@@ -854,7 +873,6 @@ async function checkLogin(){
                 );
 
             }catch(error){}
-
 
         }else{
 
