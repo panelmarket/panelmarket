@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
+import nodemailer from "nodemailer";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -607,18 +608,27 @@ function verifyPasswordResetToken(token) {
 
 
 async function sendPasswordResetEmail(user, resetUrl) {
-  const apiKey = String(process.env.RESEND_API_KEY || "").trim();
-  const from = String(process.env.MAIL_FROM || "").trim();
+  const gmailUser = String(
+    process.env.GMAIL_USER || ""
+  ).trim();
 
-  if (!apiKey) {
+  const gmailPassword = String(
+    process.env.GMAIL_APP_PASSWORD || ""
+  ).trim();
+
+  const from = String(
+    process.env.MAIL_FROM || gmailUser
+  ).trim();
+
+  if (!gmailUser) {
     throw new Error(
-      "RESEND_API_KEY Render Environment Variables içinde bulunamadı."
+      "GMAIL_USER Render Environment Variables içinde bulunamadı."
     );
   }
 
-  if (!from) {
+  if (!gmailPassword) {
     throw new Error(
-      "MAIL_FROM Render Environment Variables içinde bulunamadı."
+      "GMAIL_APP_PASSWORD Render Environment Variables içinde bulunamadı."
     );
   }
 
@@ -633,6 +643,139 @@ async function sendPasswordResetEmail(user, resetUrl) {
       "Şifre sıfırlama bağlantısı oluşturulamadı."
     );
   }
+
+  const html = `
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PanelMarket Şifre Sıfırlama</title>
+</head>
+
+<body style="
+margin:0;
+padding:0;
+background:#f5f7fb;
+font-family:Arial,Helvetica,sans-serif;
+">
+
+<div style="
+max-width:600px;
+margin:40px auto;
+background:#ffffff;
+border-radius:16px;
+padding:32px;
+">
+
+<h1 style="color:#111827;">
+PanelMarket
+</h1>
+
+<h2 style="color:#111827;">
+Şifre Sıfırlama
+</h2>
+
+<p style="
+font-size:16px;
+line-height:1.6;
+color:#4b5563;
+">
+Hesabınız için şifre sıfırlama isteği aldık.
+</p>
+
+<p style="
+font-size:16px;
+line-height:1.6;
+color:#4b5563;
+">
+Yeni şifrenizi belirlemek için aşağıdaki butona tıklayın:
+</p>
+
+<div style="margin:30px 0;">
+
+<a
+href="${resetUrl}"
+style="
+display:inline-block;
+background:#2563eb;
+color:white;
+text-decoration:none;
+padding:14px 24px;
+border-radius:10px;
+font-weight:bold;
+"
+>
+Şifremi Sıfırla
+</a>
+
+</div>
+
+<p style="
+font-size:14px;
+color:#6b7280;
+">
+Bu bağlantı 30 dakika geçerlidir.
+</p>
+
+<p style="
+font-size:14px;
+color:#6b7280;
+">
+Bu işlemi siz yapmadıysanız bu e-postayı dikkate almayabilirsiniz.
+</p>
+
+<hr>
+
+<p style="
+font-size:13px;
+color:#9ca3af;
+">
+PanelMarket
+</p>
+
+</div>
+
+</body>
+</html>
+`;
+
+  try {
+    const info = await gmailTransporter.sendMail({
+      from,
+      to: String(user.email),
+      subject: "PanelMarket - Şifre Sıfırlama",
+      html
+    });
+
+    console.log(
+      "PASSWORD RESET EMAIL SENT:",
+      {
+        to: user.email,
+        messageId: info.messageId
+      }
+    );
+
+    return info;
+
+  } catch (error) {
+
+    console.error(
+      "GMAIL PASSWORD RESET ERROR:",
+      {
+        message: error?.message,
+        code: error?.code,
+        command: error?.command
+      }
+    );
+
+    throw new Error(
+      `Gmail e-posta hatası: ${
+        error?.message || "Bilinmeyen Gmail hatası"
+      }`
+    );
+  }
+}
 
   const html = `
 <!DOCTYPE html>
