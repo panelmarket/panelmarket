@@ -30,7 +30,7 @@ body{
 
 
 /* =========================================
-   HEADER BUTONLARI
+   HEADER
 ========================================= */
 
 #headerButtons{
@@ -45,6 +45,11 @@ body{
     gap:10px;
 }
 
+
+/* =========================================
+   GİRİŞ / KAYIT BUTONLARI
+========================================= */
+
 #guestButtons .btn,
 #userButtons .btn{
     box-sizing:border-box;
@@ -54,45 +59,76 @@ body{
     min-height:42px;
     height:42px;
     padding:11px 16px;
+    margin:0;
     border-radius:9px;
     font-size:12px;
     font-weight:800;
     line-height:1;
     white-space:nowrap;
+    text-decoration:none;
 }
 
 #guestButtons .btn.outline,
 #userButtons .btn.outline{
     border:1px solid #273241;
+    background:transparent;
+    color:#fff;
 }
 
-#guestButtons .btn.blue,
-#userButtons .btn.blue{
+#guestButtons .btn.blue{
     border:1px solid #1677ff;
+    background:#1677ff;
+    color:#fff;
 }
 
-#userButtons button.btn{
-    font-family:inherit;
-    cursor:pointer;
-    appearance:none;
-    -webkit-appearance:none;
+
+/* =========================================
+   ÇIKIŞ YAP
+   URUN.HTML + SEPET.HTML İLE AYNI
+========================================= */
+
+#userButtons button.btn.blue.logout-button{
+    box-sizing:border-box !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:auto !important;
+    min-width:0 !important;
+    min-height:42px !important;
+    height:42px !important;
+    padding:11px 16px !important;
+    margin:0 !important;
+    border-radius:9px !important;
+    background:#1677ff !important;
+    background-color:#1677ff !important;
+    border:1px solid #1677ff !important;
+    color:#fff !important;
+    font-family:Inter,Arial,sans-serif !important;
+    font-size:12px !important;
+    font-weight:800 !important;
+    line-height:1 !important;
+    letter-spacing:normal !important;
+    white-space:nowrap !important;
+    text-decoration:none !important;
+    text-transform:none !important;
+    box-shadow:none !important;
+    opacity:1 !important;
+    cursor:pointer !important;
+    appearance:none !important;
+    -webkit-appearance:none !important;
+    outline:none !important;
+    transition:none !important;
 }
 
-@media(max-width:800px){
-
-    #guestButtons,
-    #userButtons{
-        gap:7px;
-    }
-
-    #guestButtons .btn,
-    #userButtons .btn{
-        min-height:40px;
-        height:40px;
-        padding:10px 13px;
-        font-size:12px;
-    }
-
+#userButtons button.btn.blue.logout-button:hover,
+#userButtons button.btn.blue.logout-button:active,
+#userButtons button.btn.blue.logout-button:focus{
+    background:#1677ff !important;
+    background-color:#1677ff !important;
+    border:1px solid #1677ff !important;
+    color:#fff !important;
+    box-shadow:none !important;
+    outline:none !important;
 }
 
 
@@ -328,6 +364,33 @@ body{
 
 }
 
+@media(max-width:700px){
+
+    #guestButtons,
+    #userButtons{
+        gap:8px;
+    }
+
+    #guestButtons .btn,
+    #userButtons .btn{
+        min-height:40px;
+        height:40px;
+        padding:10px 13px;
+        font-size:12px;
+    }
+
+    #userButtons button.btn.blue.logout-button{
+        width:auto !important;
+        min-width:0 !important;
+        height:40px !important;
+        min-height:40px !important;
+        padding:10px 13px !important;
+        font-size:12px !important;
+        border-radius:9px !important;
+    }
+
+}
+
 </style>
 
 </head>
@@ -386,7 +449,7 @@ Destek
 >
 
 
-<!-- ÇIKIŞ YAPILMIŞ -->
+<!-- GİRİŞ YAPILMAMIŞ -->
 
 <div
     id="guestButtons"
@@ -425,7 +488,7 @@ Hesabım
 </a>
 
 <button
-    class="btn blue"
+    class="btn blue logout-button"
     type="button"
     onclick="logoutUser()"
 >
@@ -853,6 +916,15 @@ async function checkLogin(){
         "";
 
 
+    if(!token){
+
+        showLoggedOut();
+
+        return;
+
+    }
+
+
     try{
 
         const headers = {
@@ -860,12 +932,8 @@ async function checkLogin(){
         };
 
 
-        if(token){
-
-            headers.Authorization =
-                "Bearer " + token;
-
-        }
+        headers.Authorization =
+            "Bearer " + token;
 
 
         const response =
@@ -893,9 +961,6 @@ async function checkLogin(){
             data.user
         ){
 
-            showLoggedIn();
-
-
             try{
 
                 localStorage.setItem(
@@ -903,7 +968,41 @@ async function checkLogin(){
                     JSON.stringify(data.user)
                 );
 
-            }catch{}
+            }catch(error){
+
+                console.warn(
+                    "Kullanıcı bilgisi kaydedilemedi:",
+                    error
+                );
+
+            }
+
+
+            showLoggedIn();
+
+            return;
+
+        }
+
+
+        /*
+         * API cevap vermiş ama doğrulama başarısız.
+         * Kayıtlı kullanıcı + token varsa oturumu
+         * koru.
+         */
+
+        const savedUser =
+            localStorage.getItem(
+                "panelmarket_user"
+            ) ||
+            sessionStorage.getItem(
+                "panelmarket_user"
+            );
+
+
+        if(savedUser && token){
+
+            showLoggedIn();
 
         }else{
 
@@ -920,19 +1019,21 @@ async function checkLogin(){
         );
 
 
+        /*
+         * Geçici ağ/API hatasında kullanıcıyı
+         * gereksiz yere çıkış yaptırma.
+         */
+
         const savedUser =
             localStorage.getItem(
+                "panelmarket_user"
+            ) ||
+            sessionStorage.getItem(
                 "panelmarket_user"
             );
 
 
-        const savedToken =
-            localStorage.getItem(
-                "panelmarket_token"
-            );
-
-
-        if(savedUser && savedToken){
+        if(savedUser && token){
 
             showLoggedIn();
 
@@ -1025,17 +1126,17 @@ function showLoggedOut(){
 
 async function logoutUser(){
 
+    const token =
+        localStorage.getItem(
+            "panelmarket_token"
+        ) ||
+        sessionStorage.getItem(
+            "panelmarket_token"
+        ) ||
+        "";
+
+
     try{
-
-        const token =
-            localStorage.getItem(
-                "panelmarket_token"
-            ) ||
-            sessionStorage.getItem(
-                "panelmarket_token"
-            ) ||
-            "";
-
 
         const headers = {
             "Accept":"application/json"
@@ -1068,41 +1169,24 @@ async function logoutUser(){
             error
         );
 
-
     }finally{
 
-        try{
+        localStorage.removeItem(
+            "panelmarket_token"
+        );
 
-            localStorage.removeItem(
-                "panelmarket_token"
-            );
+        localStorage.removeItem(
+            "panelmarket_user"
+        );
 
-            localStorage.removeItem(
-                "panelmarket_user"
-            );
+        sessionStorage.removeItem(
+            "panelmarket_token"
+        );
 
-            sessionStorage.removeItem(
-                "panelmarket_token"
-            );
+        sessionStorage.removeItem(
+            "panelmarket_user"
+        );
 
-            sessionStorage.removeItem(
-                "panelmarket_user"
-            );
-
-        }catch(error){
-
-            console.error(
-                "Oturum temizleme hatası:",
-                error
-            );
-
-        }
-
-
-        /*
-         * Direkt index'e git.
-         * index.html de oturumu tekrar kontrol edecek.
-         */
 
         window.location.href =
             "/index.html";
@@ -1176,7 +1260,6 @@ async function sendSupport(event){
 
 
     try{
-
 
         const token =
             localStorage.getItem(
@@ -1270,7 +1353,6 @@ async function sendSupport(event){
 
     }catch(error){
 
-
         result.style.display =
             "block";
 
@@ -1289,7 +1371,6 @@ async function sendSupport(event){
 
 
     }finally{
-
 
         button.disabled =
             false;
