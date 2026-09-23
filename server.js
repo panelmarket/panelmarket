@@ -3,7 +3,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
-import { google } from "googleapis";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -483,6 +482,21 @@ if (!PASSWORD_RESET_SECRET) {
 }
 
 
+const GOOGLE_CLIENT_ID =
+  String(process.env.GOOGLE_CLIENT_ID || "").trim();
+
+const GOOGLE_CLIENT_SECRET =
+  String(process.env.GOOGLE_CLIENT_SECRET || "").trim();
+
+const GOOGLE_REFRESH_TOKEN =
+  String(process.env.GOOGLE_REFRESH_TOKEN || "").trim();
+
+const GOOGLE_REDIRECT_URI =
+  `${PUBLIC_BASE_URL}/oauth/google/callback`;
+
+const GMAIL_SEND_SCOPE =
+  "https://www.googleapis.com/auth/gmail.send";
+
 /* =========================================================
    RESET TOKEN OLUŞTUR
    ========================================================= */
@@ -629,6 +643,354 @@ function verifyPasswordResetToken(token) {
   }
 }
 
+
+/* =========================================================
+   GOOGLE GMAIL OAUTH BAŞLAT
+   OAuth Playground KULLANILMIYOR
+   ========================================================= */
+
+app.get("/oauth/google/start", (req, res) => {
+  try {
+    if (!GOOGLE_CLIENT_ID) {
+      return res.status(500).send(`
+        <h2>Google OAuth yapılandırılmamış</h2>
+        <p>GOOGLE_CLIENT_ID Render Environment Variables içinde yok.</p>
+      `);
+    }
+
+    const params = new URLSearchParams({
+      client_id: GOOGLE_CLIENT_ID,
+      redirect_uri: GOOGLE_REDIRECT_URI,
+      response_type: "code",
+      scope: GMAIL_SEND_SCOPE,
+      access_type: "offline",
+      prompt: "consent"
+    });
+
+    const googleUrl =
+      `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+
+    return res.redirect(googleUrl);
+
+  } catch (error) {
+    console.error("GOOGLE OAUTH START ERROR:", error);
+
+    return res.status(500).send(`
+      <h2>Google OAuth başlatılamadı</h2>
+      <p>${String(error?.message || "Bilinmeyen hata")}</p>
+    `);
+  }
+});
+
+/* =========================================================
+   GOOGLE GMAIL OAUTH CALLBACK
+   REFRESH TOKEN ALIR
+   ========================================================= */
+
+app.get("/oauth/google/callback", async (req, res) => {
+  try {
+    const code =
+      String(req.query.code || "").trim();
+
+    const oauthError =
+      String(req.query.error || "").trim();
+
+    if (oauthError) {
+      return res.status(400).send(`
+        <!doctype html>
+        <html lang="tr">
+        <head>
+          <meta charset="UTF-8">
+          <title>Google OAuth</title>
+        </head>
+        <body style="
+          margin:0;
+          min-height:100vh;
+          display:grid;
+          place-items:center;
+          background:#0b1118;
+          color:#fff;
+          font-family:Arial,sans-serif;
+        ">
+          <div style="
+            max-width:650px;
+            padding:35px;
+            background:#111a24;
+            border-radius:18px;
+          ">
+            <h2>Google yetkilendirmesi iptal edildi</h2>
+            <p>Google hata kodu:</p>
+            <pre>${oauthError}</pre>
+          </div>
+        </body>
+        </html>
+      `);
+    }
+
+    if (!code) {
+      return res.status(400).send(`
+        <h2>Google authorization code bulunamadı.</h2>
+      `);
+    }
+
+    if (!GOOGLE_CLIENT_ID) {
+      throw new Error(
+        "GOOGLE_CLIENT_ID Render Environment Variables içinde yok."
+      );
+    }
+
+    if (!GOOGLE_CLIENT_SECRET) {
+      throw new Error(
+        "GOOGLE_CLIENT_SECRET Render Environment Variables içinde yok."
+      );
+    }
+
+    const tokenResponse =
+      await fetch(
+        "https://oauth2.googleapis.com/token",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/x-www-form-urlencoded"
+          },
+
+          body:
+            new URLSearchParams({
+              code,
+
+              client_id:
+                GOOGLE_CLIENT_ID,
+
+              client_secret:
+                GOOGLE_CLIENT_SECRET,
+
+              redirect_uri:
+                GOOGLE_REDIRECT_URI,
+
+              grant_type:
+                "authorization_code"
+            })
+        }
+      );
+
+    const tokenData =
+      await tokenResponse.json();
+
+    if (!tokenResponse.ok) {
+      console.error(
+        "GOOGLE TOKEN ERROR:",
+        {
+          status: tokenResponse.status,
+          error: tokenData?.error,
+          description:
+            tokenData?.error_description
+        }
+      );
+
+      throw new Error(
+        tokenData?.error_description ||
+        tokenData?.error ||
+        "Google token alınamadı."
+      );
+    }
+
+    const refreshToken =
+      String(
+        tokenData?.refresh_token || ""
+      ).trim();
+
+    if (!refreshToken) {
+      throw new Error(
+        "Google refresh token göndermedi. OAuth ekranında yeniden izin verin."
+      );
+    }
+
+    /*
+      REFRESH TOKEN'ı LOG'A YAZMIYORUZ.
+      SADECE TARAYICIDA GÖSTERİYORUZ.
+    */
+
+    const safeToken =
+      refreshToken
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+    return res.send(`
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PanelMarket Gmail OAuth</title>
+
+<style>
+body{
+  margin:0;
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  background:#070a0f;
+  color:#fff;
+  font-family:Arial,sans-serif;
+}
+
+.box{
+  width:min(700px,calc(100% - 30px));
+  box-sizing:border-box;
+  padding:32px;
+  background:#101720;
+  border:1px solid #243241;
+  border-radius:20px;
+}
+
+h1{
+  margin-top:0;
+}
+
+p{
+  color:#b9c3cf;
+  line-height:1.6;
+}
+
+textarea{
+  width:100%;
+  height:130px;
+  box-sizing:border-box;
+  padding:15px;
+  border-radius:12px;
+  border:1px solid #344455;
+  background:#070b10;
+  color:#fff;
+  font-family:monospace;
+  resize:none;
+}
+
+button{
+  margin-top:15px;
+  padding:13px 20px;
+  border:0;
+  border-radius:10px;
+  background:#1677ff;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.warning{
+  margin-top:20px;
+  padding:15px;
+  border-radius:12px;
+  background:#261b08;
+  color:#ffd27a;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>Gmail OAuth Başarılı ✅</h1>
+
+<p>
+Google hesabınız PanelMarket Gmail API için yetkilendirildi.
+</p>
+
+<p>
+Aşağıdaki <b>refresh token</b> değerini Render Environment
+Variables bölümünde şu değişkene kaydedin:
+</p>
+
+<p>
+<b>GOOGLE_REFRESH_TOKEN</b>
+</p>
+
+<textarea id="token" readonly>${safeToken}</textarea>
+
+<br>
+
+<button onclick="copyToken()">
+Refresh Token'ı Kopyala
+</button>
+
+<div class="warning">
+⚠️ Bu değer gizlidir. Kimseyle paylaşmayın ve GitHub'a
+veya frontend koduna koymayın.
+</div>
+
+<script>
+function copyToken(){
+  const token =
+    document.getElementById("token").value;
+
+  navigator.clipboard.writeText(token)
+    .then(() => {
+      alert("Refresh token kopyalandı.");
+    })
+    .catch(() => {
+      alert("Kopyalama başarısız. Kutudan manuel olarak kopyalayın.");
+    });
+}
+</script>
+
+</div>
+
+</body>
+</html>
+    `);
+
+  } catch (error) {
+
+    console.error(
+      "GOOGLE OAUTH CALLBACK ERROR:",
+      error?.message
+    );
+
+    return res.status(500).send(`
+      <!doctype html>
+      <html lang="tr">
+      <head>
+        <meta charset="UTF-8">
+        <title>Google OAuth Hatası</title>
+      </head>
+
+      <body style="
+        margin:0;
+        min-height:100vh;
+        display:grid;
+        place-items:center;
+        background:#070a0f;
+        color:#fff;
+        font-family:Arial,sans-serif;
+      ">
+
+      <div style="
+        max-width:650px;
+        padding:35px;
+        background:#111820;
+        border-radius:18px;
+      ">
+
+        <h2>Google OAuth başarısız ❌</h2>
+
+        <p>
+        ${String(
+          error?.message ||
+          "Bilinmeyen hata"
+        )}
+        </p>
+
+      </div>
+
+      </body>
+      </html>
+    `);
+  }
+});
 
 /* =========================================================
    GMAIL ŞİFRE SIFIRLAMA E-POSTASI
@@ -841,88 +1203,424 @@ PanelMarket
 </html>
 `;
 
+  async function sendPasswordResetEmail(user, resetUrl) {
+
+  const gmailUser =
+    String(process.env.GMAIL_USER || "").trim();
+
+  const googleClientId =
+    String(process.env.GOOGLE_CLIENT_ID || "").trim();
+
+  const googleClientSecret =
+    String(process.env.GOOGLE_CLIENT_SECRET || "").trim();
+
+  const googleRefreshToken =
+    String(process.env.GOOGLE_REFRESH_TOKEN || "").trim();
+
+  const from =
+    String(
+      process.env.MAIL_FROM ||
+      gmailUser
+    ).trim();
+
+  if (!gmailUser) {
+    throw new Error(
+      "GMAIL_USER Render Environment Variables içinde bulunamadı."
+    );
+  }
+
+  if (!googleClientId) {
+    throw new Error(
+      "GOOGLE_CLIENT_ID Render Environment Variables içinde bulunamadı."
+    );
+  }
+
+  if (!googleClientSecret) {
+    throw new Error(
+      "GOOGLE_CLIENT_SECRET Render Environment Variables içinde bulunamadı."
+    );
+  }
+
+  if (!googleRefreshToken) {
+    throw new Error(
+      "GOOGLE_REFRESH_TOKEN Render Environment Variables içinde bulunamadı."
+    );
+  }
+
+  if (!user?.email) {
+    throw new Error(
+      "Kullanıcının e-posta adresi bulunamadı."
+    );
+  }
+
+  if (!resetUrl) {
+    throw new Error(
+      "Şifre sıfırlama bağlantısı oluşturulamadı."
+    );
+  }
+
+  console.log(
+    "PASSWORD RESET EMAIL DEBUG:",
+    {
+      to: user.email,
+      from,
+      gmailUser,
+      resetUrlCreated: true
+    }
+  );
+
+  const html = `
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1.0"
+>
+
+<title>PanelMarket Şifre Sıfırlama</title>
+
+</head>
+
+<body
+style="
+margin:0;
+padding:0;
+background:#f5f7fb;
+font-family:Arial,Helvetica,sans-serif;
+"
+>
+
+<div
+style="
+max-width:600px;
+margin:40px auto;
+background:#ffffff;
+border-radius:16px;
+padding:32px;
+box-shadow:0 8px 30px rgba(0,0,0,.08);
+"
+>
+
+<h1
+style="
+margin:0 0 20px;
+font-size:28px;
+color:#111827;
+"
+>
+PanelMarket
+</h1>
+
+<h2
+style="
+margin:0 0 16px;
+color:#111827;
+"
+>
+Şifre Sıfırlama
+</h2>
+
+<p
+style="
+font-size:16px;
+line-height:1.6;
+color:#4b5563;
+"
+>
+Hesabınız için şifre sıfırlama isteği aldık.
+</p>
+
+<p
+style="
+font-size:16px;
+line-height:1.6;
+color:#4b5563;
+"
+>
+Yeni şifrenizi belirlemek için aşağıdaki butona tıklayın:
+</p>
+
+<div style="margin:30px 0;">
+
+<a
+href="${resetUrl}"
+style="
+display:inline-block;
+background:#2563eb;
+color:#ffffff;
+text-decoration:none;
+padding:14px 24px;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+"
+>
+Şifremi Sıfırla
+</a>
+
+</div>
+
+<p
+style="
+font-size:14px;
+line-height:1.6;
+color:#6b7280;
+"
+>
+Bu bağlantı güvenlik nedeniyle 30 dakika geçerlidir.
+</p>
+
+<p
+style="
+font-size:14px;
+line-height:1.6;
+color:#6b7280;
+"
+>
+Bu işlemi siz yapmadıysanız bu e-postayı dikkate almayabilirsiniz.
+</p>
+
+<hr
+style="
+border:0;
+border-top:1px solid #e5e7eb;
+margin:30px 0;
+"
+>
+
+<p
+style="
+font-size:13px;
+color:#9ca3af;
+margin:0;
+"
+>
+PanelMarket
+</p>
+
+</div>
+
+</body>
+
+</html>
+`;
+
   try {
 
-    const { google } = await import("googleapis");
+    /*
+     * 1. GOOGLE REFRESH TOKEN
+     *    -> ACCESS TOKEN
+     */
 
-    const oauth2Client =
-      new google.auth.OAuth2(
-        googleClientId,
-        googleClientSecret
+    const tokenResponse =
+      await fetch(
+        "https://oauth2.googleapis.com/token",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/x-www-form-urlencoded"
+          },
+
+          body:
+            new URLSearchParams({
+              client_id:
+                googleClientId,
+
+              client_secret:
+                googleClientSecret,
+
+              refresh_token:
+                googleRefreshToken,
+
+              grant_type:
+                "refresh_token"
+            })
+        }
       );
 
-    oauth2Client.setCredentials({
-      refresh_token: googleRefreshToken
-    });
+    const tokenData =
+      await tokenResponse.json();
 
-    const gmail =
-      google.gmail({
-        version: "v1",
-        auth: oauth2Client
-      });
+    if (!tokenResponse.ok) {
+
+      console.error(
+        "GOOGLE ACCESS TOKEN ERROR:",
+        {
+          status:
+            tokenResponse.status,
+
+          error:
+            tokenData?.error,
+
+          description:
+            tokenData?.error_description
+        }
+      );
+
+      throw new Error(
+        tokenData?.error_description ||
+        tokenData?.error ||
+        "Google access token alınamadı."
+      );
+    }
+
+    const accessToken =
+      String(
+        tokenData?.access_token || ""
+      ).trim();
+
+    if (!accessToken) {
+      throw new Error(
+        "Google access token boş geldi."
+      );
+    }
+
+
+    /*
+     * 2. MIME HEADER ENCODE
+     */
 
     function encodeMimeHeader(value) {
 
       return /[^\x00-\x7F]/.test(value)
+
         ? `=?UTF-8?B?${Buffer
             .from(value, "utf8")
             .toString("base64")}?=`
+
         : value;
     }
 
+
+    /*
+     * 3. MIME E-POSTA
+     */
+
     const mimeMessage = [
+
       `From: ${from}`,
+
       `To: ${String(user.email)}`,
+
       `Subject: ${encodeMimeHeader(
         "PanelMarket - Şifre Sıfırlama"
       )}`,
+
       "MIME-Version: 1.0",
+
       'Content-Type: text/html; charset="UTF-8"',
+
       "Content-Transfer-Encoding: 8bit",
+
       "",
+
       html
+
     ].join("\r\n");
+
+
+    /*
+     * 4. GMAIL API RAW FORMAT
+     */
 
     const raw =
       Buffer
-        .from(mimeMessage, "utf8")
+        .from(
+          mimeMessage,
+          "utf8"
+        )
         .toString("base64url");
 
-    const result =
-      await gmail.users.messages.send({
-        userId: "me",
-        requestBody: {
-          raw
+
+    /*
+     * 5. GMAIL API İLE GÖNDER
+     */
+
+    const gmailResponse =
+      await fetch(
+        "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
+        {
+          method: "POST",
+
+          headers: {
+            "Authorization":
+              `Bearer ${accessToken}`,
+
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              raw
+            })
         }
-      });
+      );
+
+
+    const gmailData =
+      await gmailResponse.json();
+
+
+    if (!gmailResponse.ok) {
+
+      console.error(
+        "GMAIL SEND ERROR:",
+        {
+          status:
+            gmailResponse.status,
+
+          error:
+            gmailData?.error?.message ||
+            gmailData?.error ||
+            null
+        }
+      );
+
+      throw new Error(
+        gmailData?.error?.message ||
+        "Gmail API e-posta gönderimi başarısız."
+      );
+    }
+
 
     const messageId =
-      result?.data?.id || null;
+      gmailData?.id || null;
+
 
     console.log(
       "PASSWORD RESET EMAIL SENT:",
       {
         to: user.email,
-        messageId
+        messageId,
+        provider: "gmail-api"
       }
     );
+
 
     return {
       messageId,
       provider: "gmail-api"
     };
 
+
   } catch (error) {
 
     console.error(
       "GMAIL API PASSWORD RESET ERROR:",
       {
-        message: error?.message,
-        code: error?.code,
-        response:
-          error?.response?.data ||
-          error?.response ||
-          null
+        message:
+          error?.message,
+
+        status:
+          error?.status || null
       }
     );
 
@@ -934,7 +1632,7 @@ PanelMarket
     );
   }
 }
-
+  
 /* =========================================================
    ŞİFRE SIFIRLAMA E-POSTASI İSTEĞİ
    ========================================================= */
@@ -1039,118 +1737,6 @@ app.post(
     }
   }
 );
-
-
-/* =========================================================
-   RESET TOKEN KONTROLÜ
-   ========================================================= */
-
-app.get(
-  "/api/reset-password/verify",
-  async (req, res) => {
-
-    try {
-
-      const token =
-        String(
-          req.query.token || ""
-        ).trim();
-
-      if (!token) {
-
-        return res.status(400).json({
-          ok: false,
-          valid: false,
-          error:
-            "Şifre sıfırlama bağlantısı bulunamadı."
-        });
-
-      }
-
-      const payload =
-        verifyPasswordResetToken(
-          token
-        );
-
-      if (!payload) {
-
-        return res.status(400).json({
-          ok: false,
-          valid: false,
-          error:
-            "Şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş."
-        });
-
-      }
-
-      const user =
-        await findUserById(
-          payload.uid
-        );
-
-      if (!user) {
-
-        return res.status(404).json({
-          ok: false,
-          valid: false,
-          error:
-            "Kullanıcı bulunamadı."
-        });
-
-      }
-
-      const databaseEmail =
-        String(
-          user.email || ""
-        )
-          .trim()
-          .toLowerCase();
-
-      const tokenEmail =
-        String(
-          payload.email || ""
-        )
-          .trim()
-          .toLowerCase();
-
-      if (
-        databaseEmail !==
-        tokenEmail
-      ) {
-
-        return res.status(400).json({
-          ok: false,
-          valid: false,
-          error:
-            "Şifre sıfırlama bağlantısı geçersiz."
-        });
-
-      }
-
-      return res.json({
-        ok: true,
-        valid: true,
-        email: user.email
-      });
-
-    } catch (e) {
-
-      console.error(
-        "RESET TOKEN VERIFY ERROR:",
-        e
-      );
-
-      return res.status(500).json({
-        ok: false,
-        valid: false,
-        error:
-          "Şifre sıfırlama bağlantısı kontrol edilemedi."
-      });
-
-    }
-  }
-);
-
 
 /* =========================================================
    YENİ ŞİFRE OLUŞTUR
