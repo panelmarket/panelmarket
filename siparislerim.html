@@ -12,15 +12,22 @@ a{text-decoration:none;color:inherit}
 button{font-family:inherit}
 
 header{
-position:sticky;top:0;z-index:1000;height:76px;
+position:sticky;
+top:0;
+z-index:1000;
+height:76px;
 background:rgba(7,10,15,.92);
 backdrop-filter:blur(18px);
 border-bottom:1px solid #1c2531
 }
 
 .header{
-width:min(1200px,94%);height:100%;margin:auto;
-display:flex;align-items:center;justify-content:space-between
+width:min(1200px,94%);
+height:100%;
+margin:auto;
+display:flex;
+align-items:center;
+justify-content:space-between
 }
 
 .logo{
@@ -55,9 +62,24 @@ font-size:13px
 color:#fff
 }
 
+/* =========================
+   HEADER KULLANICI ALANI
+========================= */
+
 .header-buttons{
 display:flex;
-gap:9px
+align-items:center;
+gap:10px
+}
+
+.header-email{
+max-width:220px;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+color:#cbd5e1;
+font-size:12px;
+font-weight:700
 }
 
 .header-btn{
@@ -73,6 +95,18 @@ border:1px solid #273241
 
 .register{
 background:#1677ff
+}
+
+.logout-btn{
+border:1px solid #273241;
+background:#0d131b;
+color:#fff;
+cursor:pointer
+}
+
+.logout-btn:hover{
+background:#151d27;
+border-color:#3a4656
 }
 
 .container{
@@ -233,12 +267,37 @@ font-size:12px
 display:none
 }
 
+.header-email{
+max-width:140px
+}
+
+.header-btn{
+padding:10px 12px
+}
+
 .order{
 grid-template-columns:1fr
 }
 
 .order-right{
 text-align:left
+}
+
+}
+
+@media(max-width:500px){
+
+.header-email{
+max-width:115px;
+font-size:11px
+}
+
+.header-buttons{
+gap:6px
+}
+
+.logout-btn{
+padding:9px 10px
 }
 
 }
@@ -263,17 +322,19 @@ text-align:left
 
 <div class="header-buttons">
 
-<a href="/login.html"
-class="header-btn login"
-id="loginButton">
-GİRİŞ YAP
-</a>
+<span
+id="headerEmail"
+class="header-email">
+Kontrol ediliyor...
+</span>
 
-<a href="/register.html"
-class="header-btn register"
-id="registerButton">
-KAYIT OL
-</a>
+<button
+type="button"
+class="header-btn logout-btn"
+id="logoutButton"
+onclick="logout()">
+ÇIKIŞ
+</button>
 
 </div>
 
@@ -310,9 +371,11 @@ Siparişler kontrol ediliyor...
 
 function getToken(){
 
-return localStorage.getItem(
-"panelmarket_token"
-) || "";
+return (
+localStorage.getItem("panelmarket_token") ||
+sessionStorage.getItem("panelmarket_token") ||
+""
+);
 
 }
 
@@ -330,11 +393,13 @@ return {
 ...extra,
 
 ...(token
-? {
+?
+{
 Authorization:
 "Bearer " + token
 }
-: {})
+:
+{})
 
 };
 
@@ -373,7 +438,15 @@ localStorage.removeItem(
 "panelmarket_token"
 );
 
+sessionStorage.removeItem(
+"panelmarket_token"
+);
+
 localStorage.removeItem(
+"panelmarket_user"
+);
+
+sessionStorage.removeItem(
 "panelmarket_user"
 );
 
@@ -395,6 +468,96 @@ return res;
 
 
 /* =========================
+   HEADER
+========================= */
+
+function updateHeader(user){
+
+if(!user) return;
+
+const headerEmail=
+document.getElementById(
+"headerEmail"
+);
+
+if(headerEmail){
+
+const email=
+user.email ||
+user.user_email ||
+user.mail ||
+"";
+
+headerEmail.textContent=
+email || "Hesabım";
+
+headerEmail.title=
+email || "Hesabım";
+
+}
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function logout(){
+
+const button=
+document.getElementById(
+"logoutButton"
+);
+
+if(button){
+
+button.disabled=true;
+button.textContent="ÇIKIŞ...";
+
+}
+
+try{
+
+await apiFetch(
+"/api/logout",
+{
+method:"POST"
+}
+);
+
+}catch(error){
+
+console.warn(
+"LOGOUT ERROR:",
+error
+);
+
+}
+
+localStorage.removeItem(
+"panelmarket_token"
+);
+
+sessionStorage.removeItem(
+"panelmarket_token"
+);
+
+localStorage.removeItem(
+"panelmarket_user"
+);
+
+sessionStorage.removeItem(
+"panelmarket_user"
+);
+
+window.location.href=
+"/index.html";
+
+}
+
+
+/* =========================
    LOAD ORDERS
 ========================= */
 
@@ -410,7 +573,10 @@ try{
 */
 
 const meRes=
-await apiFetch("/api/auth/me");
+await apiFetch(
+"/api/auth/me?t=" +
+Date.now()
+);
 
 const meData=
 await meRes.json();
@@ -429,12 +595,24 @@ return;
 
 
 /*
+   GİRİŞ YAPAN KULLANICININ
+   E-POSTASINI ÜST MENÜDE GÖSTER
+*/
+
+updateHeader(
+meData.user
+);
+
+
+/*
    SADECE OTURUM AÇAN KULLANICININ
    SİPARİŞLERİ SUNUCUDAN GELİR
 */
 
 const res=
-await apiFetch("/api/orders");
+await apiFetch(
+"/api/orders"
+);
 
 const data=
 await res.json();
@@ -458,8 +636,10 @@ data.error ||
 
 const orders=
 Array.isArray(data)
-? data
-: (data.orders || []);
+?
+data
+:
+(data.orders || []);
 
 
 /*
@@ -566,8 +746,10 @@ ${escapeHtml(license)}
 
 ${
 order.createdAt
-? formatDate(order.createdAt)
-: "Yeni"
+?
+formatDate(order.createdAt)
+:
+"Yeni"
 }
 
 </span>
@@ -618,13 +800,6 @@ TESLİM AL
 }).join("");
 
 
-/*
-   Header'ı giriş yapan kullanıcıya göre değiştir
-*/
-
-updateHeader(meData.user);
-
-
 }catch(e){
 
 if(e.message==="Oturum gerekli."){
@@ -647,77 +822,6 @@ e.message ||
 </div>
 
 `;
-
-}
-
-}
-
-
-/* =========================
-   HEADER
-========================= */
-
-function updateHeader(user){
-
-if(!user) return;
-
-const loginButton=
-document.getElementById(
-"loginButton"
-);
-
-const registerButton=
-document.getElementById(
-"registerButton"
-);
-
-
-if(loginButton){
-
-loginButton.textContent=
-"HESABIM";
-
-loginButton.href=
-"/hesabim.html";
-
-}
-
-
-if(registerButton){
-
-registerButton.textContent=
-"ÇIKIŞ YAP";
-
-registerButton.href="#";
-
-registerButton.onclick=
-async function(e){
-
-e.preventDefault();
-
-try{
-
-await apiFetch(
-"/api/logout",
-{
-method:"POST"
-}
-);
-
-}catch(err){}
-
-localStorage.removeItem(
-"panelmarket_token"
-);
-
-localStorage.removeItem(
-"panelmarket_user"
-);
-
-window.location.href=
-"/index.html";
-
-};
 
 }
 
