@@ -2366,7 +2366,177 @@ app.get("/api/admin/transactions",requireAuth,requireAdmin,async(req,res)=>{try{
 
 /* ADMIN PRODUCTS */
 app.get("/api/admin/products",requireAuth,requireAdmin,async(req,res)=>{try{const {data,error}=await supabase.from("products").select("*").order("sort_order",{ascending:true});if(error)throw error;res.json(data||[]);}catch(e){res.status(500).json({error:"Ürünler alınamadı."});}});
-app.post("/api/admin/products",requireAuth,requireAdmin,async(req,res)=>{try{const id=String(req.body.id||"").trim().toLowerCase();if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id))return res.status(400).json({error:"Geçerli ürün ID girin."});const row={id,name:String(req.body.name||"").trim(),category:String(req.body.category||""),description:String(req.body.description||""),price:money(req.body.price),old_price:req.body.oldPrice==null?null:money(req.body.oldPrice),badge:String(req.body.badge||""),delivery:String(req.body.delivery||"Hemen"),update_period:String(req.body.update||"1 Yıl"),support:String(req.body.support||"30 Gün"),active:req.body.active!==false,sort_order:Number(req.body.sortOrder||0)};if(!row.name||row.price<0)return res.status(400).json({error:"Ürün adı ve fiyat zorunludur."});const {data,error}=await supabase.from("products").insert(row).select("*").single();if(error)throw error;res.status(201).json({success:true,product:data});}catch(e){res.status(500).json({error:"Ürün oluşturulamadı."});}});
+app.post("/api/admin/products", requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const id = String(req.body.id || "")
+      .trim()
+      .toLowerCase();
+
+    const name = String(req.body.name || "").trim();
+    const category = String(req.body.category || "").trim();
+    const description = String(req.body.description || "").trim();
+    const badge = String(req.body.badge || "").trim();
+    const delivery = String(req.body.delivery || "Hemen").trim();
+    const update = String(req.body.update || "1 Yıl").trim();
+    const support = String(req.body.support || "30 Gün").trim();
+
+    const price = money(req.body.price);
+
+    const oldPrice =
+      req.body.oldPrice === null ||
+      req.body.oldPrice === undefined ||
+      req.body.oldPrice === ""
+        ? null
+        : money(req.body.oldPrice);
+
+    const active =
+      req.body.active !== false;
+
+    const sortOrder =
+      Number(req.body.sortOrder || 0);
+
+    /* ID KONTROLÜ */
+    if (!id) {
+      return res.status(400).json({
+        ok: false,
+        error: "Ürün ID boş bırakılamaz."
+      });
+    }
+
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) {
+      return res.status(400).json({
+        ok: false,
+        error:
+          "Geçerli ürün ID girin. Örnek: yeni-panel"
+      });
+    }
+
+    /* ÜRÜN ADI */
+    if (!name) {
+      return res.status(400).json({
+        ok: false,
+        error: "Ürün adı zorunludur."
+      });
+    }
+
+    /* FİYAT */
+    if (!Number.isFinite(price) || price < 0) {
+      return res.status(400).json({
+        ok: false,
+        error: "Geçerli bir ürün fiyatı girin."
+      });
+    }
+
+    /* AYNI ID VAR MI? */
+    const {
+      data: existingProduct,
+      error: existingError
+    } = await supabase
+      .from("products")
+      .select("id,name")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (existingError) {
+      console.error(
+        "PRODUCT EXISTING CHECK ERROR:",
+        existingError
+      );
+
+      return res.status(500).json({
+        ok: false,
+        error: "Ürün kontrolü yapılamadı.",
+        databaseError: existingError.message
+      });
+    }
+
+    if (existingProduct) {
+      return res.status(409).json({
+        ok: false,
+        error:
+          `Bu ürün ID zaten kullanılıyor: ${id}`,
+        existingProduct: existingProduct.name || ""
+      });
+    }
+
+    /* YENİ ÜRÜN */
+    const row = {
+      id,
+      name,
+      category,
+      description,
+      price,
+      old_price: oldPrice,
+      badge,
+      delivery,
+      update_period: update,
+      support,
+      active,
+      sort_order: Number.isFinite(sortOrder)
+        ? sortOrder
+        : 0
+    };
+
+    console.log(
+      "ADMIN PRODUCT CREATE:",
+      {
+        id: row.id,
+        name: row.name,
+        category: row.category,
+        price: row.price
+      }
+    );
+
+    const {
+      data,
+      error
+    } = await supabase
+      .from("products")
+      .insert(row)
+      .select("*")
+      .single();
+
+    if (error) {
+      console.error(
+        "ADMIN PRODUCT INSERT ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+        ok: false,
+        error: "Ürün veritabanına eklenemedi.",
+        databaseError: error.message,
+        databaseCode: error.code || null,
+        databaseDetails: error.details || null,
+        databaseHint: error.hint || null
+      });
+    }
+
+    console.log(
+      "ADMIN PRODUCT CREATED:",
+      data?.id
+    );
+
+    return res.status(201).json({
+      ok: true,
+      success: true,
+      product: data
+    });
+
+  } catch (e) {
+
+    console.error(
+      "ADMIN PRODUCT CREATE ERROR:",
+      e
+    );
+
+    return res.status(500).json({
+      ok: false,
+      error: "Ürün oluşturulamadı.",
+      databaseError: e?.message || null
+    });
+  }
+});
 app.put("/api/admin/products/:id",requireAuth,requireAdmin,async(req,res)=>{try{const patch={};for(const [k,v] of Object.entries({name:req.body.name,category:req.body.category,description:req.body.description,badge:req.body.badge,delivery:req.body.delivery,update_period:req.body.update,support:req.body.support}))if(v!==undefined)patch[k]=String(v);if(req.body.price!==undefined)patch.price=money(req.body.price);if(req.body.oldPrice!==undefined)patch.old_price=req.body.oldPrice===null?null:money(req.body.oldPrice);if(req.body.active!==undefined)patch.active=Boolean(req.body.active);if(req.body.sortOrder!==undefined)patch.sort_order=Number(req.body.sortOrder);const {data,error}=await supabase.from("products").update(patch).eq("id",req.params.id).select("*").single();if(error)throw error;res.json({success:true,product:data});}catch(e){res.status(500).json({error:"Ürün güncellenemedi."});}});
 app.patch("/api/admin/products/:id/status",requireAuth,requireAdmin,async(req,res)=>{try{const {data,error}=await supabase.from("products").update({active:Boolean(req.body.active)}).eq("id",req.params.id).select("*").single();if(error)throw error;res.json({success:true,product:data});}catch(e){res.status(500).json({error:"Ürün durumu güncellenemedi."});}});
 app.delete("/api/admin/products/:id",requireAuth,requireAdmin,async(req,res)=>{try{const {error}=await supabase.from("products").delete().eq("id",req.params.id);if(error)throw error;res.json({success:true});}catch(e){res.status(500).json({error:"Ürün silinemedi."});}});
