@@ -118,13 +118,13 @@ header{
     gap:10px;
 }
 
-#guestButtons .header-btn,
-#userButtons .header-btn{
 
-    box-sizing:border-box;
+/*
+   INDEX.HTML'DEKİ .btn SINIFLARI
+*/
 
+.header-buttons .btn{
     display:inline-flex;
-
     align-items:center;
     justify-content:center;
 
@@ -139,96 +139,43 @@ header{
     font-weight:800;
 
     line-height:1;
-
     white-space:nowrap;
+
+    box-sizing:border-box;
+
+    text-decoration:none;
 }
 
-#guestButtons .login,
-#userButtons .login{
 
+/* INDEX.HTML .btn.outline */
+
+.header-buttons .btn.outline{
     border:1px solid #273241;
-
+    background:transparent;
+    color:#fff;
 }
 
-#guestButtons .register,
-#userButtons .register{
 
+/* INDEX.HTML .btn.blue */
+
+.header-buttons .btn.blue{
     border:1px solid #1677ff;
-
     background:#1677ff;
+    color:#fff;
+}
+
+
+/* ÇIKIŞ YAP */
+
+.header-buttons button.btn.blue{
+    font-family:inherit;
+    cursor:pointer;
+    appearance:none;
+    -webkit-appearance:none;
 
     color:#fff;
-
-}
-
-
-#userButtons .register{
-
-    color:#fff !important;
-
-    background:#1677ff !important;
-
-    border:1px solid #1677ff !important;
-
-}
-
-
-#userButtons button.header-btn{
-
-    color:#fff !important;
-
-    background:#1677ff !important;
-
-    border:1px solid #1677ff !important;
-
-    font-family:inherit;
-
-    font-size:12px;
-
-    font-weight:800;
-
-    line-height:1;
-
-    cursor:pointer;
-
-    appearance:none;
-
-    -webkit-appearance:none;
-
-}
-
-#userButtons button.header-btn{
-
-    font-family:inherit;
-
-    cursor:pointer;
-
-    appearance:none;
-    -webkit-appearance:none;
-
-}
-
-@media(max-width:700px){
-
-    #guestButtons,
-    #userButtons{
-
-        gap:8px;
-
-    }
-
-    #guestButtons .header-btn,
-    #userButtons .header-btn{
-
-        min-height:40px;
-        height:40px;
-
-        padding:10px 13px;
-
-        font-size:12px;
-
-    }
-
+    background:#1677ff;
+    border:1px solid #1677ff;
 }
 
 
@@ -426,10 +373,10 @@ header{
 
 
 /* =========================================
-   BUTONLAR
+   SEPET BUTONLARI
 ========================================= */
 
-.btn{
+.actions .btn{
 
     border:0;
 
@@ -442,6 +389,12 @@ header{
     font-size:13px;
 
     font-weight:900;
+
+    display:block;
+
+    width:100%;
+
+    text-align:center;
 
 }
 
@@ -463,7 +416,7 @@ header{
 
     background:#101720;
 
-    border:1px solid #263445;
+    border:1px solid #263445 !important;
 
     color:#fff;
 
@@ -535,12 +488,6 @@ header{
 
 }
 
-.actions .btn{
-
-    text-align:center;
-
-}
-
 .notice{
 
     margin-top:18px;
@@ -606,6 +553,28 @@ footer{
     .cart{
 
         grid-template-columns:1fr;
+
+    }
+
+}
+
+@media(max-width:700px){
+
+    #guestButtons,
+    #userButtons{
+
+        gap:8px;
+
+    }
+
+    .header-buttons .btn{
+
+        min-height:40px;
+        height:40px;
+
+        padding:10px 13px;
+
+        font-size:12px;
 
     }
 
@@ -741,22 +710,18 @@ footer{
 
     <div
         id="guestButtons"
-        style="
-            display:flex;
-            gap:10px;
-            align-items:center;
-        "
+        style="display:flex;gap:10px;align-items:center;"
     >
 
         <a
-            class="header-btn login"
+            class="btn outline"
             href="/login.html"
         >
             Giriş Yap
         </a>
 
         <a
-            class="header-btn register"
+            class="btn blue"
             href="/register.html"
         >
             Kayıt Ol
@@ -769,22 +734,18 @@ footer{
 
     <div
         id="userButtons"
-        style="
-            display:none;
-            gap:10px;
-            align-items:center;
-        "
+        style="display:none;gap:10px;align-items:center;"
     >
 
         <a
-            class="header-btn login"
+            class="btn outline"
             href="/hesabim.html"
         >
             Hesabım
         </a>
 
         <button
-            class="header-btn register"
+            class="btn blue"
             type="button"
             onclick="logoutUser()"
         >
@@ -1420,8 +1381,6 @@ async function loadCart(){
 
                 }
 
-
-                /* Görseli sepete kaydet */
 
                 cart.image_url =
                     imageUrl;
