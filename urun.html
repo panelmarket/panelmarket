@@ -10,7 +10,7 @@
     content="width=device-width, initial-scale=1.0"
 >
 
-<title>Sepet - PanelMarket</title>
+<title>Ürün - PanelMarket</title>
 
 
 <style>
@@ -130,7 +130,7 @@ header{
 
 
 /* =========================================
-   TÜM HEADER BUTONLARI
+   HEADER BUTONLARI
 ========================================= */
 
 #headerButtons a.btn,
@@ -182,7 +182,7 @@ header{
 
 
 /* =========================================
-   GİRİŞ YAP
+   GİRİŞ
 ========================================= */
 
 #headerButtons a.btn.outline{
@@ -199,7 +199,7 @@ header{
 
 
 /* =========================================
-   KAYIT OL
+   KAYIT
 ========================================= */
 
 #headerButtons a.btn.blue{
@@ -217,7 +217,6 @@ header{
 
 /* =========================================
    HESABIM
-   INDEX.HTML İLE AYNI
 ========================================= */
 
 #headerButtons #userButtons a.btn.outline{
@@ -266,11 +265,6 @@ header{
 
 }
 
-
-/* =========================================
-   HESABIM HOVER
-========================================= */
-
 #headerButtons #userButtons a.btn.outline:hover{
 
     background:transparent !important;
@@ -285,8 +279,7 @@ header{
 
 
 /* =========================================
-   ÇIKIŞ YAP
-   GÖNDERDİĞİN GÖRSELDEKİ GİBİ
+   ÇIKIŞ
 ========================================= */
 
 #headerButtons #userButtons button.logout-button{
@@ -353,47 +346,8 @@ header{
 
 }
 
-
-/* =========================================
-   ÇIKIŞ HOVER
-========================================= */
-
-#headerButtons #userButtons button.logout-button:hover{
-
-    background:#0866e8 !important;
-
-    background-color:#0866e8 !important;
-
-    border:0 !important;
-
-    color:#fff !important;
-
-    box-shadow:none !important;
-
-}
-
-
-/* =========================================
-   ÇIKIŞ ACTIVE
-========================================= */
-
-#headerButtons #userButtons button.logout-button:active{
-
-    background:#0866e8 !important;
-
-    background-color:#0866e8 !important;
-
-    border:0 !important;
-
-    color:#fff !important;
-
-}
-
-
-/* =========================================
-   ÇIKIŞ FOCUS
-========================================= */
-
+#headerButtons #userButtons button.logout-button:hover,
+#headerButtons #userButtons button.logout-button:active,
 #headerButtons #userButtons button.logout-button:focus{
 
     background:#0866e8 !important;
@@ -404,15 +358,15 @@ header{
 
     color:#fff !important;
 
-    outline:none !important;
-
     box-shadow:none !important;
+
+    outline:none !important;
 
 }
 
 
 /* =========================================
-   KAYIT OL HOVER
+   KAYIT HOVER
 ========================================= */
 
 #headerButtons a.btn.blue:hover{
@@ -424,6 +378,49 @@ header{
     border-color:#1677ff !important;
 
     color:#fff !important;
+
+}
+
+
+/* =========================================
+   SEPET BUTONU
+========================================= */
+
+.cart-button{
+
+    position:relative;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    min-height:42px;
+
+    padding:11px 16px;
+
+    border-radius:9px;
+
+    background:#101720;
+
+    border:1px solid #273241;
+
+    color:#fff;
+
+    font-size:12px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+}
+
+.cart-button:hover{
+
+    background:#151f2b;
 
 }
 
@@ -441,7 +438,6 @@ header{
 
     }
 
-
     #headerButtons a.btn{
 
         min-height:40px !important;
@@ -453,7 +449,6 @@ header{
         font-size:12px !important;
 
     }
-
 
     #headerButtons #userButtons button.logout-button{
 
@@ -475,42 +470,56 @@ header{
 ========================================= */
 
 .container{
+
     width:min(1100px,94%);
 
     margin:45px auto 90px;
+
 }
 
 .page-title{
+
     margin-bottom:25px;
+
 }
 
 .page-title h1{
+
     font-size:36px;
 
     letter-spacing:-1.5px;
+
 }
 
 .page-title p{
+
     margin-top:8px;
 
     color:#8995a7;
+
 }
 
 
 /* =========================================
-   SEPET
+   ÜRÜN ALANI
 ========================================= */
 
-.cart{
+.product-layout{
 
     display:grid;
 
     grid-template-columns:
-        1fr 350px;
+        minmax(0,1fr)
+        390px;
 
-    gap:20px;
+    gap:24px;
 
 }
+
+
+/* =========================================
+   CARD
+========================================= */
 
 .card{
 
@@ -524,22 +533,18 @@ header{
 
 }
 
-.product{
 
-    display:flex;
-
-    align-items:center;
-
-    gap:20px;
-
-}
+/* =========================================
+   ÜRÜN GÖRSELİ
+========================================= */
 
 .product-image{
 
-    width:115px;
-    height:95px;
+    width:100%;
 
-    border-radius:15px;
+    min-height:420px;
+
+    border-radius:16px;
 
     background:
         radial-gradient(
@@ -559,18 +564,19 @@ header{
 
     overflow:hidden;
 
-    flex-shrink:0;
-
 }
 
 .product-image img{
 
     width:100%;
+
     height:100%;
+
+    min-height:420px;
 
     display:block;
 
-    object-fit:cover;
+    object-fit:contain;
 
     border-radius:inherit;
 
@@ -578,15 +584,26 @@ header{
 
 .image-fallback{
 
-    font-size:40px;
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    width:100%;
+
+    min-height:420px;
+
+    color:#607087;
+
+    font-size:70px;
 
 }
 
-.product-info{
 
-    flex:1;
-
-}
+/* =========================================
+   ÜRÜN BİLGİSİ
+========================================= */
 
 .category{
 
@@ -596,72 +613,99 @@ header{
 
     font-weight:800;
 
-    margin-bottom:7px;
+    margin-bottom:10px;
 
 }
 
 .product-name{
 
-    font-size:21px;
+    font-size:32px;
 
     font-weight:900;
 
-}
+    line-height:1.12;
 
-.license{
-
-    margin-top:9px;
-
-    color:#8995a7;
-
-    font-size:13px;
-
-}
-
-.price{
-
-    text-align:right;
-
-}
-
-.price strong{
-
-    font-size:22px;
-
-}
-
-
-/* =========================================
-   BOŞ
-========================================= */
-
-.empty{
-
-    text-align:center;
-
-    padding:55px 20px;
-
-}
-
-.empty-icon{
-
-    font-size:48px;
+    letter-spacing:-1px;
 
     margin-bottom:15px;
 
 }
 
-.empty h2{
+.description{
 
-    margin-bottom:8px;
+    color:#9aa6b7;
+
+    font-size:14px;
+
+    line-height:1.7;
+
+    margin-bottom:24px;
+
+    white-space:pre-line;
 
 }
 
-.empty p{
+.price-box{
+
+    padding:18px;
+
+    border-radius:14px;
+
+    background:#09111b;
+
+    border:1px solid #1d2a39;
+
+    margin-bottom:18px;
+
+}
+
+.price-label{
+
+    color:#78869a;
+
+    font-size:12px;
+
+    margin-bottom:6px;
+
+}
+
+.price{
+
+    font-size:30px;
+
+    font-weight:900;
+
+}
+
+.license-box{
+
+    padding:14px 16px;
+
+    border-radius:12px;
+
+    background:#101720;
+
+    border:1px solid #263445;
+
+    margin-bottom:18px;
+
+}
+
+.license-label{
 
     color:#8995a7;
 
-    margin-bottom:22px;
+    font-size:12px;
+
+    margin-bottom:5px;
+
+}
+
+.license-value{
+
+    font-size:15px;
+
+    font-weight:800;
 
 }
 
@@ -683,6 +727,14 @@ header{
     font-size:13px;
 
     font-weight:900;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
 
 }
 
@@ -710,57 +762,15 @@ header{
 
 }
 
-.summary h2{
+.secondary:hover{
 
-    font-size:20px;
-
-    margin-bottom:22px;
+    background:#151f2b;
 
 }
 
-.row{
+.full{
 
-    display:flex;
-
-    justify-content:space-between;
-
-    padding:13px 0;
-
-    color:#8995a7;
-
-    font-size:14px;
-
-    border-bottom:1px solid #18212c;
-
-    gap:15px;
-
-}
-
-.row span:last-child{
-
-    text-align:right;
-
-}
-
-.row.total{
-
-    color:#fff;
-
-    border:0;
-
-    padding-top:20px;
-
-    font-size:17px;
-
-    font-weight:900;
-
-}
-
-.total strong{
-
-    color:#fff;
-
-    font-size:24px;
+    width:100%;
 
 }
 
@@ -772,43 +782,62 @@ header{
 
     gap:10px;
 
-    margin-top:20px;
-
 }
 
-.actions .btn{
+
+/* =========================================
+   DURUM
+========================================= */
+
+.loading{
 
     text-align:center;
 
+    padding:70px 20px;
+
+    color:#8995a7;
+
 }
 
-.notice{
+.error-box{
 
-    margin-top:18px;
+    text-align:center;
 
-    padding:13px;
+    padding:60px 20px;
+
+}
+
+.error-box h2{
+
+    margin-bottom:10px;
+
+}
+
+.error-box p{
+
+    color:#8995a7;
+
+    margin-bottom:22px;
+
+}
+
+.success-message{
+
+    margin-top:12px;
+
+    padding:12px;
 
     border-radius:10px;
 
     background:rgba(22,119,255,.08);
 
-    border:1px solid rgba(22,119,255,.2);
+    border:1px solid rgba(22,119,255,.22);
 
     color:#9bb8df;
 
     font-size:12px;
 
     line-height:1.5;
-
-}
-
-.loading{
-
-    text-align:center;
-
-    padding:55px 20px;
-
-    color:#8995a7;
 
 }
 
@@ -836,7 +865,7 @@ footer{
    MOBİL
 ========================================= */
 
-@media(max-width:800px){
+@media(max-width:850px){
 
     .nav{
 
@@ -844,33 +873,39 @@ footer{
 
     }
 
-    .cart{
+    .product-layout{
 
         grid-template-columns:1fr;
 
     }
 
-}
+    .product-image,
+    .product-image img,
+    .image-fallback{
 
+        min-height:320px;
+
+    }
+
+}
 
 @media(max-width:600px){
 
-    .product{
+    .container{
 
-        align-items:flex-start;
-
-    }
-
-    .product-image{
-
-        width:80px;
-        height:75px;
+        margin-top:28px;
 
     }
 
-    .price strong{
+    .page-title h1{
 
-        font-size:18px;
+        font-size:28px;
+
+    }
+
+    .product-name{
+
+        font-size:25px;
 
     }
 
@@ -880,45 +915,17 @@ footer{
 
     }
 
-    .product-name{
+    .product-image,
+    .product-image img,
+    .image-fallback{
 
-        font-size:17px;
-
-    }
-
-}
-
-
-@media(max-width:450px){
-
-    .product{
-
-        gap:12px;
+        min-height:250px;
 
     }
 
-    .product-image{
+    .price{
 
-        width:72px;
-        height:68px;
-
-    }
-
-    .product-info{
-
-        min-width:0;
-
-    }
-
-    .product-name{
-
-        word-break:break-word;
-
-    }
-
-    .price strong{
-
-        font-size:16px;
+        font-size:26px;
 
     }
 
@@ -980,9 +987,7 @@ footer{
 >
 
 
-    <!-- =====================================
-         GİRİŞ YAPILMAMIŞ
-    ====================================== -->
+    <!-- GİRİŞ YAPILMAMIŞ -->
 
     <div
         id="guestButtons"
@@ -1006,10 +1011,7 @@ footer{
     </div>
 
 
-    <!-- =====================================
-         GİRİŞ YAPILMIŞ
-         HESABIM + ÇIKIŞ YAP
-    ====================================== -->
+    <!-- GİRİŞ YAPILMIŞ -->
 
     <div
         id="userButtons"
@@ -1023,6 +1025,12 @@ footer{
             Hesabım
         </a>
 
+        <a
+            class="cart-button"
+            href="/sepet.html"
+        >
+            🛒 Sepet
+        </a>
 
         <button
             class="logout-button"
@@ -1053,11 +1061,11 @@ footer{
 <div class="page-title">
 
     <h1>
-        Sepetim
+        Ürün
     </h1>
 
     <p>
-        Satın almak istediğiniz ürünü kontrol edin.
+        Satın almak istediğiniz ürünü inceleyin.
     </p>
 
 </div>
@@ -1066,7 +1074,7 @@ footer{
 <div id="content">
 
     <div class="card loading">
-        Sepet yükleniyor...
+        Ürün yükleniyor...
     </div>
 
 </div>
@@ -1084,6 +1092,9 @@ footer{
 
 <script>
 
+/* =========================================
+   SABİTLER
+========================================= */
 
 const content =
     document.getElementById("content");
@@ -1135,20 +1146,52 @@ function format(value){
 
 
 /* =========================================
-   OTURUM KONTROLÜ
-   INDEX.HTML İLE AYNI
+   ÜRÜN ID
 ========================================= */
 
-async function checkLogin(){
+function getProductId(){
 
-    const token =
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    return (
+        params.get("id") ||
+        params.get("productId") ||
+        ""
+    ).trim();
+
+}
+
+
+/* =========================================
+   OTURUM TOKEN
+========================================= */
+
+function getToken(){
+
+    return (
         localStorage.getItem(
             "panelmarket_token"
         ) ||
         sessionStorage.getItem(
             "panelmarket_token"
         ) ||
-        "";
+        ""
+    );
+
+}
+
+
+/* =========================================
+   OTURUM KONTROLÜ
+========================================= */
+
+async function checkLogin(){
+
+    const token =
+        getToken();
 
 
     try{
@@ -1184,7 +1227,9 @@ async function checkLogin(){
         const data =
             await response
                 .json()
-                .catch(()=>({}));
+                .catch(
+                    ()=>({})
+                );
 
 
         if(
@@ -1223,22 +1268,13 @@ async function checkLogin(){
         );
 
 
-        const savedUser =
-            localStorage.getItem(
-                "panelmarket_user"
-            );
+        /*
+         * API geçici olarak cevap vermezse
+         * kayıtlı token varsa kullanıcıyı
+         * çıkış yapmış gibi göstermiyoruz.
+         */
 
-
-        const savedToken =
-            localStorage.getItem(
-                "panelmarket_token"
-            );
-
-
-        if(
-            savedUser &&
-            savedToken
-        ){
+        if(token){
 
             showLoggedIn();
 
@@ -1263,7 +1299,6 @@ function showLoggedIn(){
         document.getElementById(
             "guestButtons"
         );
-
 
     const userButtons =
         document.getElementById(
@@ -1300,7 +1335,6 @@ function showLoggedOut(){
             "guestButtons"
         );
 
-
     const userButtons =
         document.getElementById(
             "userButtons"
@@ -1334,13 +1368,7 @@ async function logoutUser(){
     try{
 
         const token =
-            localStorage.getItem(
-                "panelmarket_token"
-            ) ||
-            sessionStorage.getItem(
-                "panelmarket_token"
-            ) ||
-            "";
+            getToken();
 
 
         const headers = {
@@ -1380,7 +1408,6 @@ async function logoutUser(){
 
     }finally{
 
-
         try{
 
             localStorage.removeItem(
@@ -1414,21 +1441,6 @@ async function logoutUser(){
 
 
 /* =========================================
-   SEPETİ TEMİZLE
-========================================= */
-
-function clearCart(){
-
-    localStorage.removeItem(
-        "panelmarket_cart"
-    );
-
-    location.reload();
-
-}
-
-
-/* =========================================
    ÜRÜN GÖRSELİ
 ========================================= */
 
@@ -1446,11 +1458,9 @@ function createProductImage(
     if(!url){
 
         return `
-
             <div class="image-fallback">
                 ▣
             </div>
-
         `;
 
     }
@@ -1459,18 +1469,15 @@ function createProductImage(
     return `
 
         <img
-
             src="${escapeHtml(url)}"
-
             alt="${escapeHtml(
                 productName || "Ürün"
             )}"
 
             onerror="
                 this.style.display='none';
-                this.nextElementSibling.style.display='block';
+                this.nextElementSibling.style.display='flex';
             "
-
         >
 
         <div
@@ -1486,64 +1493,473 @@ function createProductImage(
 
 
 /* =========================================
-   SEPET
+   API'DEN ÜRÜN GETİR
 ========================================= */
 
-async function loadCart(){
+async function getProduct(){
+
+    const productId =
+        getProductId();
 
 
-    let cart = null;
+    if(!productId){
 
+        throw new Error(
+            "Ürün ID bulunamadı."
+        );
+
+    }
+
+
+    /*
+     * Önce doğrudan:
+     * /api/products/:id
+     */
 
     try{
 
-        cart = JSON.parse(
+        const response =
+            await fetch(
 
-            localStorage.getItem(
-                "panelmarket_cart"
-            ) || "null"
+                "/api/products/" +
 
+                encodeURIComponent(
+                    productId
+                ) +
+
+                "?t=" +
+
+                Date.now(),
+
+                {
+                    method:"GET",
+
+                    headers:{
+                        "Accept":
+                            "application/json"
+                    },
+
+                    credentials:"include",
+
+                    cache:"no-store"
+                }
+
+            );
+
+
+        const data =
+            await response
+                .json()
+                .catch(
+                    ()=>null
+                );
+
+
+        if(
+            response.ok &&
+            data &&
+            data.id
+        ){
+
+            return data;
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Direkt ürün API isteği başarısız:",
+            error
         );
+
+    }
+
+
+    /*
+     * Direkt endpoint çalışmazsa
+     * /api/products listesinden bul.
+     */
+
+    const response =
+        await fetch(
+            "/api/products?t=" + Date.now(),
+            {
+                method:"GET",
+
+                headers:{
+                    "Accept":
+                        "application/json"
+                },
+
+                credentials:"include",
+
+                cache:"no-store"
+            }
+        );
+
+
+    if(!response.ok){
+
+        throw new Error(
+            "Ürünler API'den alınamadı. HTTP " +
+            response.status
+        );
+
+    }
+
+
+    const data =
+        await response
+            .json()
+            .catch(
+                ()=>null
+            );
+
+
+    let products = [];
+
+
+    if(Array.isArray(data)){
+
+        products = data;
+
+    }else if(
+        data &&
+        Array.isArray(data.products)
+    ){
+
+        products =
+            data.products;
+
+    }else if(
+        data &&
+        Array.isArray(data.data)
+    ){
+
+        products =
+            data.data;
+
+    }
+
+
+    const product =
+        products.find(
+            function(item){
+
+                return String(
+                    item?.id ?? ""
+                ) === String(
+                    productId
+                );
+
+            }
+        );
+
+
+    if(!product){
+
+        throw new Error(
+            "Ürün bulunamadı."
+        );
+
+    }
+
+
+    return product;
+
+}
+
+
+/* =========================================
+   LİSANS BİLGİSİ
+========================================= */
+
+function getLicenseName(product){
+
+    return (
+
+        product.licenseName ||
+
+        product.license_name ||
+
+        product.license ||
+
+        product.packageName ||
+
+        product.package_name ||
+
+        "1 Site"
+
+    );
+
+}
+
+
+/* =========================================
+   ÜRÜN AÇ
+========================================= */
+
+async function loadProduct(){
+
+    try{
+
+        content.innerHTML = `
+
+            <div class="card loading">
+                Ürün yükleniyor...
+            </div>
+
+        `;
+
+
+        const product =
+            await getProduct();
+
+
+        const productId =
+            String(
+                product.id
+            );
+
+
+        const productName =
+            product.name ||
+
+            product.productName ||
+
+            product.title ||
+
+            "Ürün";
+
+
+        const price =
+            Number(
+                product.price || 0
+            );
+
+
+        const imageUrl =
+            product.image_url ||
+
+            product.imageUrl ||
+
+            product.image ||
+
+            product.thumbnail ||
+
+            "";
+
+
+        const description =
+            product.description ||
+
+            product.desc ||
+
+            product.details ||
+
+            "PanelMarket ürünü.";
+
+
+        const licenseName =
+            getLicenseName(
+                product
+            );
+
+
+        document.title =
+            escapeHtml(
+                productName
+            ) +
+            " - PanelMarket";
+
+
+        content.innerHTML = `
+
+            <div class="product-layout">
+
+
+                <!-- =================================
+                     ÜRÜN GÖRSELİ
+                ================================== -->
+
+                <div class="card">
+
+                    <div class="product-image">
+
+                        ${createProductImage(
+                            imageUrl,
+                            productName
+                        )}
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================
+                     ÜRÜN BİLGİLERİ
+                ================================== -->
+
+                <div class="card">
+
+                    <div class="category">
+
+                        PanelMarket Yazılım
+
+                    </div>
+
+
+                    <div class="product-name">
+
+                        ${escapeHtml(
+                            productName
+                        )}
+
+                    </div>
+
+
+                    <div class="description">
+
+                        ${escapeHtml(
+                            description
+                        )}
+
+                    </div>
+
+
+                    <div class="license-box">
+
+                        <div class="license-label">
+
+                            Lisans
+
+                        </div>
+
+                        <div class="license-value">
+
+                            ${escapeHtml(
+                                licenseName
+                            )}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="price-box">
+
+                        <div class="price-label">
+
+                            Ürün fiyatı
+
+                        </div>
+
+                        <div class="price">
+
+                            ₺${format(
+                                price
+                            )}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="actions">
+
+                        <button
+                            type="button"
+                            class="btn primary full"
+                            onclick="addToCart()"
+                        >
+
+                            🛒 SEPETE EKLE
+
+                        </button>
+
+
+                        <a
+                            href="/sepet.html"
+                            class="btn secondary full"
+                        >
+
+                            SEPETİ GÖR
+
+                        </a>
+
+
+                        <a
+                            href="/index.html"
+                            class="btn secondary full"
+                        >
+
+                            ALIŞVERİŞE DEVAM ET
+
+                        </a>
+
+                    </div>
+
+
+                    <div
+                        id="cartMessage"
+                        class="success-message"
+                        style="display:none;"
+                    ></div>
+
+
+                </div>
+
+
+            </div>
+
+        `;
+
+
+        /*
+         * Ürünü global değişkende tutuyoruz.
+         * Sepete eklerken tekrar API çağrısı
+         * yapmak gerekmiyor.
+         */
+
+        window.currentProduct = {
+
+            id:
+                productId,
+
+            name:
+                productName,
+
+            price:
+                price,
+
+            licenseName:
+                licenseName,
+
+            image_url:
+                imageUrl
+
+        };
 
 
     }catch(error){
 
         console.error(
-            "Sepet okunamadı:",
+            "Ürün yükleme hatası:",
             error
         );
 
 
-        localStorage.removeItem(
-            "panelmarket_cart"
-        );
-
-
-        cart = null;
-
-    }
-
-
-    /* =====================================
-       SEPET BOŞ
-    ===================================== */
-
-    if(!cart){
-
         content.innerHTML = `
 
-            <div class="card empty">
-
-                <div class="empty-icon">
-                    🛒
-                </div>
+            <div class="card error-box">
 
                 <h2>
-                    Sepetiniz boş
+                    Ürün bulunamadı
                 </h2>
 
                 <p>
-                    Satın almak için ürünlerden birini seçin.
+                    İstediğiniz ürün bulunamadı
+                    veya ürün bilgileri alınamadı.
                 </p>
 
                 <a
@@ -1557,340 +1973,148 @@ async function loadCart(){
 
         `;
 
+    }
+
+}
+
+
+/* =========================================
+   SEPETE EKLE
+========================================= */
+
+function addToCart(){
+
+    const product =
+        window.currentProduct;
+
+
+    if(
+        !product ||
+        !product.id
+    ){
+
+        alert(
+            "Ürün bilgileri henüz yüklenmedi."
+        );
+
         return;
 
     }
 
 
-    let price =
-        Number(
-            cart.price || 0
+    /*
+     * SEPET SAYFASININ BEKLEDİĞİ
+     * FORMATLA BİREBİR AYNI.
+     */
+
+    const cart = {
+
+        productId:
+            String(
+                product.id
+            ),
+
+        productName:
+            String(
+                product.name ||
+                "Ürün"
+            ),
+
+        price:
+            Number(
+                product.price || 0
+            ),
+
+        licenseName:
+            String(
+                product.licenseName ||
+                "1 Site"
+            ),
+
+        image_url:
+            String(
+                product.image_url ||
+                ""
+            )
+
+    };
+
+
+    try{
+
+        localStorage.setItem(
+
+            "panelmarket_cart",
+
+            JSON.stringify(
+                cart
+            )
+
         );
 
 
-    let productName =
-        cart.productName ||
-        "Ürün";
-
-
-    let licenseName =
-        cart.licenseName ||
-        "1 Site";
-
-
-    let imageUrl =
-        cart.image_url ||
-        cart.imageUrl ||
-        "";
-
-
-    /* =====================================
-       ÜRÜNÜ API'DEN TEKRAR ÇEK
-    ===================================== */
-
-    if(cart.productId){
-
-        try{
-
-            const response =
-                await fetch(
-
-                    "/api/products/" +
-
-                    encodeURIComponent(
-                        cart.productId
-                    ) +
-
-                    "?t=" +
-
-                    Date.now(),
-
-                    {
-
-                        method:"GET",
-
-                        headers:{
-                            "Accept":
-                                "application/json"
-                        },
-
-                        credentials:"include",
-
-                        cache:"no-store"
-
-                    }
-
-                );
-
-
-            const product =
-                await response
-                    .json()
-                    .catch(
-                        ()=>null
-                    );
-
-
-            if(
-                response.ok &&
-                product &&
-                product.id
-            ){
-
-                productName =
-                    product.name ||
-                    productName;
-
-
-                imageUrl =
-                    product.image_url ||
-                    product.imageUrl ||
-                    imageUrl;
-
-
-                if(
-                    cart.price === undefined ||
-                    cart.price === null ||
-                    Number(cart.price) <= 0
-                ){
-
-                    price =
-                        Number(
-                            product.price || 0
-                        );
-
-                }
-
-
-                cart.image_url =
-                    imageUrl;
-
-
-                cart.productName =
-                    productName;
-
-
-                try{
-
-                    localStorage.setItem(
-
-                        "panelmarket_cart",
-
-                        JSON.stringify(
-                            cart
-                        )
-
-                    );
-
-                }catch(error){}
-
-            }
-
-
-        }catch(error){
-
-            console.error(
-                "Sepet ürün API hatası:",
-                error
+        const message =
+            document.getElementById(
+                "cartMessage"
             );
+
+
+        if(message){
+
+            message.style.display =
+                "block";
+
+            message.innerHTML = `
+
+                Ürün sepete eklendi.
+                <br><br>
+
+                <a
+                    href="/sepet.html"
+                    style="
+                        color:#fff;
+                        font-weight:900;
+                        text-decoration:underline;
+                    "
+                >
+                    SEPETE GİT
+                </a>
+
+            `;
 
         }
 
+
+        /*
+         * Kısa gecikme ile sepete gönder.
+         * Böylece kullanıcı "eklendi" mesajını
+         * görebilir.
+         */
+
+        setTimeout(
+            function(){
+
+                window.location.href =
+                    "/sepet.html";
+
+            },
+            250
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Sepete ekleme hatası:",
+            error
+        );
+
+
+        alert(
+            "Ürün sepete eklenemedi. Lütfen tekrar deneyin."
+        );
+
     }
-
-
-    /* =====================================
-       SEPETİ GÖSTER
-    ===================================== */
-
-    content.innerHTML = `
-
-        <div class="cart">
-
-
-            <!-- ÜRÜN -->
-
-            <div class="card">
-
-                <div class="product">
-
-
-                    <div class="product-image">
-
-                        ${createProductImage(
-                            imageUrl,
-                            productName
-                        )}
-
-                    </div>
-
-
-                    <div class="product-info">
-
-                        <div class="category">
-
-                            PanelMarket Yazılım
-
-                        </div>
-
-
-                        <div class="product-name">
-
-                            ${escapeHtml(
-                                productName
-                            )}
-
-                        </div>
-
-
-                        <div class="license">
-
-                            Lisans:
-
-                            <strong>
-
-                                ${escapeHtml(
-                                    licenseName
-                                )}
-
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="price">
-
-                        <strong>
-
-                            ₺${format(price)}
-
-                        </strong>
-
-                    </div>
-
-
-                </div>
-
-            </div>
-
-
-            <!-- SİPARİŞ ÖZETİ -->
-
-            <div class="card summary">
-
-
-                <h2>
-                    Sipariş Özeti
-                </h2>
-
-
-                <div class="row">
-
-                    <span>
-                        Ürün
-                    </span>
-
-                    <span>
-                        ₺${format(price)}
-                    </span>
-
-                </div>
-
-
-                <div class="row">
-
-                    <span>
-                        Lisans
-                    </span>
-
-                    <span>
-
-                        ${escapeHtml(
-                            licenseName
-                        )}
-
-                    </span>
-
-                </div>
-
-
-                <div class="row">
-
-                    <span>
-                        Ödeme
-                    </span>
-
-                    <span>
-                        Bakiye
-                    </span>
-
-                </div>
-
-
-                <div class="row total">
-
-                    <span>
-                        Toplam
-                    </span>
-
-                    <strong>
-
-                        ₺${format(price)}
-
-                    </strong>
-
-                </div>
-
-
-                <div class="actions">
-
-
-                    <a
-                        href="/odeme.html"
-                        class="btn primary"
-                    >
-                        ÖDEMEYE GEÇ
-                    </a>
-
-
-                    <a
-                        href="/index.html"
-                        class="btn secondary"
-                    >
-                        ALIŞVERİŞE DEVAM ET
-                    </a>
-
-
-                    <button
-                        class="btn secondary"
-                        type="button"
-                        onclick="clearCart()"
-                    >
-                        SEPETİ TEMİZLE
-                    </button>
-
-
-                </div>
-
-
-                <div class="notice">
-
-                    Satın alma sırasında hesabınızdaki
-                    bakiye kontrol edilir. Yeterli bakiye
-                    bulunmazsa ödeme sayfasından bakiye
-                    yükleyebilirsiniz.
-
-                </div>
-
-
-            </div>
-
-
-        </div>
-
-    `;
 
 }
 
@@ -1901,7 +2125,7 @@ async function loadCart(){
 
 checkLogin();
 
-loadCart();
+loadProduct();
 
 
 </script>
