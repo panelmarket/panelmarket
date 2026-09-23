@@ -1,0 +1,603 @@
+<!-- =========================
+     DESTEK
+========================= -->
+
+<section id="destek" class="support-section">
+
+    <div class="support-container">
+
+        <div class="support-header">
+            <span class="support-badge">DESTEK</span>
+
+            <h2>
+                Size nasıl yardımcı olabiliriz?
+            </h2>
+
+            <p>
+                PanelMarket ile ilgili sorularınız, siparişleriniz
+                veya hesabınızla ilgili sorunlar için bize ulaşabilirsiniz.
+            </p>
+        </div>
+
+
+        <div class="support-grid">
+
+            <!-- E-POSTA -->
+            <div class="support-card">
+
+                <div class="support-icon">
+                    ✉
+                </div>
+
+                <h3>
+                    E-posta Desteği
+                </h3>
+
+                <p>
+                    Sorununuzu detaylı şekilde bize gönderin.
+                    Destek ekibimiz size yardımcı olacaktır.
+                </p>
+
+                <a
+                    href="mailto:panelmarketdestek@gmail.com"
+                    class="support-button">
+                    E-POSTA GÖNDER
+                </a>
+
+            </div>
+
+
+            <!-- SİPARİŞ -->
+            <div class="support-card">
+
+                <div class="support-icon">
+                    📦
+                </div>
+
+                <h3>
+                    Sipariş Desteği
+                </h3>
+
+                <p>
+                    Satın aldığınız ürün, lisans veya teslimat
+                    işlemleriyle ilgili yardım alın.
+                </p>
+
+                <a
+                    href="/siparislerim.html"
+                    class="support-button">
+                    SİPARİŞLERİM
+                </a>
+
+            </div>
+
+
+            <!-- HESAP -->
+            <div class="support-card">
+
+                <div class="support-icon">
+                    👤
+                </div>
+
+                <h3>
+                    Hesap Desteği
+                </h3>
+
+                <p>
+                    Hesabınız, giriş işlemleriniz veya şifre
+                    işlemleriniz hakkında yardım alın.
+                </p>
+
+                <a
+                    href="/hesabim.html"
+                    class="support-button">
+                    HESABIM
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- DESTEK FORMU -->
+
+        <div class="support-form-card">
+
+            <div class="support-form-title">
+                <h3>
+                    Destek Talebi Oluştur
+                </h3>
+
+                <p>
+                    Sorununuzu aşağıdaki alana yazabilirsiniz.
+                </p>
+            </div>
+
+
+            <form
+                id="supportForm"
+                onsubmit="sendSupport(event)">
+
+                <div class="support-form-grid">
+
+                    <div class="support-field">
+
+                        <label>
+                            Adınız
+                        </label>
+
+                        <input
+                            type="text"
+                            id="supportName"
+                            placeholder="Adınız"
+                            required>
+
+                    </div>
+
+
+                    <div class="support-field">
+
+                        <label>
+                            E-posta
+                        </label>
+
+                        <input
+                            type="email"
+                            id="supportEmail"
+                            placeholder="E-posta adresiniz"
+                            required>
+
+                    </div>
+
+                </div>
+
+
+                <div class="support-field">
+
+                    <label>
+                        Konu
+                    </label>
+
+                    <select
+                        id="supportSubject"
+                        required>
+
+                        <option value="">
+                            Konu seçin
+                        </option>
+
+                        <option value="Sipariş">
+                            Sipariş
+                        </option>
+
+                        <option value="Lisans">
+                            Lisans
+                        </option>
+
+                        <option value="Ödeme">
+                            Ödeme
+                        </option>
+
+                        <option value="Hesap">
+                            Hesap
+                        </option>
+
+                        <option value="Giriş">
+                            Giriş problemi
+                        </option>
+
+                        <option value="Diğer">
+                            Diğer
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="support-field">
+
+                    <label>
+                        Mesajınız
+                    </label>
+
+                    <textarea
+                        id="supportMessage"
+                        rows="6"
+                        placeholder="Sorununuzu açıklayın..."
+                        required></textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="support-submit"
+                    id="supportSubmit">
+
+                    DESTEK TALEBİ GÖNDER
+
+                </button>
+
+            </form>
+
+
+            <div
+                id="supportResult"
+                class="support-result">
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<style>
+
+/* =========================
+   DESTEK
+========================= */
+
+.support-section{
+    padding:90px 20px;
+    background:#070a0f;
+    border-top:1px solid #1c2531;
+}
+
+.support-container{
+    width:min(1100px,94%);
+    margin:auto;
+}
+
+.support-header{
+    text-align:center;
+    max-width:700px;
+    margin:0 auto 45px;
+}
+
+.support-badge{
+    display:inline-block;
+    padding:7px 12px;
+    border-radius:8px;
+    background:rgba(22,119,255,.10);
+    border:1px solid rgba(22,119,255,.25);
+    color:#5eacff;
+    font-size:11px;
+    font-weight:900;
+    margin-bottom:15px;
+}
+
+.support-header h2{
+    font-size:34px;
+    font-weight:900;
+    letter-spacing:-1px;
+}
+
+.support-header p{
+    color:#8995a7;
+    font-size:14px;
+    line-height:1.7;
+    margin-top:12px;
+}
+
+
+/* KARTLAR */
+
+.support-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    margin-bottom:25px;
+}
+
+.support-card{
+    background:#0d131b;
+    border:1px solid #1c2633;
+    border-radius:18px;
+    padding:25px;
+    transition:.2s;
+}
+
+.support-card:hover{
+    transform:translateY(-3px);
+    border-color:#29405c;
+}
+
+.support-icon{
+    width:48px;
+    height:48px;
+    display:grid;
+    place-items:center;
+    border-radius:13px;
+    background:#101923;
+    border:1px solid #1f2c3b;
+    font-size:22px;
+    margin-bottom:18px;
+}
+
+.support-card h3{
+    font-size:18px;
+    margin-bottom:9px;
+}
+
+.support-card p{
+    color:#8995a7;
+    font-size:13px;
+    line-height:1.7;
+    min-height:66px;
+}
+
+.support-button{
+    display:inline-block;
+    margin-top:18px;
+    padding:11px 14px;
+    border-radius:9px;
+    background:#1677ff;
+    color:#fff;
+    font-size:11px;
+    font-weight:900;
+}
+
+.support-button:hover{
+    background:#2a87ff;
+}
+
+
+/* FORM */
+
+.support-form-card{
+    background:#0d131b;
+    border:1px solid #1c2633;
+    border-radius:18px;
+    padding:28px;
+}
+
+.support-form-title{
+    margin-bottom:25px;
+}
+
+.support-form-title h3{
+    font-size:21px;
+}
+
+.support-form-title p{
+    color:#8995a7;
+    font-size:13px;
+    margin-top:7px;
+}
+
+.support-form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+}
+
+.support-field{
+    margin-bottom:17px;
+}
+
+.support-field label{
+    display:block;
+    color:#cbd5e1;
+    font-size:12px;
+    font-weight:800;
+    margin-bottom:8px;
+}
+
+.support-field input,
+.support-field select,
+.support-field textarea{
+    width:100%;
+    border:1px solid #273241;
+    background:#080d13;
+    color:#fff;
+    border-radius:10px;
+    padding:13px;
+    outline:none;
+    font-family:inherit;
+    font-size:13px;
+}
+
+.support-field input:focus,
+.support-field select:focus,
+.support-field textarea:focus{
+    border-color:#1677ff;
+}
+
+.support-field textarea{
+    resize:vertical;
+    min-height:130px;
+}
+
+.support-submit{
+    width:100%;
+    border:0;
+    border-radius:10px;
+    padding:14px;
+    background:#1677ff;
+    color:#fff;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:900;
+}
+
+.support-submit:hover{
+    background:#2a87ff;
+}
+
+.support-submit:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.support-result{
+    margin-top:15px;
+    display:none;
+    padding:12px;
+    border-radius:9px;
+    font-size:12px;
+}
+
+
+/* MOBİL */
+
+@media(max-width:800px){
+
+.support-grid{
+    grid-template-columns:1fr;
+}
+
+.support-form-grid{
+    grid-template-columns:1fr;
+}
+
+.support-header h2{
+    font-size:28px;
+}
+
+}
+
+</style>
+
+
+<script>
+
+async function sendSupport(event){
+
+event.preventDefault();
+
+const button=
+document.getElementById("supportSubmit");
+
+const result=
+document.getElementById("supportResult");
+
+const name=
+document.getElementById("supportName").value.trim();
+
+const email=
+document.getElementById("supportEmail").value.trim();
+
+const subject=
+document.getElementById("supportSubject").value;
+
+const message=
+document.getElementById("supportMessage").value.trim();
+
+if(!name || !email || !subject || !message){
+
+return;
+
+}
+
+button.disabled=true;
+
+button.textContent=
+"GÖNDERİLİYOR...";
+
+result.style.display="none";
+
+try{
+
+const token=
+localStorage.getItem(
+"panelmarket_token"
+) ||
+sessionStorage.getItem(
+"panelmarket_token"
+) ||
+"";
+
+const response=
+await fetch(
+"/api/support",
+{
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json",
+
+...(token
+?
+{
+Authorization:
+"Bearer " + token
+}
+:
+{})
+},
+
+credentials:"include",
+
+body:JSON.stringify({
+name,
+email,
+subject,
+message
+})
+}
+);
+
+const data=
+await response.json()
+.catch(()=>({}));
+
+if(!response.ok){
+
+throw new Error(
+data.error ||
+"Destek talebi gönderilemedi."
+);
+
+}
+
+result.style.display="block";
+
+result.style.background=
+"rgba(40,210,120,.1)";
+
+result.style.border=
+"1px solid rgba(40,210,120,.25)";
+
+result.style.color=
+"#73e6a3";
+
+result.textContent=
+"Destek talebiniz başarıyla gönderildi.";
+
+document.getElementById(
+"supportForm"
+).reset();
+
+}catch(error){
+
+result.style.display="block";
+
+result.style.background=
+"rgba(255,60,60,.1)";
+
+result.style.border=
+"1px solid rgba(255,60,60,.3)";
+
+result.style.color=
+"#ff9b9b";
+
+result.textContent=
+error.message ||
+"Bir hata oluştu.";
+
+}finally{
+
+button.disabled=false;
+
+button.textContent=
+"DESTEK TALEBİ GÖNDER";
+
+}
+
+}
+
+</script>
