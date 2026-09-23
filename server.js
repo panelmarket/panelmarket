@@ -1203,67 +1203,76 @@ PanelMarket
        ===================================================== */
 
     const tokenResponse = await fetch(
-      "https://oauth2.googleapis.com/token",
-      {
-        method: "POST",
+  "https://oauth2.googleapis.com/token",
+  {
+    method: "POST",
 
-        headers: {
-          "Content-Type":
-            "application/x-www-form-urlencoded"
-        },
+    headers: {
+      "Content-Type":
+        "application/x-www-form-urlencoded"
+    },
 
-        body: new URLSearchParams({
-          client_id:
-            googleClientId,
+    body: new URLSearchParams({
+      client_id: googleClientId,
+      client_secret: googleClientSecret,
+      refresh_token: googleRefreshToken,
+      grant_type: "refresh_token"
+    })
+  }
+);
 
-          client_secret:
-            googleClientSecret,
+const tokenData =
+  await tokenResponse.json();
 
-          refresh_token:
-            googleRefreshToken,
+console.log(
+  "GOOGLE TOKEN RESPONSE:",
+  {
+    status:
+      tokenResponse.status,
 
-          grant_type:
-            "refresh_token"
-        })
-      }
-    );
+    ok:
+      tokenResponse.ok,
 
-    const tokenData =
-      await tokenResponse.json();
+    error:
+      tokenData?.error || null,
 
-    if (!tokenResponse.ok) {
+    description:
+      tokenData?.error_description || null,
 
-      console.error(
-        "GOOGLE ACCESS TOKEN ERROR:",
-        {
-          status:
-            tokenResponse.status,
+    accessTokenReceived:
+      !!tokenData?.access_token
+  }
+);
 
-          error:
-            tokenData?.error,
+if (!tokenResponse.ok) {
 
-          description:
-            tokenData?.error_description
-        }
-      );
+  throw new Error(
+    `Google OAuth token hatası: ${
+      tokenData?.error_description ||
+      tokenData?.error ||
+      `HTTP ${tokenResponse.status}`
+    }`
+  );
+}
 
-      throw new Error(
-        tokenData?.error_description ||
-        tokenData?.error ||
-        "Google access token alınamadı."
-      );
-    }
+const accessToken =
+  String(
+    tokenData?.access_token || ""
+  ).trim();
 
-    const accessToken =
-      String(
-        tokenData?.access_token || ""
-      ).trim();
+if (!accessToken) {
 
-    if (!accessToken) {
-      throw new Error(
-        "Google access token boş geldi."
-      );
-    }
+  throw new Error(
+    "Google access token boş geldi."
+  );
+}
+
+console.log(
+  "GOOGLE ACCESS TOKEN ALINDI:",
+  {
+    success: true
+  }
+);
 
 
     /* =====================================================
