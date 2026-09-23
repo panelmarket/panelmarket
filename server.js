@@ -45,6 +45,46 @@ const money = value => {
   return Number.isFinite(n) ? Math.round(n * 100) / 100 : 0;
 };
 const findProduct = id => products.find(p => p.id === id);
+async function getProductById(id) {
+  const productId = String(id || "").trim().toLowerCase();
+
+  if (!productId) {
+    return null;
+  }
+
+  // Önce Supabase'den ara
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("id", productId)
+      .eq("active", true)
+      .maybeSingle();
+
+    if (!error && data) {
+      return formatProduct(data);
+    }
+
+    if (error) {
+      console.error(
+        "PRODUCT DB LOOKUP ERROR:",
+        error.message
+      );
+    }
+  } catch (e) {
+    console.error(
+      "PRODUCT DB LOOKUP EXCEPTION:",
+      e.message
+    );
+  }
+
+  // Eski sabit ürünler için fallback
+  const fallback = products.find(
+    p => p.id === productId && p.active !== false
+  );
+
+  return fallback ? formatProduct(fallback) : null;
+}
 const createOrderNumber = () => `PM-${new Date().getFullYear()}-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
 const createLicenseKey = () => `PMK-${crypto.randomBytes(12).toString("hex").toUpperCase()}`;
 const createToken = () => crypto.randomBytes(32).toString("hex");
@@ -171,13 +211,52 @@ app.get("/api/products", async (req,res) => {
 });
 app.get("/api/products/:id", async (req,res) => {
   try {
-    let product = findProduct(req.params.id);
-    const { data } = await supabase.from("products").select("*").eq("id",req.params.id).maybeSingle();
-    if (data) product = formatProduct(data);
-    if (!product) return res.status(404).json({error:"Ürün bulunamadı."});
-    const prices = {}; for (const [id,l] of Object.entries(licenses)) prices[id]={name:l.name,price:calculatePrice(product,id)};
-    res.json({...product,licenses:prices});
-  } catch(e){ console.error(e); res.status(500).json({error:"Ürün alınamadı."}); }
+
+    const product =
+      await getProductById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        ok: false,
+        error: "Ürün bulunamadı."
+      });
+    }
+
+    const prices = {};
+
+    for (
+      const [id, license]
+      of Object.entries(licenses)
+    ) {
+
+      prices[id] = {
+        name: license.name,
+        price: calculatePrice(
+          product,
+          id
+        )
+      };
+
+    }
+
+    return res.json({
+      ...product,
+      licenses: prices
+    });
+
+  } catch (e) {
+
+    console.error(
+      "PRODUCT DETAIL ERROR:",
+      e
+    );
+
+    return res.status(500).json({
+      ok: false,
+      error: "Ürün alınamadı."
+    });
+
+  }
 });
 
 /* REGISTER */
@@ -2326,18 +2405,381 @@ app.post("/api/wallet/topup",requireAuth,async(req,res)=>{
 });
 
 /* ORDERS */
-app.post("/api/orders",requireAuth,async(req,res)=>{
-  try{
-    const product=findProduct(String(req.body.productId||""));const licenseId=String(req.body.licenseId||"");
-    if(!product)return res.status(404).json({error:"Ürün bulunamadı."});if(!licenses[licenseId])return res.status(400).json({error:"Lisans seçimi geçersiz."});
-    const total=calculatePrice(product,licenseId);const {data:fresh,error:ue}=await supabase.from("users").select("*").eq("id",req.user.id).single();if(ue)throw ue;const balance=money(fresh.balance);if(balance<total)return res.status(400).json({error:"Yetersiz bakiye."});
-    const newBalance=money(balance-total);const {data:updated,error:be}=await supabase.from("users").update({balance:newBalance}).eq("id",req.user.id).eq("balance",balance).select("*").maybeSingle();if(be)throw be;if(!updated)return res.status(409).json({error:"Bakiye değişti. Lütfen tekrar deneyin."});
-    const orderNumber=createOrderNumber(), licenseKey=createLicenseKey();const {data:order,error:oe}=await supabase.from("orders").insert({user_id:req.user.id,order_number:orderNumber,product_id:product.id,product_name:product.name,license_id:licenseId,license_name:licenses[licenseId].name,amount:total,status:"Ödeme Alındı",delivery_status:"Teslim Edilebilir",license_key:licenseKey}).select("*").single();
-    if(oe){await supabase.from("users").update({balance}).eq("id",req.user.id);throw oe;}
-    const {error:te}=await supabase.from("transactions").insert({user_id:req.user.id,type:"debit",amount:total,note:`${product.name} satın alımı`});if(te)console.error("Transaction error:",te.message);
-    res.json({success:true,order:formatOrder(order),balance:money(updated.balance)});
-  }catch(e){console.error("ORDER ERROR:",e);res.status(500).json({error:"Sipariş oluşturulamadı."});}
-});
+/* ORDERS */
+app.post(
+  "/api/orders",
+  requireAuth,
+  async (req, res) => {
+
+    try {
+
+      /*
+       * ÖNEMLİ:
+       * Ürün artık sadece server.js içindeki
+       * sabit products listesinden aranmaz.
+       *
+       * Önce Supabase products tablosundan aranır.
+       * Böylece Admin Panel'den eklenen yeni ürünler
+       * de satın alınabilir.
+       */
+
+      const productId =
+        String(
+          req.body.productId || ""
+        )
+          .trim()
+          .toLowerCase();
+
+      const licenseId =
+        String(
+          req.body.licenseId || ""
+        ).trim();
+
+      if (!productId) {
+
+        return res.status(400).json({
+          ok: false,
+          success: false,
+          error:
+            "Ürün seçimi bulunamadı."
+        });
+
+      }
+
+      /*
+       * YENİ ÜRÜN SİSTEMİ
+       *
+       * Supabase -> aktif ürün
+       * Eski sabit ürün -> fallback
+       */
+
+      const product =
+        await getProductById(
+          productId
+        );
+
+      if (!product) {
+
+        return res.status(404).json({
+          ok: false,
+          success: false,
+          error:
+            "Ürün bulunamadı."
+        });
+
+      }
+
+      if (!licenses[licenseId]) {
+
+        return res.status(400).json({
+          ok: false,
+          success: false,
+          error:
+            "Lisans seçimi geçersiz."
+        });
+
+      }
+
+      /*
+       * ÜRÜN FİYATINI HESAPLA
+       */
+
+      const total =
+        calculatePrice(
+          product,
+          licenseId
+        );
+
+      /*
+       * GÜNCEL BAKİYEYİ VERİTABANINDAN AL
+       */
+
+      const {
+        data: fresh,
+        error: userError
+      } = await supabase
+        .from("users")
+        .select("*")
+        .eq(
+          "id",
+          req.user.id
+        )
+        .single();
+
+      if (userError) {
+        throw userError;
+      }
+
+      if (!fresh) {
+
+        return res.status(404).json({
+          ok: false,
+          success: false,
+          error:
+            "Kullanıcı bulunamadı."
+        });
+
+      }
+
+      const balance =
+        money(
+          fresh.balance
+        );
+
+      /*
+       * BAKİYE KONTROLÜ
+       */
+
+      if (balance < total) {
+
+        return res.status(400).json({
+          ok: false,
+          success: false,
+          error:
+            "Yetersiz bakiye.",
+          balance,
+          required:
+            total
+        });
+
+      }
+
+      /*
+       * YENİ BAKİYE
+       */
+
+      const newBalance =
+        money(
+          balance - total
+        );
+
+      /*
+       * ATOMIC BAKİYE GÜNCELLEME
+       */
+
+      const {
+        data: updated,
+        error: balanceError
+      } = await supabase
+        .from("users")
+        .update({
+          balance:
+            newBalance
+        })
+        .eq(
+          "id",
+          req.user.id
+        )
+        .eq(
+          "balance",
+          balance
+        )
+        .select("*")
+        .maybeSingle();
+
+      if (balanceError) {
+        throw balanceError;
+      }
+
+      /*
+       * BAKİYE BAŞKA BİR İŞLEM TARAFINDAN
+       * DEĞİŞTİRİLDİYSE PARA ÇEKME.
+       */
+
+      if (!updated) {
+
+        return res.status(409).json({
+          ok: false,
+          success: false,
+          error:
+            "Bakiye değişti. Lütfen tekrar deneyin."
+        });
+
+      }
+
+      /*
+       * SİPARİŞ NUMARASI
+       */
+
+      const orderNumber =
+        createOrderNumber();
+
+      /*
+       * LİSANS ANAHTARI
+       */
+
+      const licenseKey =
+        createLicenseKey();
+
+      /*
+       * SİPARİŞİ OLUŞTUR
+       */
+
+      const {
+        data: order,
+        error: orderError
+      } = await supabase
+        .from("orders")
+        .insert({
+
+          user_id:
+            req.user.id,
+
+          order_number:
+            orderNumber,
+
+          product_id:
+            product.id,
+
+          product_name:
+            product.name,
+
+          license_id:
+            licenseId,
+
+          license_name:
+            licenses[
+              licenseId
+            ].name,
+
+          amount:
+            total,
+
+          status:
+            "Ödeme Alındı",
+
+          delivery_status:
+            "Teslim Edilebilir",
+
+          license_key:
+            licenseKey
+
+        })
+        .select("*")
+        .single();
+
+      /*
+       * SİPARİŞ OLUŞMAZSA
+       * BAKİYEYİ GERİ YÜKLE
+       */
+
+      if (orderError) {
+
+        await supabase
+          .from("users")
+          .update({
+            balance
+          })
+          .eq(
+            "id",
+            req.user.id
+          );
+
+        throw orderError;
+      }
+
+      /*
+       * TRANSACTION KAYDI
+       */
+
+      const {
+        error: transactionError
+      } = await supabase
+        .from("transactions")
+        .insert({
+
+          user_id:
+            req.user.id,
+
+          type:
+            "debit",
+
+          amount:
+            total,
+
+          note:
+            `${product.name} satın alımı`
+
+        });
+
+      if (transactionError) {
+
+        console.error(
+          "Transaction error:",
+          transactionError.message
+        );
+
+      }
+
+      /*
+       * BAŞARILI
+       */
+
+      console.log(
+        "ORDER CREATED:",
+        {
+          orderId:
+            order?.id || null,
+
+          orderNumber,
+
+          userId:
+            req.user.id,
+
+          productId:
+            product.id,
+
+          productName:
+            product.name,
+
+          licenseId,
+
+          amount:
+            total
+        }
+      );
+
+      return res.json({
+
+        ok: true,
+
+        success: true,
+
+        order:
+          formatOrder(order),
+
+        balance:
+          money(
+            updated.balance
+          )
+
+      });
+
+    } catch (e) {
+
+      console.error(
+        "ORDER ERROR:",
+        e
+      );
+
+      return res.status(500).json({
+
+        ok: false,
+
+        success: false,
+
+        error:
+          "Sipariş oluşturulamadı.",
+
+        databaseError:
+          e?.message || null
+
+      });
+
+    }
+
+  }
+);
 app.get("/api/orders",requireAuth,async(req,res)=>{try{const {data,error}=await supabase.from("orders").select("*").eq("user_id",req.user.id).order("created_at",{ascending:false});if(error)throw error;res.json((data||[]).map(formatOrder));}catch(e){res.status(500).json({error:"Siparişler alınamadı."});}});
 app.get("/api/orders/:id",requireAuth,async(req,res)=>{try{let q=supabase.from("orders").select("*").eq("user_id",req.user.id);q=/^[0-9a-fA-F-]{36}$/.test(req.params.id)?q.eq("id",req.params.id):q.eq("order_number",req.params.id);const {data,error}=await q.maybeSingle();if(error)throw error;if(!data)return res.status(404).json({error:"Sipariş bulunamadı."});res.json(formatOrder(data));}catch(e){res.status(500).json({error:"Sipariş alınamadı."});}});
 app.get("/api/account/transactions",requireAuth,async(req,res)=>{try{const {data,error}=await supabase.from("transactions").select("*").eq("user_id",req.user.id).order("created_at",{ascending:false});if(error)throw error;res.json((data||[]).map(t=>({id:t.id,type:t.type,amount:money(t.amount),note:t.note,date:t.created_at})));}catch(e){res.status(500).json({error:"İşlem geçmişi alınamadı."});}});
