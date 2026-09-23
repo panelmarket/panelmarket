@@ -3,7 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
-import nodemailer from "nodemailer";
+import { google } from "googleapis";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
