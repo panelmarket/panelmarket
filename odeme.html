@@ -142,7 +142,6 @@ header{
 
 /* =========================================
    ÇIKIŞ YAP
-   URUN.HTML / SEPET.HTML İLE AYNI
 ========================================= */
 
 #userButtons button.btn.blue.logout-button{
@@ -526,8 +525,6 @@ Hesabım
 <div class="header-buttons">
 
 
-<!-- GİRİŞ YAPILMAMIŞ -->
-
 <div
     id="guestButtons"
     style="display:flex"
@@ -549,8 +546,6 @@ Kayıt Ol
 
 </div>
 
-
-<!-- GİRİŞ YAPILMIŞ -->
 
 <div
     id="userButtons"
@@ -727,13 +722,34 @@ SEPETE DÖN
    SEPET
 ========================================= */
 
-const cart = JSON.parse(
-    localStorage.getItem("panelmarket_cart") || "null"
-);
+let cart = null;
+
+try{
+
+    cart = JSON.parse(
+        localStorage.getItem(
+            "panelmarket_cart"
+        ) || "null"
+    );
+
+}catch(error){
+
+    console.error(
+        "Sepet okunamadı:",
+        error
+    );
+
+    cart = null;
+
+}
+
 
 let account = null;
+
 let loadingAccount = false;
+
 let creatingOrder = false;
+
 let toppingUp = false;
 
 
@@ -762,16 +778,21 @@ function getToken(){
 
 function authHeaders(extra = {}){
 
-    const token = getToken();
+    const token =
+        getToken();
+
 
     return {
+
         ...extra,
+
         ...(token
             ? {
                 Authorization:
                     "Bearer " + token
             }
             : {})
+
     };
 
 }
@@ -847,55 +868,256 @@ async function apiFetch(
 
 /* =========================================
    LİSANS ID BUL
+   GENİŞ UYUMLULUK
 ========================================= */
 
 function getLicenseId(){
 
+    if(!cart){
+
+        return null;
+
+    }
+
+
     /*
-     * Öncelik:
-     * 1. licenseId
-     * 2. license_id
-     * 3. license object's id
+     * 1. Doğrudan licenseId
+     */
+
+    const directIds = [
+
+        cart.licenseId,
+
+        cart.license_id,
+
+        cart.licenseID,
+
+        cart.licenseKey,
+
+        cart.license_key,
+
+        cart.packageId,
+
+        cart.package_id,
+
+        cart.selectedLicenseId,
+
+        cart.selected_license_id
+
+    ];
+
+
+    for(
+        const value of directIds
+    ){
+
+        if(
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== ""
+        ){
+
+            return value;
+
+        }
+
+    }
+
+
+    /*
+     * 2. license nesnesi
      */
 
     if(
-        cart &&
-        cart.licenseId !== undefined &&
-        cart.licenseId !== null &&
-        String(cart.licenseId).trim() !== ""
-    ){
-
-        return cart.licenseId;
-
-    }
-
-
-    if(
-        cart &&
-        cart.license_id !== undefined &&
-        cart.license_id !== null &&
-        String(cart.license_id).trim() !== ""
-    ){
-
-        return cart.license_id;
-
-    }
-
-
-    if(
-        cart &&
         cart.license &&
         typeof cart.license === "object"
     ){
 
-        if(
-            cart.license.id !== undefined &&
-            cart.license.id !== null
+        const licenseObjectIds = [
+
+            cart.license.id,
+
+            cart.license.licenseId,
+
+            cart.license.license_id,
+
+            cart.license.licenseID,
+
+            cart.license.key,
+
+            cart.license.licenseKey,
+
+            cart.license.license_key
+
+        ];
+
+
+        for(
+            const value of licenseObjectIds
         ){
 
-            return cart.license.id;
+            if(
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ""
+            ){
+
+                return value;
+
+            }
 
         }
+
+    }
+
+
+    /*
+     * 3. selectedLicense nesnesi
+     */
+
+    if(
+        cart.selectedLicense &&
+        typeof cart.selectedLicense === "object"
+    ){
+
+        const selectedIds = [
+
+            cart.selectedLicense.id,
+
+            cart.selectedLicense.licenseId,
+
+            cart.selectedLicense.license_id,
+
+            cart.selectedLicense.key,
+
+            cart.selectedLicense.licenseKey,
+
+            cart.selectedLicense.license_key
+
+        ];
+
+
+        for(
+            const value of selectedIds
+        ){
+
+            if(
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ""
+            ){
+
+                return value;
+
+            }
+
+        }
+
+    }
+
+
+    /*
+     * 4. selected_license nesnesi
+     */
+
+    if(
+        cart.selected_license &&
+        typeof cart.selected_license === "object"
+    ){
+
+        const selectedIds = [
+
+            cart.selected_license.id,
+
+            cart.selected_license.licenseId,
+
+            cart.selected_license.license_id,
+
+            cart.selected_license.key,
+
+            cart.selected_license.licenseKey,
+
+            cart.selected_license.license_key
+
+        ];
+
+
+        for(
+            const value of selectedIds
+        ){
+
+            if(
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ""
+            ){
+
+                return value;
+
+            }
+
+        }
+
+    }
+
+
+    /*
+     * 5. Ayrı localStorage lisans kaydı
+     */
+
+    try{
+
+        const savedLicense =
+            JSON.parse(
+                localStorage.getItem(
+                    "panelmarket_selected_license"
+                ) || "null"
+            );
+
+
+        if(savedLicense){
+
+            const savedIds = [
+
+                savedLicense.id,
+
+                savedLicense.licenseId,
+
+                savedLicense.license_id,
+
+                savedLicense.key,
+
+                savedLicense.licenseKey,
+
+                savedLicense.license_key
+
+            ];
+
+
+            for(
+                const value of savedIds
+            ){
+
+                if(
+                    value !== undefined &&
+                    value !== null &&
+                    String(value).trim() !== ""
+                ){
+
+                    return value;
+
+                }
+
+            }
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Kayıtlı lisans okunamadı:",
+            error
+        );
 
     }
 
@@ -911,42 +1133,127 @@ function getLicenseId(){
 
 function getLicenseName(){
 
-    if(
-        cart &&
-        cart.licenseName
-    ){
+    if(!cart){
 
-        return cart.licenseName;
+        return "1 Site";
 
     }
 
 
     if(
-        cart &&
-        cart.license_name
+        cart.licenseName !== undefined &&
+        cart.licenseName !== null &&
+        String(cart.licenseName).trim() !== ""
     ){
 
-        return cart.license_name;
+        return String(
+            cart.licenseName
+        ).trim();
 
     }
 
 
     if(
-        cart &&
+        cart.license_name !== undefined &&
+        cart.license_name !== null &&
+        String(cart.license_name).trim() !== ""
+    ){
+
+        return String(
+            cart.license_name
+        ).trim();
+
+    }
+
+
+    if(
         cart.license &&
         typeof cart.license === "object"
     ){
 
         return (
+
             cart.license.name ||
+
             cart.license.title ||
+
+            cart.license.licenseName ||
+
+            cart.license.license_name ||
+
             "1 Site"
+
+        );
+
+    }
+
+
+    if(
+        cart.license &&
+        typeof cart.license !== "object"
+    ){
+
+        return String(
+            cart.license
         );
 
     }
 
 
     return "1 Site";
+
+}
+
+
+/* =========================================
+   SEPET LİSANS BİLGİSİNİ GÜNCELLE
+========================================= */
+
+function normalizeCartLicense(){
+
+    if(!cart){
+
+        return;
+
+    }
+
+
+    const licenseId =
+        getLicenseId();
+
+
+    const licenseName =
+        getLicenseName();
+
+
+    /*
+     * Eski veya farklı yapıdan gelen
+     * lisans bilgilerini tek forma getir.
+     */
+
+    if(licenseName){
+
+        cart.licenseName =
+            String(
+                licenseName
+            );
+
+    }
+
+
+    if(
+        licenseId !== null &&
+        licenseId !== undefined &&
+        String(licenseId).trim() !== ""
+    ){
+
+        cart.licenseId =
+            licenseId;
+
+        cart.license_id =
+            licenseId;
+
+    }
 
 }
 
@@ -962,10 +1269,12 @@ if(!cart){
     ).innerHTML =
         "<div class='notice'>Sepetinizde ürün bulunmuyor.</div>";
 
+
     document.getElementById(
         "total"
     ).textContent =
         "₺0,00";
+
 
     document.getElementById(
         "buyButton"
@@ -973,8 +1282,14 @@ if(!cart){
 
 }else{
 
+    normalizeCartLicense();
+
+
     const price =
-        Number(cart.price || 0);
+        Number(
+            cart.price || 0
+        );
+
 
     const licenseName =
         getLicenseName();
@@ -988,7 +1303,8 @@ if(!cart){
 
             <div class="product-name">
                 ${escapeHtml(
-                    cart.productName
+                    cart.productName ||
+                    "Ürün"
                 )}
             </div>
 
@@ -1115,7 +1431,9 @@ async function topup(){
 
 
     const amount =
-        Number(input.value);
+        Number(
+            input.value
+        );
 
 
     if(!amount || amount <= 0){
@@ -1252,7 +1570,7 @@ async function createOrder(){
 
 
     /*
-     * Ürün ID kontrolü
+     * Ürün ID
      */
 
     if(
@@ -1272,28 +1590,30 @@ async function createOrder(){
 
 
     /*
-     * LİSANS ID KONTROLÜ
+     * LİSANS
      */
 
     const licenseId =
         getLicenseId();
 
 
+    const licenseName =
+        getLicenseName();
+
+
+    /*
+     * Burada eski sepetlerdeki
+     * licenseId eksikliğini ayrıca kontrol ediyoruz.
+     */
+
     if(
         licenseId === null ||
+        licenseId === undefined ||
         String(licenseId).trim() === ""
     ){
 
-        /*
-         * Eski sepet kayıtlarında licenseId
-         * olmayabilir. Kullanıcıyı doğrudan
-         * "Lisans seçimi geçersiz" hatasına
-         * göndermek yerine sepeti yenilemesini
-         * söylüyoruz.
-         */
-
         showMessage(
-            "Lisans bilgisi bulunamadı. Lütfen ürünü tekrar seçip sepete ekleyin.",
+            "Lisans bilgisi bulunamadı. Lütfen Ürünler sayfasından ürünü yeniden sepete ekleyin.",
             "error"
         );
 
@@ -1317,18 +1637,24 @@ async function createOrder(){
 
 
     const price =
-        Number(cart.price || 0);
+        Number(
+            cart.price || 0
+        );
 
 
     const balance =
-        Number(account.balance || 0);
+        Number(
+            account.balance || 0
+        );
 
 
     if(balance < price){
 
         showMessage(
             "Yetersiz bakiye. Siparişi oluşturmak için ₺" +
-            format(price - balance) +
+            format(
+                price - balance
+            ) +
             " daha yüklemeniz gerekiyor.",
             "error"
         );
@@ -1355,25 +1681,46 @@ async function createOrder(){
     try{
 
         /*
-         * Sunucuya hem licenseId
-         * hem licenseName gönderiliyor.
-         *
-         * Asıl doğrulama licenseId
-         * üzerinden yapılır.
+         * SUNUCUYA LİSANS BİLGİLERİNİ
+         * GENİŞ UYUMLU ŞEKİLDE GÖNDER.
          */
 
         const orderBody = {
 
             productId:
-                cart.productId,
+                String(
+                    cart.productId
+                ),
 
             licenseId:
                 licenseId,
 
+            license_id:
+                licenseId,
+
             licenseName:
-                getLicenseName()
+                licenseName,
+
+            license_name:
+                licenseName,
+
+            licenseKey:
+                cart.licenseKey ||
+                cart.license_key ||
+                "",
+
+            license_key:
+                cart.licenseKey ||
+                cart.license_key ||
+                ""
 
         };
+
+
+        console.log(
+            "PanelMarket sipariş gönderiliyor:",
+            orderBody
+        );
 
 
         const res =
@@ -1384,6 +1731,9 @@ async function createOrder(){
 
                     headers:{
                         "Content-Type":
+                            "application/json",
+
+                        "Accept":
                             "application/json"
                     },
 
@@ -1423,11 +1773,15 @@ async function createOrder(){
 
 
         /*
-         * Sipariş başarılı
+         * Sipariş başarılı.
          */
 
         localStorage.removeItem(
             "panelmarket_cart"
+        );
+
+        localStorage.removeItem(
+            "panelmarket_selected_license"
         );
 
 
@@ -1461,6 +1815,12 @@ async function createOrder(){
             "Oturum gerekli."
         ){
 
+            console.error(
+                "Sipariş oluşturma hatası:",
+                e
+            );
+
+
             showMessage(
                 e.message ||
                 "Sipariş oluşturulamadı.",
@@ -1489,7 +1849,9 @@ function showMessage(
         );
 
 
-    el.textContent = text;
+    el.textContent =
+        text;
+
 
     el.className =
         "message " + type;
@@ -1509,14 +1871,15 @@ function showMessage(
 
 function format(n){
 
-    return Number(n || 0)
-        .toLocaleString(
-            "tr-TR",
-            {
-                minimumFractionDigits:2,
-                maximumFractionDigits:2
-            }
-        );
+    return Number(
+        n || 0
+    ).toLocaleString(
+        "tr-TR",
+        {
+            minimumFractionDigits:2,
+            maximumFractionDigits:2
+        }
+    );
 
 }
 
@@ -1527,17 +1890,18 @@ function format(n){
 
 function escapeHtml(str){
 
-    return String(str ?? "")
-        .replace(
-            /[&<>"']/g,
-            m => ({
-                "&":"&amp;",
-                "<":"&lt;",
-                ">":"&gt;",
-                '"':"&quot;",
-                "'":"&#039;"
-            }[m])
-        );
+    return String(
+        str ?? ""
+    ).replace(
+        /[&<>"']/g,
+        m => ({
+            "&":"&amp;",
+            "<":"&lt;",
+            ">":"&gt;",
+            '"':"&quot;",
+            "'":"&#039;"
+        }[m])
+    );
 
 }
 
@@ -1653,7 +2017,10 @@ async function checkLogin(){
             );
 
 
-        if(savedUser && token){
+        if(
+            savedUser &&
+            token
+        ){
 
             showLoggedIn();
 
@@ -1687,12 +2054,18 @@ function showLoggedIn(){
 
 
     if(guest){
-        guest.style.display = "none";
+
+        guest.style.display =
+            "none";
+
     }
 
 
     if(user){
-        user.style.display = "flex";
+
+        user.style.display =
+            "flex";
+
     }
 
 }
@@ -1713,12 +2086,18 @@ function showLoggedOut(){
 
 
     if(guest){
-        guest.style.display = "flex";
+
+        guest.style.display =
+            "flex";
+
     }
 
 
     if(user){
-        user.style.display = "none";
+
+        user.style.display =
+            "none";
+
     }
 
 }
