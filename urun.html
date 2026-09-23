@@ -119,11 +119,11 @@ header{
 }
 
 
-/*
-   INDEX.HTML'DEKİ .btn SINIFLARI
-*/
+/* INDEX.HTML'DEKİ .btn */
 
-.header-buttons .btn{
+#headerButtons .btn{
+    box-sizing:border-box;
+
     display:inline-flex;
     align-items:center;
     justify-content:center;
@@ -139,43 +139,81 @@ header{
     font-weight:800;
 
     line-height:1;
-    white-space:nowrap;
 
-    box-sizing:border-box;
+    white-space:nowrap;
 
     text-decoration:none;
 }
 
 
-/* INDEX.HTML .btn.outline */
+/* INDEX.HTML - OUTLINE */
 
-.header-buttons .btn.outline{
+#headerButtons .btn.outline{
     border:1px solid #273241;
     background:transparent;
     color:#fff;
 }
 
 
-/* INDEX.HTML .btn.blue */
+/* INDEX.HTML - BLUE */
 
-.header-buttons .btn.blue{
+#headerButtons .btn.blue{
     border:1px solid #1677ff;
     background:#1677ff;
     color:#fff;
 }
 
 
-/* ÇIKIŞ YAP */
+/* ÇIKIŞ YAP - INDEX.HTML İLE AYNI */
 
-.header-buttons button.btn.blue{
+#headerButtons #userButtons button.btn.blue{
+    border:1px solid #1677ff !important;
+    background:#1677ff !important;
+    color:#fff !important;
+
     font-family:inherit;
+
+    font-size:12px !important;
+    font-weight:800 !important;
+
+    line-height:1;
+
     cursor:pointer;
+
     appearance:none;
     -webkit-appearance:none;
+}
 
-    color:#fff;
+
+/* HOVER */
+
+#headerButtons .btn.blue:hover{
+    border-color:#1677ff;
     background:#1677ff;
-    border:1px solid #1677ff;
+    color:#fff;
+}
+
+
+/* MOBİL HEADER */
+
+@media(max-width:700px){
+
+    #guestButtons,
+    #userButtons{
+        gap:8px;
+    }
+
+    #headerButtons .btn{
+
+        min-height:40px;
+        height:40px;
+
+        padding:10px 13px;
+
+        font-size:12px;
+
+    }
+
 }
 
 
@@ -373,10 +411,10 @@ header{
 
 
 /* =========================================
-   SEPET BUTONLARI
+   BUTONLAR
 ========================================= */
 
-.actions .btn{
+.btn{
 
     border:0;
 
@@ -389,12 +427,6 @@ header{
     font-size:13px;
 
     font-weight:900;
-
-    display:block;
-
-    width:100%;
-
-    text-align:center;
 
 }
 
@@ -416,7 +448,7 @@ header{
 
     background:#101720;
 
-    border:1px solid #263445 !important;
+    border:1px solid #263445;
 
     color:#fff;
 
@@ -488,6 +520,12 @@ header{
 
 }
 
+.actions .btn{
+
+    text-align:center;
+
+}
+
 .notice{
 
     margin-top:18px;
@@ -553,28 +591,6 @@ footer{
     .cart{
 
         grid-template-columns:1fr;
-
-    }
-
-}
-
-@media(max-width:700px){
-
-    #guestButtons,
-    #userButtons{
-
-        gap:8px;
-
-    }
-
-    .header-buttons .btn{
-
-        min-height:40px;
-        height:40px;
-
-        padding:10px 13px;
-
-        font-size:12px;
 
     }
 
