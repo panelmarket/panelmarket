@@ -12,6 +12,7 @@
 
 <title>Sepet - PanelMarket</title>
 
+
 <style>
 
 *{
@@ -56,6 +57,7 @@ header{
     width:min(1200px,94%);
     height:100%;
     margin:auto;
+
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -65,6 +67,7 @@ header{
     display:flex;
     align-items:center;
     gap:11px;
+
     font-size:21px;
     font-weight:900;
 }
@@ -72,18 +75,27 @@ header{
 .logo-icon{
     width:40px;
     height:40px;
+
     border-radius:12px;
+
     display:grid;
     place-items:center;
+
     background:linear-gradient(
         135deg,
         #1677ff,
         #7347ff
     );
+
     box-shadow:
         0 8px 30px
         rgba(22,119,255,.25);
 }
+
+
+/* =========================================
+   NAV
+========================================= */
 
 .nav{
     display:flex;
@@ -113,14 +125,16 @@ header{
 #userButtons{
     display:flex;
     align-items:center;
+    gap:10px;
 }
 
 
 /* =========================================
-   GİRİŞ YAP / KAYIT OL
+   TÜM HEADER BUTONLARI
 ========================================= */
 
-#headerButtons a.btn{
+#headerButtons a.btn,
+#headerButtons button.btn{
 
     box-sizing:border-box !important;
 
@@ -162,11 +176,14 @@ header{
 
     opacity:1 !important;
 
-    transition:none !important;
+    outline:none !important;
+
 }
 
 
-/* GİRİŞ YAP */
+/* =========================================
+   GİRİŞ YAP
+========================================= */
 
 #headerButtons a.btn.outline{
 
@@ -181,7 +198,9 @@ header{
 }
 
 
-/* KAYIT OL */
+/* =========================================
+   KAYIT OL
+========================================= */
 
 #headerButtons a.btn.blue{
 
@@ -197,11 +216,11 @@ header{
 
 
 /* =========================================
-   ÇIKIŞ YAP
-   INDEX.HTML GİBİ
+   HESABIM
+   INDEX.HTML İLE AYNI
 ========================================= */
 
-#headerButtons .logout-button{
+#headerButtons #userButtons a.btn.outline{
 
     box-sizing:border-box !important;
 
@@ -210,13 +229,86 @@ header{
     align-items:center !important;
     justify-content:center !important;
 
+    width:auto !important;
+
+    min-width:0 !important;
+
+    min-height:42px !important;
+    height:42px !important;
+
+    padding:11px 16px !important;
+
+    margin:0 !important;
+
+    border-radius:9px !important;
+
+    background:transparent !important;
+
+    background-color:transparent !important;
+
+    border:1px solid #273241 !important;
+
+    color:#fff !important;
+
+    font-family:Inter,Arial,sans-serif !important;
+
+    font-size:12px !important;
+
+    font-weight:800 !important;
+
+    line-height:1 !important;
+
+    white-space:nowrap !important;
+
+    text-decoration:none !important;
+
+    box-shadow:none !important;
+
+}
+
+
+/* =========================================
+   HESABIM HOVER
+========================================= */
+
+#headerButtons #userButtons a.btn.outline:hover{
+
+    background:transparent !important;
+
+    background-color:transparent !important;
+
+    border-color:#273241 !important;
+
+    color:#fff !important;
+
+}
+
+
+/* =========================================
+   ÇIKIŞ YAP
+   GÖNDERDİĞİN GÖRSELDEKİ GİBİ
+========================================= */
+
+#headerButtons #userButtons button.logout-button{
+
+    box-sizing:border-box !important;
+
+    display:inline-flex !important;
+
+    align-items:center !important;
+
+    justify-content:center !important;
+
     width:96px !important;
+
     min-width:96px !important;
 
     height:44px !important;
+
     min-height:44px !important;
 
     padding:0 !important;
+
     margin:0 !important;
 
     border:0 !important;
@@ -224,6 +316,7 @@ header{
     border-radius:10px !important;
 
     background:#0866e8 !important;
+
     background-color:#0866e8 !important;
 
     color:#fff !important;
@@ -257,52 +350,59 @@ header{
     outline:none !important;
 
     transition:none !important;
+
 }
 
 
-/* ÇIKIŞ HOVER */
+/* =========================================
+   ÇIKIŞ HOVER
+========================================= */
 
-#headerButtons .logout-button:hover{
+#headerButtons #userButtons button.logout-button:hover{
 
     background:#0866e8 !important;
 
     background-color:#0866e8 !important;
 
-    color:#fff !important;
-
     border:0 !important;
+
+    color:#fff !important;
 
     box-shadow:none !important;
 
 }
 
 
-/* ÇIKIŞ ACTIVE */
+/* =========================================
+   ÇIKIŞ ACTIVE
+========================================= */
 
-#headerButtons .logout-button:active{
+#headerButtons #userButtons button.logout-button:active{
 
     background:#0866e8 !important;
 
     background-color:#0866e8 !important;
 
-    color:#fff !important;
-
     border:0 !important;
+
+    color:#fff !important;
 
 }
 
 
-/* ÇIKIŞ FOCUS */
+/* =========================================
+   ÇIKIŞ FOCUS
+========================================= */
 
-#headerButtons .logout-button:focus{
+#headerButtons #userButtons button.logout-button:focus{
 
     background:#0866e8 !important;
 
     background-color:#0866e8 !important;
 
-    color:#fff !important;
-
     border:0 !important;
+
+    color:#fff !important;
 
     outline:none !important;
 
@@ -311,17 +411,41 @@ header{
 }
 
 
-/* MOBİL HEADER */
+/* =========================================
+   KAYIT OL HOVER
+========================================= */
+
+#headerButtons a.btn.blue:hover{
+
+    background:#1677ff !important;
+
+    background-color:#1677ff !important;
+
+    border-color:#1677ff !important;
+
+    color:#fff !important;
+
+}
+
+
+/* =========================================
+   MOBİL HEADER
+========================================= */
 
 @media(max-width:700px){
 
-    #guestButtons{
+    #guestButtons,
+    #userButtons{
+
         gap:8px;
+
     }
+
 
     #headerButtons a.btn{
 
         min-height:40px !important;
+
         height:40px !important;
 
         padding:10px 13px !important;
@@ -330,12 +454,15 @@ header{
 
     }
 
-    #headerButtons .logout-button{
+
+    #headerButtons #userButtons button.logout-button{
 
         width:96px !important;
+
         min-width:96px !important;
 
         height:42px !important;
+
         min-height:42px !important;
 
     }
@@ -349,6 +476,7 @@ header{
 
 .container{
     width:min(1100px,94%);
+
     margin:45px auto 90px;
 }
 
@@ -358,11 +486,13 @@ header{
 
 .page-title h1{
     font-size:36px;
+
     letter-spacing:-1.5px;
 }
 
 .page-title p{
     margin-top:8px;
+
     color:#8995a7;
 }
 
@@ -722,6 +852,7 @@ footer{
 
 }
 
+
 @media(max-width:600px){
 
     .product{
@@ -756,6 +887,7 @@ footer{
     }
 
 }
+
 
 @media(max-width:450px){
 
@@ -876,13 +1008,21 @@ footer{
 
     <!-- =====================================
          GİRİŞ YAPILMIŞ
-         SADECE ÇIKIŞ YAP
+         HESABIM + ÇIKIŞ YAP
     ====================================== -->
 
     <div
         id="userButtons"
-        style="display:none;align-items:center;"
+        style="display:none;gap:10px;align-items:center;"
     >
+
+        <a
+            class="btn outline"
+            href="/hesabim.html"
+        >
+            Hesabım
+        </a>
+
 
         <button
             class="logout-button"
