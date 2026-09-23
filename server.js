@@ -997,7 +997,6 @@ function copyToken(){
    ========================================================= */
 
 async function sendPasswordResetEmail(user, resetUrl) {
-
   const gmailUser =
     String(process.env.GMAIL_USER || "").trim();
 
@@ -1065,18 +1064,13 @@ async function sendPasswordResetEmail(user, resetUrl) {
   const html = `
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta
   name="viewport"
   content="width=device-width,initial-scale=1.0"
 >
-
 <title>PanelMarket Şifre Sıfırlama</title>
-
 </head>
 
 <body
@@ -1199,251 +1193,40 @@ PanelMarket
 </div>
 
 </body>
-
-</html>
-`;
-
-  async function sendPasswordResetEmail(user, resetUrl) {
-
-  const gmailUser =
-    String(process.env.GMAIL_USER || "").trim();
-
-  const googleClientId =
-    String(process.env.GOOGLE_CLIENT_ID || "").trim();
-
-  const googleClientSecret =
-    String(process.env.GOOGLE_CLIENT_SECRET || "").trim();
-
-  const googleRefreshToken =
-    String(process.env.GOOGLE_REFRESH_TOKEN || "").trim();
-
-  const from =
-    String(
-      process.env.MAIL_FROM ||
-      gmailUser
-    ).trim();
-
-  if (!gmailUser) {
-    throw new Error(
-      "GMAIL_USER Render Environment Variables içinde bulunamadı."
-    );
-  }
-
-  if (!googleClientId) {
-    throw new Error(
-      "GOOGLE_CLIENT_ID Render Environment Variables içinde bulunamadı."
-    );
-  }
-
-  if (!googleClientSecret) {
-    throw new Error(
-      "GOOGLE_CLIENT_SECRET Render Environment Variables içinde bulunamadı."
-    );
-  }
-
-  if (!googleRefreshToken) {
-    throw new Error(
-      "GOOGLE_REFRESH_TOKEN Render Environment Variables içinde bulunamadı."
-    );
-  }
-
-  if (!user?.email) {
-    throw new Error(
-      "Kullanıcının e-posta adresi bulunamadı."
-    );
-  }
-
-  if (!resetUrl) {
-    throw new Error(
-      "Şifre sıfırlama bağlantısı oluşturulamadı."
-    );
-  }
-
-  console.log(
-    "PASSWORD RESET EMAIL DEBUG:",
-    {
-      to: user.email,
-      from,
-      gmailUser,
-      resetUrlCreated: true
-    }
-  );
-
-  const html = `
-<!DOCTYPE html>
-<html lang="tr">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1.0"
->
-
-<title>PanelMarket Şifre Sıfırlama</title>
-
-</head>
-
-<body
-style="
-margin:0;
-padding:0;
-background:#f5f7fb;
-font-family:Arial,Helvetica,sans-serif;
-"
->
-
-<div
-style="
-max-width:600px;
-margin:40px auto;
-background:#ffffff;
-border-radius:16px;
-padding:32px;
-box-shadow:0 8px 30px rgba(0,0,0,.08);
-"
->
-
-<h1
-style="
-margin:0 0 20px;
-font-size:28px;
-color:#111827;
-"
->
-PanelMarket
-</h1>
-
-<h2
-style="
-margin:0 0 16px;
-color:#111827;
-"
->
-Şifre Sıfırlama
-</h2>
-
-<p
-style="
-font-size:16px;
-line-height:1.6;
-color:#4b5563;
-"
->
-Hesabınız için şifre sıfırlama isteği aldık.
-</p>
-
-<p
-style="
-font-size:16px;
-line-height:1.6;
-color:#4b5563;
-"
->
-Yeni şifrenizi belirlemek için aşağıdaki butona tıklayın:
-</p>
-
-<div style="margin:30px 0;">
-
-<a
-href="${resetUrl}"
-style="
-display:inline-block;
-background:#2563eb;
-color:#ffffff;
-text-decoration:none;
-padding:14px 24px;
-border-radius:10px;
-font-size:16px;
-font-weight:bold;
-"
->
-Şifremi Sıfırla
-</a>
-
-</div>
-
-<p
-style="
-font-size:14px;
-line-height:1.6;
-color:#6b7280;
-"
->
-Bu bağlantı güvenlik nedeniyle 30 dakika geçerlidir.
-</p>
-
-<p
-style="
-font-size:14px;
-line-height:1.6;
-color:#6b7280;
-"
->
-Bu işlemi siz yapmadıysanız bu e-postayı dikkate almayabilirsiniz.
-</p>
-
-<hr
-style="
-border:0;
-border-top:1px solid #e5e7eb;
-margin:30px 0;
-"
->
-
-<p
-style="
-font-size:13px;
-color:#9ca3af;
-margin:0;
-"
->
-PanelMarket
-</p>
-
-</div>
-
-</body>
-
 </html>
 `;
 
   try {
 
-    /*
-     * 1. GOOGLE REFRESH TOKEN
-     *    -> ACCESS TOKEN
-     */
+    /* =====================================================
+       1. REFRESH TOKEN -> ACCESS TOKEN
+       ===================================================== */
 
-    const tokenResponse =
-      await fetch(
-        "https://oauth2.googleapis.com/token",
-        {
-          method: "POST",
+    const tokenResponse = await fetch(
+      "https://oauth2.googleapis.com/token",
+      {
+        method: "POST",
 
-          headers: {
-            "Content-Type":
-              "application/x-www-form-urlencoded"
-          },
+        headers: {
+          "Content-Type":
+            "application/x-www-form-urlencoded"
+        },
 
-          body:
-            new URLSearchParams({
-              client_id:
-                googleClientId,
+        body: new URLSearchParams({
+          client_id:
+            googleClientId,
 
-              client_secret:
-                googleClientSecret,
+          client_secret:
+            googleClientSecret,
 
-              refresh_token:
-                googleRefreshToken,
+          refresh_token:
+            googleRefreshToken,
 
-              grant_type:
-                "refresh_token"
-            })
-        }
-      );
+          grant_type:
+            "refresh_token"
+        })
+      }
+    );
 
     const tokenData =
       await tokenResponse.json();
@@ -1483,28 +1266,25 @@ PanelMarket
     }
 
 
-    /*
-     * 2. MIME HEADER ENCODE
-     */
+    /* =====================================================
+       2. MIME HEADER
+       ===================================================== */
 
     function encodeMimeHeader(value) {
 
       return /[^\x00-\x7F]/.test(value)
-
         ? `=?UTF-8?B?${Buffer
             .from(value, "utf8")
             .toString("base64")}?=`
-
         : value;
     }
 
 
-    /*
-     * 3. MIME E-POSTA
-     */
+    /* =====================================================
+       3. MIME E-POSTA
+       ===================================================== */
 
     const mimeMessage = [
-
       `From: ${from}`,
 
       `To: ${String(user.email)}`,
@@ -1522,13 +1302,12 @@ PanelMarket
       "",
 
       html
-
     ].join("\r\n");
 
 
-    /*
-     * 4. GMAIL API RAW FORMAT
-     */
+    /* =====================================================
+       4. GMAIL RAW
+       ===================================================== */
 
     const raw =
       Buffer
@@ -1539,9 +1318,9 @@ PanelMarket
         .toString("base64url");
 
 
-    /*
-     * 5. GMAIL API İLE GÖNDER
-     */
+    /* =====================================================
+       5. GMAIL API
+       ===================================================== */
 
     const gmailResponse =
       await fetch(
@@ -1557,10 +1336,9 @@ PanelMarket
               "application/json"
           },
 
-          body:
-            JSON.stringify({
-              raw
-            })
+          body: JSON.stringify({
+            raw
+          })
         }
       );
 
