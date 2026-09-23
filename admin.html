@@ -604,6 +604,51 @@ placeholder="Ürün ara..."
 
 <div class="field full">
 
+<label>Ürün Görseli</label>
+
+<input
+  id="productImage"
+  type="file"
+  accept="image/jpeg,image/png,image/webp"
+>
+
+<div
+  id="imagePreview"
+  style="
+    display:none;
+    margin-top:10px;
+    padding:10px;
+    border:1px solid #222e3d;
+    border-radius:12px;
+    background:#070c12;
+  "
+>
+
+<img
+  id="imagePreviewImg"
+  src=""
+  alt="Ürün görseli"
+  style="
+    display:block;
+    width:100%;
+    max-width:420px;
+    height:220px;
+    object-fit:contain;
+    border-radius:10px;
+    margin:auto;
+  "
+>
+
+</div>
+
+<small style="display:block;margin-top:7px;color:#68778a">
+JPG, PNG veya WEBP • Maksimum 5 MB
+</small>
+
+</div>   
+
+<div class="field full">
+
 <label>Ürün Durumu</label>
 
 <label class="checkbox">
@@ -641,6 +686,7 @@ const tokenKey='panelmarket_token';
 let token=null;
 let products=[];
 let editingId=null;
+let selectedImageFile=null;
 
 
 /* =========================================================
@@ -1639,7 +1685,30 @@ async function saveProduct(e){
 
   };
 
+   
+let imageUrl=null;
 
+if(selectedImageFile){
+
+  try{
+
+    imageUrl=
+      await compressImage(
+        selectedImageFile
+      );
+
+  }catch(error){
+
+    return showAlert(
+      error.message ||
+      'Görsel hazırlanamadı.',
+      'error'
+    );
+
+  }
+
+}
+   
   const edit=
     !!editingId;
 
@@ -1939,6 +2008,195 @@ function jsEscape(v){
 
 }
 
+/* =========================================================
+   GÖRSELİ KÜÇÜLT
+========================================================= */
+
+function compressImage(file){
+
+  return new Promise((resolve,reject)=>{
+
+    const reader=
+      new FileReader();
+
+    reader.onload=function(){
+
+      const img=
+        new Image();
+
+      img.onload=function(){
+
+        const maxWidth=1200;
+        const maxHeight=800;
+
+        let width=img.width;
+        let height=img.height;
+
+        if(width>maxWidth){
+
+          height=
+            height *
+            (maxWidth/width);
+
+          width=maxWidth;
+
+        }
+
+        if(height>maxHeight){
+
+          width=
+            width *
+            (maxHeight/height);
+
+          height=maxHeight;
+
+        }
+
+        const canvas=
+          document.createElement(
+            'canvas'
+          );
+
+        canvas.width=
+          Math.round(width);
+
+        canvas.height=
+          Math.round(height);
+
+        const ctx=
+          canvas.getContext('2d');
+
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
+
+        resolve(
+          canvas.toDataURL(
+            'image/webp',
+            0.82
+          )
+        );
+
+      };
+
+      img.onerror=function(){
+
+        reject(
+          new Error(
+            'Görsel okunamadı.'
+          )
+        );
+
+      };
+
+      img.src=
+        reader.result;
+
+    };
+
+    reader.onerror=function(){
+
+      reject(
+        new Error(
+          'Görsel okunamadı.'
+        )
+      );
+
+    };
+
+    reader.readAsDataURL(file);
+
+  });
+
+}
+   
+/* =========================================================
+   ÜRÜN GÖRSELİ
+========================================================= */
+
+document
+  .getElementById('productImage')
+  .addEventListener('change', function(){
+
+    const file =
+      this.files &&
+      this.files[0];
+
+    if(!file){
+
+      selectedImageFile=null;
+
+      document.getElementById(
+        'imagePreview'
+      ).style.display='none';
+
+      document.getElementById(
+        'imagePreviewImg'
+      ).src='';
+
+      return;
+    }
+
+    if(file.size > 5 * 1024 * 1024){
+
+      this.value='';
+      selectedImageFile=null;
+
+      document.getElementById(
+        'imagePreview'
+      ).style.display='none';
+
+      showAlert(
+        'Görsel en fazla 5 MB olabilir.',
+        'error'
+      );
+
+      return;
+    }
+
+    const allowed=[
+      'image/jpeg',
+      'image/png',
+      'image/webp'
+    ];
+
+    if(!allowed.includes(file.type)){
+
+      this.value='';
+      selectedImageFile=null;
+
+      showAlert(
+        'Sadece JPG, PNG veya WEBP görsel yükleyebilirsin.',
+        'error'
+      );
+
+      return;
+    }
+
+    selectedImageFile=file;
+
+    const reader=
+      new FileReader();
+
+    reader.onload=function(e){
+
+      document.getElementById(
+        'imagePreviewImg'
+      ).src=e.target.result;
+
+      document.getElementById(
+        'imagePreview'
+      ).style.display='block';
+
+    };
+
+    reader.readAsDataURL(file);
+
+  });   
 
 /* =========================================================
    BUTONLAR
