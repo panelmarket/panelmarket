@@ -1,51 +1,341 @@
-```html
 <!doctype html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PanelMarket</title>
+
 <link rel="stylesheet" href="/style.css">
+
+<style>
+
+/* =================================
+   DESTEK BÖLÜMÜ
+================================= */
+
+#destek{
+    scroll-margin-top:90px;
+}
+
+.support-section{
+    margin-top:20px;
+    padding:70px 30px;
+    background:#0d131b;
+    border:1px solid #1c2633;
+    border-radius:20px;
+}
+
+.support-header{
+    text-align:center;
+    max-width:700px;
+    margin:0 auto 35px;
+}
+
+.support-badge{
+    display:inline-block;
+    padding:7px 12px;
+    border-radius:8px;
+    background:rgba(22,119,255,.10);
+    border:1px solid rgba(22,119,255,.25);
+    color:#5eacff;
+    font-size:11px;
+    font-weight:900;
+    margin-bottom:15px;
+}
+
+.support-header h2{
+    font-size:32px;
+    margin-bottom:10px;
+}
+
+.support-header p{
+    color:#8995a7;
+    font-size:14px;
+    line-height:1.7;
+}
+
+
+/* DESTEK KARTLARI */
+
+.support-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.support-card{
+    background:#080d13;
+    border:1px solid #1c2633;
+    border-radius:16px;
+    padding:25px;
+    transition:.2s;
+}
+
+.support-card:hover{
+    border-color:#315277;
+    transform:translateY(-2px);
+}
+
+.support-icon{
+    width:48px;
+    height:48px;
+    border-radius:13px;
+    display:grid;
+    place-items:center;
+    background:#101923;
+    border:1px solid #1f2c3b;
+    font-size:22px;
+    margin-bottom:16px;
+}
+
+.support-card h3{
+    font-size:17px;
+    margin-bottom:9px;
+}
+
+.support-card p{
+    color:#8995a7;
+    font-size:12px;
+    line-height:1.7;
+    min-height:60px;
+}
+
+.support-button{
+    display:inline-block;
+    margin-top:16px;
+    padding:11px 14px;
+    border-radius:9px;
+    background:#1677ff;
+    color:#fff;
+    font-size:11px;
+    font-weight:900;
+}
+
+.support-button:hover{
+    background:#2a87ff;
+}
+
+
+/* DESTEK FORMU */
+
+.support-form{
+    margin-top:20px;
+    background:#080d13;
+    border:1px solid #1c2633;
+    border-radius:16px;
+    padding:25px;
+}
+
+.support-form h3{
+    font-size:20px;
+    margin-bottom:7px;
+}
+
+.support-form-description{
+    color:#8995a7;
+    font-size:12px;
+    margin-bottom:22px;
+}
+
+.support-fields{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.support-field{
+    margin-bottom:15px;
+}
+
+.support-field.full{
+    grid-column:1 / -1;
+}
+
+.support-field label{
+    display:block;
+    color:#cbd5e1;
+    font-size:12px;
+    font-weight:800;
+    margin-bottom:7px;
+}
+
+.support-field input,
+.support-field select,
+.support-field textarea{
+    width:100%;
+    padding:13px;
+    border-radius:9px;
+    border:1px solid #273241;
+    background:#0d131b;
+    color:#fff;
+    outline:none;
+    font-family:inherit;
+    font-size:13px;
+}
+
+.support-field input:focus,
+.support-field select:focus,
+.support-field textarea:focus{
+    border-color:#1677ff;
+}
+
+.support-field textarea{
+    min-height:130px;
+    resize:vertical;
+}
+
+.support-submit{
+    width:100%;
+    padding:13px;
+    border:0;
+    border-radius:9px;
+    background:#1677ff;
+    color:#fff;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:900;
+}
+
+.support-submit:hover{
+    background:#2a87ff;
+}
+
+.support-result{
+    display:none;
+    margin-top:15px;
+    padding:12px;
+    border-radius:9px;
+    font-size:12px;
+}
+
+
+/* MOBİL */
+
+@media(max-width:800px){
+
+    .support-grid{
+        grid-template-columns:1fr;
+    }
+
+    .support-fields{
+        grid-template-columns:1fr;
+    }
+
+    .support-field.full{
+        grid-column:auto;
+    }
+
+    .support-section{
+        padding:45px 18px;
+    }
+
+    .support-header h2{
+        font-size:26px;
+    }
+
+}
+
+</style>
+
 </head>
 
 <body>
 
+
 <header>
+
   <div class="header">
 
     <a class="logo" href="/">
-      <span class="logo-icon">P</span>PanelMarket
+      <span class="logo-icon">P</span>
+      PanelMarket
     </a>
 
+
     <nav>
-      <a href="#urunler">Ürünler</a>
-      <a href="#neden">Neden PanelMarket?</a>
-      <a href="#destek">Destek</a>
+
+      <a href="#urunler">
+        Ürünler
+      </a>
+
+      <a href="#neden">
+        Neden PanelMarket?
+      </a>
+
+      <a href="#destek">
+        Destek
+      </a>
+
     </nav>
 
-    <div class="header-buttons" id="headerButtons">
+
+    <div
+      class="header-buttons"
+      id="headerButtons"
+    >
 
       <!-- Giriş yapılmamış kullanıcı -->
+
       <div id="guestButtons">
-        <a class="btn outline" href="/login.html">Giriş Yap</a>
-        <a class="btn blue" href="/register.html">Kayıt Ol</a>
+
+        <a
+          class="btn outline"
+          href="/login.html"
+        >
+          Giriş Yap
+        </a>
+
+        <a
+          class="btn blue"
+          href="/register.html"
+        >
+          Kayıt Ol
+        </a>
+
       </div>
 
+
       <!-- Giriş yapılmış kullanıcı -->
-      <div id="userButtons" style="display:none;gap:10px;align-items:center;">
-        <a class="btn outline" href="/hesabim.html">Hesabım</a>
-        <button class="btn blue" type="button" onclick="logoutUser()">Çıkış Yap</button>
+
+      <div
+        id="userButtons"
+        style="display:none;gap:10px;align-items:center;"
+      >
+
+        <a
+          class="btn outline"
+          href="/hesabim.html"
+        >
+          Hesabım
+        </a>
+
+        <button
+          class="btn blue"
+          type="button"
+          onclick="logoutUser()"
+        >
+          Çıkış Yap
+        </button>
+
       </div>
 
     </div>
 
   </div>
+
 </header>
 
-<section class="hero">
-  <div class="badge">● Profesyonel yazılım mağazası</div>
 
-  <h1>İhtiyacın olan <span>panel burada.</span></h1>
+<section class="hero">
+
+  <div class="badge">
+    ● Profesyonel yazılım mağazası
+  </div>
+
+  <h1>
+    İhtiyacın olan
+    <span>panel burada.</span>
+  </h1>
 
   <p>
     Profesyonel web panelleri ve hazır yazılım çözümlerini tek bir mağazadan keşfet.
@@ -53,48 +343,110 @@
   </p>
 
   <div class="actions">
-    <a class="btn blue" href="#urunler">Ürünleri İncele →</a>
-    <a class="btn outline" href="/register.html">Hesap Oluştur</a>
+
+    <a
+      class="btn blue"
+      href="#urunler"
+    >
+      Ürünleri İncele →
+    </a>
+
+    <a
+      class="btn outline"
+      href="/register.html"
+    >
+      Hesap Oluştur
+    </a>
+
   </div>
+
 </section>
+
 
 <div class="features">
 
   <div class="card feature">
+
     ⚡
-    <strong>Hızlı Teslimat</strong>
-    <small>Satın alma sonrası hızlı teslimat</small>
+
+    <strong>
+      Hızlı Teslimat
+    </strong>
+
+    <small>
+      Satın alma sonrası hızlı teslimat
+    </small>
+
   </div>
 
+
   <div class="card feature">
+
     🔐
-    <strong>Lisanslı Ürünler</strong>
-    <small>Ürün bazlı lisans sistemi</small>
+
+    <strong>
+      Lisanslı Ürünler
+    </strong>
+
+    <small>
+      Ürün bazlı lisans sistemi
+    </small>
+
   </div>
 
+
   <div class="card feature">
+
     🛠️
-    <strong>Teknik Destek</strong>
-    <small>Kurulum ve kullanım desteği</small>
+
+    <strong>
+      Teknik Destek
+    </strong>
+
+    <small>
+      Kurulum ve kullanım desteği
+    </small>
+
   </div>
 
+
   <div class="card feature">
+
     💳
-    <strong>Güvenli Ödeme</strong>
-    <small>Güvenli bakiye sistemi</small>
+
+    <strong>
+      Güvenli Ödeme
+    </strong>
+
+    <small>
+      Güvenli bakiye sistemi
+    </small>
+
   </div>
 
 </div>
 
+
 <main class="container">
 
-<section class="section" id="urunler">
 
-  <h2>Panel Mağazası</h2>
+<!-- =================================
+     ÜRÜNLER
+================================= -->
+
+<section
+  class="section"
+  id="urunler"
+>
+
+  <h2>
+    Panel Mağazası
+  </h2>
 
   <p class="muted">
     Satışta bulunan hazır yazılım ve yönetim panelleri
   </p>
+
 
   <div class="tools">
 
@@ -105,485 +457,1072 @@
       oninput="render()"
     >
 
+
     <select
       id="cat"
       class="select"
       onchange="render()"
     >
-      <option value="all">Tüm Kategoriler</option>
-      <option value="Admin Paneli">Admin Panelleri</option>
-      <option value="E-Ticaret">E-Ticaret</option>
-      <option value="İşletme">İşletme</option>
-      <option value="Finans">Finans</option>
-      <option value="Destek">Destek</option>
+
+      <option value="all">
+        Tüm Kategoriler
+      </option>
+
+      <option value="Admin Paneli">
+        Admin Panelleri
+      </option>
+
+      <option value="E-Ticaret">
+        E-Ticaret
+      </option>
+
+      <option value="İşletme">
+        İşletme
+      </option>
+
+      <option value="Finans">
+        Finans
+      </option>
+
+      <option value="Destek">
+        Destek
+      </option>
+
     </select>
 
   </div>
 
-  <div id="products" class="products"></div>
+
+  <div
+    id="products"
+    class="products"
+  ></div>
 
 </section>
 
-<section class="section" id="neden">
 
-  <h2>Neden PanelMarket?</h2>
+<!-- =================================
+     NEDEN PANELMARKET
+================================= -->
+
+<section
+  class="section"
+  id="neden"
+>
+
+  <h2>
+    Neden PanelMarket?
+  </h2>
+
 
   <div class="why-grid">
 
     <div class="card">
-      <h3>Profesyonel Paneller</h3>
+
+      <h3>
+        Profesyonel Paneller
+      </h3>
+
       <p class="muted">
         Modern yönetim ve satış çözümleri.
       </p>
+
     </div>
 
+
     <div class="card">
-      <h3>Lisans Sistemi</h3>
+
+      <h3>
+        Lisans Sistemi
+      </h3>
+
       <p class="muted">
         İhtiyacına göre farklı lisans seçenekleri.
       </p>
+
     </div>
 
+
     <div class="card">
-      <h3>Teknik Destek</h3>
+
+      <h3>
+        Teknik Destek
+      </h3>
+
       <p class="muted">
         Kurulum ve kullanım süreçlerinde destek.
       </p>
+
     </div>
 
   </div>
 
 </section>
 
-<section class="cta" id="destek">
 
-  <h2>Kendi panelini seç.</h2>
+<!-- =================================
+     DESTEK
+================================= -->
 
-  <p class="muted">
-    Hesabını oluştur ve ürünleri incelemeye başla.
-  </p>
+<section
+  class="section support-section"
+  id="destek"
+>
 
-  <a class="btn blue" href="/register.html">
-    Ücretsiz Hesap Oluştur →
-  </a>
+  <div class="support-header">
+
+    <span class="support-badge">
+      DESTEK
+    </span>
+
+    <h2>
+      Size nasıl yardımcı olabiliriz?
+    </h2>
+
+    <p>
+      PanelMarket hesabınız, siparişleriniz,
+      lisanslarınız veya ürünleriniz hakkında
+      destek almak için aşağıdaki seçenekleri kullanabilirsiniz.
+    </p>
+
+  </div>
+
+
+  <div class="support-grid">
+
+
+    <!-- E-POSTA -->
+
+    <div class="support-card">
+
+      <div class="support-icon">
+        ✉️
+      </div>
+
+      <h3>
+        E-posta Desteği
+      </h3>
+
+      <p>
+        Sorununuzu bize e-posta yoluyla
+        gönderebilirsiniz.
+      </p>
+
+      <a
+        class="support-button"
+        href="mailto:panelmarketdestek@gmail.com"
+      >
+        E-POSTA GÖNDER
+      </a>
+
+    </div>
+
+
+    <!-- SİPARİŞ -->
+
+    <div class="support-card">
+
+      <div class="support-icon">
+        📦
+      </div>
+
+      <h3>
+        Sipariş Desteği
+      </h3>
+
+      <p>
+        Siparişlerinizi, lisanslarınızı
+        ve teslimatlarınızı görüntüleyin.
+      </p>
+
+      <a
+        class="support-button"
+        href="/siparislerim.html"
+      >
+        SİPARİŞLERİM
+      </a>
+
+    </div>
+
+
+    <!-- HESAP -->
+
+    <div class="support-card">
+
+      <div class="support-icon">
+        👤
+      </div>
+
+      <h3>
+        Hesap Desteği
+      </h3>
+
+      <p>
+        Hesabınız ve giriş işlemleriniz
+        hakkında yardım alın.
+      </p>
+
+      <a
+        class="support-button"
+        href="/hesabim.html"
+      >
+        HESABIM
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <!-- DESTEK FORMU -->
+
+  <div class="support-form">
+
+    <h3>
+      Destek Talebi Oluştur
+    </h3>
+
+    <p class="support-form-description">
+      Sorununuzu açıklayın. Destek ekibimiz
+      sizinle iletişime geçsin.
+    </p>
+
+
+    <form
+      id="supportForm"
+      onsubmit="sendSupport(event)"
+    >
+
+      <div class="support-fields">
+
+
+        <div class="support-field">
+
+          <label>
+            Adınız
+          </label>
+
+          <input
+            type="text"
+            id="supportName"
+            placeholder="Adınız"
+            required
+          >
+
+        </div>
+
+
+        <div class="support-field">
+
+          <label>
+            E-posta
+          </label>
+
+          <input
+            type="email"
+            id="supportEmail"
+            placeholder="E-posta adresiniz"
+            required
+          >
+
+        </div>
+
+
+        <div class="support-field full">
+
+          <label>
+            Konu
+          </label>
+
+          <select
+            id="supportSubject"
+            required
+          >
+
+            <option value="">
+              Konu seçin
+            </option>
+
+            <option value="Sipariş">
+              Sipariş
+            </option>
+
+            <option value="Lisans">
+              Lisans
+            </option>
+
+            <option value="Ödeme">
+              Ödeme
+            </option>
+
+            <option value="Hesap">
+              Hesap
+            </option>
+
+            <option value="Giriş">
+              Giriş problemi
+            </option>
+
+            <option value="Diğer">
+              Diğer
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="support-field full">
+
+          <label>
+            Mesajınız
+          </label>
+
+          <textarea
+            id="supportMessage"
+            placeholder="Sorununuzu açıklayın..."
+            required
+          ></textarea>
+
+        </div>
+
+
+      </div>
+
+
+      <button
+        class="support-submit"
+        id="supportSubmit"
+        type="submit"
+      >
+        DESTEK TALEBİ GÖNDER
+      </button>
+
+
+      <div
+        id="supportResult"
+        class="support-result"
+      ></div>
+
+    </form>
+
+  </div>
 
 </section>
 
+
 </main>
+
 
 <footer>
 
   <div class="footer">
-    <span>© 2026 PanelMarket</span>
-    <span>Yazılım Panelleri • Lisans • Destek</span>
+
+    <span>
+      © 2026 PanelMarket
+    </span>
+
+    <span>
+      Yazılım Panelleri • Lisans • Destek
+    </span>
+
   </div>
 
 </footer>
+
 
 <script>
 
 let ps = [];
 
 
-/* ---------------------------------
+/* =================================
    OTURUM KONTROLÜ
---------------------------------- */
+================================= */
 
-async function checkLogin() {
+async function checkLogin(){
 
-  const token =
-    localStorage.getItem("panelmarket_token") ||
-    sessionStorage.getItem("panelmarket_token") ||
-    "";
+const token =
+localStorage.getItem(
+"panelmarket_token"
+) ||
+sessionStorage.getItem(
+"panelmarket_token"
+) ||
+"";
 
-  try {
 
-    const headers = {
-      "Accept": "application/json"
-    };
+try{
 
-    if (token) {
-      headers.Authorization = "Bearer " + token;
-    }
+const headers = {
+"Accept":"application/json"
+};
 
-    const response = await fetch(
-      "/api/auth/me?t=" + Date.now(),
-      {
-        method: "GET",
-        headers,
-        credentials: "include",
-        cache: "no-store"
-      }
-    );
+if(token){
 
-    const data = await response.json().catch(() => ({}));
-
-    if (
-      response.ok &&
-      data &&
-      data.authenticated === true &&
-      data.user
-    ) {
-
-      showLoggedIn();
-
-      // Kullanıcı bilgisini güncel tut
-      try {
-        localStorage.setItem(
-          "panelmarket_user",
-          JSON.stringify(data.user)
-        );
-      } catch {}
-
-    } else {
-
-      showLoggedOut();
-
-    }
-
-  } catch (error) {
-
-    console.error(
-      "Oturum kontrolü başarısız:",
-      error
-    );
-
-    /*
-      API geçici olarak cevap vermezse
-      eski kullanıcı bilgisini kullan.
-    */
-    const savedUser =
-      localStorage.getItem("panelmarket_user");
-
-    const savedToken =
-      localStorage.getItem("panelmarket_token");
-
-    if (savedUser && savedToken) {
-      showLoggedIn();
-    } else {
-      showLoggedOut();
-    }
-
-  }
+headers.Authorization =
+"Bearer " + token;
 
 }
 
 
-/* ---------------------------------
-   GİRİŞ YAPILMIŞ GÖRÜNÜM
---------------------------------- */
+const response =
+await fetch(
+"/api/auth/me?t=" + Date.now(),
+{
+method:"GET",
+headers,
+credentials:"include",
+cache:"no-store"
+}
+);
 
-function showLoggedIn() {
 
-  const guestButtons =
-    document.getElementById("guestButtons");
+const data =
+await response
+.json()
+.catch(()=>({}));
 
-  const userButtons =
-    document.getElementById("userButtons");
 
-  if (guestButtons) {
-    guestButtons.style.display = "none";
-  }
+if(
+response.ok &&
+data &&
+data.authenticated === true &&
+data.user
+){
 
-  if (userButtons) {
-    userButtons.style.display = "flex";
-  }
+showLoggedIn();
+
+
+try{
+
+localStorage.setItem(
+"panelmarket_user",
+JSON.stringify(data.user)
+);
+
+}catch{}
+
+
+}else{
+
+showLoggedOut();
 
 }
 
 
-/* ---------------------------------
-   GİRİŞ YAPILMAMIŞ GÖRÜNÜM
---------------------------------- */
+}catch(error){
 
-function showLoggedOut() {
+console.error(
+"Oturum kontrolü başarısız:",
+error
+);
 
-  const guestButtons =
-    document.getElementById("guestButtons");
 
-  const userButtons =
-    document.getElementById("userButtons");
+const savedUser =
+localStorage.getItem(
+"panelmarket_user"
+);
 
-  if (guestButtons) {
-    guestButtons.style.display = "flex";
-  }
+const savedToken =
+localStorage.getItem(
+"panelmarket_token"
+);
 
-  if (userButtons) {
-    userButtons.style.display = "none";
-  }
+
+if(savedUser && savedToken){
+
+showLoggedIn();
+
+}else{
+
+showLoggedOut();
+
+}
+
+}
 
 }
 
 
-/* ---------------------------------
-   ÇIKIŞ YAP
---------------------------------- */
+/* =================================
+   GİRİŞ YAPILMIŞ
+================================= */
 
-async function logoutUser() {
+function showLoggedIn(){
 
-  try {
+const guestButtons =
+document.getElementById(
+"guestButtons"
+);
 
-    const token =
-      localStorage.getItem("panelmarket_token") ||
-      sessionStorage.getItem("panelmarket_token") ||
-      "";
+const userButtons =
+document.getElementById(
+"userButtons"
+);
 
-    const headers = {
-      "Accept": "application/json"
-    };
 
-    if (token) {
-      headers.Authorization =
-        "Bearer " + token;
-    }
+if(guestButtons){
 
-    await fetch(
-      "/api/logout",
-      {
-        method: "POST",
-        headers,
-        credentials: "include",
-        cache: "no-store"
-      }
-    );
-
-  } catch (error) {
-
-    console.error(
-      "Çıkış API hatası:",
-      error
-    );
-
-  } finally {
-
-    /*
-      Yerel oturum bilgilerini temizle
-    */
-
-    try {
-      localStorage.removeItem(
-        "panelmarket_token"
-      );
-
-      localStorage.removeItem(
-        "panelmarket_user"
-      );
-
-      sessionStorage.removeItem(
-        "panelmarket_token"
-      );
-
-      sessionStorage.removeItem(
-        "panelmarket_user"
-      );
-
-    } catch {}
-
-    showLoggedOut();
-
-    /*
-      Ana sayfada kal.
-      Artık Giriş Yap / Kayıt Ol görünür.
-    */
-
-    window.location.href = "/index.html";
-
-  }
+guestButtons.style.display =
+"none";
 
 }
 
 
-/* ---------------------------------
-   ÜRÜNLERİ YÜKLE
---------------------------------- */
+if(userButtons){
 
-async function load() {
+userButtons.style.display =
+"flex";
 
-  try {
-
-    const response =
-      await fetch("/api/products");
-
-    if (!response.ok) {
-      throw new Error(
-        "Ürünler alınamadı."
-      );
-    }
-
-    ps = await response.json();
-
-    render();
-
-  } catch (error) {
-
-    console.error(
-      "Ürün yükleme hatası:",
-      error
-    );
-
-    ps = [];
-
-    document.getElementById(
-      "products"
-    ).innerHTML =
-      '<div class="empty">Ürünler yüklenemedi.</div>';
-
-  }
+}
 
 }
 
 
-/* ---------------------------------
+/* =================================
+   GİRİŞ YAPILMAMIŞ
+================================= */
+
+function showLoggedOut(){
+
+const guestButtons =
+document.getElementById(
+"guestButtons"
+);
+
+const userButtons =
+document.getElementById(
+"userButtons"
+);
+
+
+if(guestButtons){
+
+guestButtons.style.display =
+"flex";
+
+}
+
+
+if(userButtons){
+
+userButtons.style.display =
+"none";
+
+}
+
+}
+
+
+/* =================================
+   ÇIKIŞ
+================================= */
+
+async function logoutUser(){
+
+try{
+
+const token =
+localStorage.getItem(
+"panelmarket_token"
+) ||
+sessionStorage.getItem(
+"panelmarket_token"
+) ||
+"";
+
+
+const headers = {
+"Accept":
+"application/json"
+};
+
+
+if(token){
+
+headers.Authorization =
+"Bearer " + token;
+
+}
+
+
+await fetch(
+"/api/logout",
+{
+method:"POST",
+headers,
+credentials:"include",
+cache:"no-store"
+}
+);
+
+
+}catch(error){
+
+console.error(
+"Çıkış API hatası:",
+error
+);
+
+}finally{
+
+
+try{
+
+localStorage.removeItem(
+"panelmarket_token"
+);
+
+localStorage.removeItem(
+"panelmarket_user"
+);
+
+sessionStorage.removeItem(
+"panelmarket_token"
+);
+
+sessionStorage.removeItem(
+"panelmarket_user"
+);
+
+}catch{}
+
+
+showLoggedOut();
+
+window.location.href =
+"/index.html";
+
+}
+
+}
+
+
+/* =================================
+   ÜRÜNLER
+================================= */
+
+async function load(){
+
+try{
+
+const response =
+await fetch(
+"/api/products"
+);
+
+
+if(!response.ok){
+
+throw new Error(
+"Ürünler alınamadı."
+);
+
+}
+
+
+ps =
+await response.json();
+
+render();
+
+
+}catch(error){
+
+console.error(
+"Ürün yükleme hatası:",
+error
+);
+
+
+ps=[];
+
+
+document.getElementById(
+"products"
+).innerHTML =
+'<div class="empty">Ürünler yüklenemedi.</div>';
+
+}
+
+}
+
+
+/* =================================
    ÜRÜNLERİ GÖSTER
---------------------------------- */
+================================= */
 
-function render() {
+function render(){
 
-  const queryInput =
-    document.getElementById("q");
+const queryInput =
+document.getElementById("q");
 
-  const categoryInput =
-    document.getElementById("cat");
+const categoryInput =
+document.getElementById("cat");
 
-  const products =
-    document.getElementById("products");
-
-  const q =
-    (queryInput?.value || "")
-      .toLowerCase()
-      .trim();
-
-  const c =
-    categoryInput?.value || "all";
-
-  const filtered =
-    ps.filter(p => {
-
-      const name =
-        String(p.name || "")
-          .toLowerCase();
-
-      const description =
-        String(p.description || "")
-          .toLowerCase();
-
-      const category =
-        String(p.category || "");
-
-      return (
-        (c === "all" ||
-         category === c) &&
-        (
-          name.includes(q) ||
-          description.includes(q)
-        )
-      );
-
-    });
+const products =
+document.getElementById("products");
 
 
-  products.innerHTML =
-    filtered.map(p => `
+const q =
+(queryInput?.value || "")
+.toLowerCase()
+.trim();
 
-      <article class="product">
 
-        <div class="visual">
-          <div class="screen">
-            <i></i>
-            <i></i>
-            <i></i>
-          </div>
-        </div>
+const c =
+categoryInput?.value ||
+"all";
 
-        <div class="body">
 
-          <div class="category">
-            ${p.category || ""}
-          </div>
+const filtered =
+ps.filter(p=>{
 
-          <h3>
-            ${p.name || ""}
-          </h3>
+const name =
+String(p.name || "")
+.toLowerCase();
 
-          <p>
-            ${p.description || ""}
-          </p>
+const description =
+String(p.description || "")
+.toLowerCase();
 
-          <div class="info">
+const category =
+String(p.category || "");
 
-            <div>
-              LİSANS
-              <br>
-              <b>1 Site</b>
-            </div>
 
-            <div>
-              TESLİMAT
-              <br>
-              <b>${p.delivery || ""}</b>
-            </div>
+return(
 
-            <div>
-              GÜNCELLEME
-              <br>
-              <b>${p.update || ""}</b>
-            </div>
+(c==="all" ||
+category===c)
 
-            <div>
-              DESTEK
-              <br>
-              <b>${p.support || ""}</b>
-            </div>
+&&
 
-          </div>
+(
+name.includes(q) ||
+description.includes(q)
+)
 
-          <div class="bottom">
+);
 
-            <div>
+});
 
-              ${
-                p.oldPrice
-                  ? `<span class="old">
-                       ₺${Number(p.oldPrice).toLocaleString("tr-TR")}
-                     </span>`
-                  : ""
-              }
 
-              <span class="price">
-                ₺${Number(p.price || 0).toLocaleString("tr-TR")}
-              </span>
+products.innerHTML =
+filtered.map(p=>`
 
-            </div>
+<article class="product">
 
-            <a
-              class="btn blue"
-              href="/urun.html?id=${encodeURIComponent(p.id)}"
-            >
-              SATIN AL
-            </a>
+<div class="visual">
 
-          </div>
+<div class="screen">
 
-        </div>
+<i></i>
+<i></i>
+<i></i>
 
-      </article>
+</div>
 
-    `).join("")
+</div>
 
-    || '<div class="empty">Ürün bulunamadı.</div>';
+
+<div class="body">
+
+<div class="category">
+${p.category || ""}
+</div>
+
+
+<h3>
+${p.name || ""}
+</h3>
+
+
+<p>
+${p.description || ""}
+</p>
+
+
+<div class="info">
+
+
+<div>
+LİSANS
+<br>
+<b>1 Site</b>
+</div>
+
+
+<div>
+TESLİMAT
+<br>
+<b>${p.delivery || ""}</b>
+</div>
+
+
+<div>
+GÜNCELLEME
+<br>
+<b>${p.update || ""}</b>
+</div>
+
+
+<div>
+DESTEK
+<br>
+<b>${p.support || ""}</b>
+</div>
+
+
+</div>
+
+
+<div class="bottom">
+
+<div>
+
+${
+p.oldPrice
+?
+`<span class="old">
+₺${Number(p.oldPrice).toLocaleString("tr-TR")}
+</span>`
+:
+""
+}
+
+
+<span class="price">
+₺${Number(
+p.price || 0
+).toLocaleString("tr-TR")}
+</span>
+
+</div>
+
+
+<a
+class="btn blue"
+href="/urun.html?id=${encodeURIComponent(p.id)}"
+>
+SATIN AL
+</a>
+
+
+</div>
+
+</div>
+
+</article>
+
+`).join("")
+
+||
+
+'<div class="empty">Ürün bulunamadı.</div>';
 
 }
 
 
-/* ---------------------------------
-   SAYFA AÇILDIĞINDA
---------------------------------- */
+/* =================================
+   DESTEK FORMU
+================================= */
+
+async function sendSupport(event){
+
+event.preventDefault();
+
+
+const button =
+document.getElementById(
+"supportSubmit"
+);
+
+const result =
+document.getElementById(
+"supportResult"
+);
+
+
+const name =
+document.getElementById(
+"supportName"
+).value.trim();
+
+
+const email =
+document.getElementById(
+"supportEmail"
+).value.trim();
+
+
+const subject =
+document.getElementById(
+"supportSubject"
+).value;
+
+
+const message =
+document.getElementById(
+"supportMessage"
+).value.trim();
+
+
+if(
+!name ||
+!email ||
+!subject ||
+!message
+){
+
+return;
+
+}
+
+
+button.disabled=true;
+
+button.textContent =
+"GÖNDERİLİYOR...";
+
+
+try{
+
+
+const token =
+localStorage.getItem(
+"panelmarket_token"
+) ||
+sessionStorage.getItem(
+"panelmarket_token"
+) ||
+"";
+
+
+const headers = {
+
+"Content-Type":
+"application/json",
+
+"Accept":
+"application/json"
+
+};
+
+
+if(token){
+
+headers.Authorization =
+"Bearer " + token;
+
+}
+
+
+const response =
+await fetch(
+"/api/support",
+{
+method:"POST",
+headers,
+credentials:"include",
+cache:"no-store",
+
+body:JSON.stringify({
+
+name:name,
+
+email:email,
+
+subject:subject,
+
+message:message
+
+})
+
+}
+);
+
+
+const data =
+await response
+.json()
+.catch(()=>({}));
+
+
+if(!response.ok){
+
+throw new Error(
+data.error ||
+"Destek talebi gönderilemedi."
+);
+
+}
+
+
+result.style.display =
+"block";
+
+result.style.background =
+"rgba(40,210,120,.1)";
+
+result.style.border =
+"1px solid rgba(40,210,120,.25)";
+
+result.style.color =
+"#73e6a3";
+
+result.textContent =
+"Destek talebiniz başarıyla gönderildi.";
+
+
+document.getElementById(
+"supportForm"
+).reset();
+
+
+}catch(error){
+
+
+result.style.display =
+"block";
+
+result.style.background =
+"rgba(255,60,60,.1)";
+
+result.style.border =
+"1px solid rgba(255,60,60,.3)";
+
+result.style.color =
+"#ff9b9b";
+
+result.textContent =
+error.message ||
+"Bir hata oluştu.";
+
+
+}finally{
+
+
+button.disabled=false;
+
+button.textContent =
+"DESTEK TALEBİ GÖNDER";
+
+}
+
+}
+
+
+/* =================================
+   BAŞLAT
+================================= */
 
 checkLogin();
+
 load();
+
 
 </script>
 
 </body>
 </html>
-```
