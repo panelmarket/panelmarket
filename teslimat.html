@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="tr">
 
@@ -44,11 +43,8 @@ header{
     top:0;
     z-index:1000;
     height:76px;
-
     background:rgba(7,10,15,.92);
-
     backdrop-filter:blur(18px);
-
     border-bottom:1px solid #1c2531
 }
 
@@ -56,7 +52,6 @@ header{
     width:min(1200px,94%);
     height:100%;
     margin:auto;
-
     display:flex;
     align-items:center;
     justify-content:space-between
@@ -66,7 +61,6 @@ header{
     display:flex;
     align-items:center;
     gap:11px;
-
     font-size:21px;
     font-weight:900
 }
@@ -74,19 +68,14 @@ header{
 .logo-icon{
     width:40px;
     height:40px;
-
     border-radius:12px;
-
     display:grid;
     place-items:center;
-
-    background:
-        linear-gradient(
-            135deg,
-            #1677ff,
-            #7347ff
-        );
-
+    background:linear-gradient(
+        135deg,
+        #1677ff,
+        #7347ff
+    );
     box-shadow:
         0 8px 30px
         rgba(22,119,255,.25)
@@ -117,13 +106,11 @@ header{
 
 .header-btn{
     padding:11px 16px;
-
     border-radius:9px;
-
     font-size:12px;
     font-weight:800;
-
-    cursor:pointer
+    cursor:pointer;
+    text-decoration:none
 }
 
 .login{
@@ -132,10 +119,18 @@ header{
     color:#fff
 }
 
+.login:hover{
+    background:#101820
+}
+
 .register{
     background:#1677ff;
     border:1px solid #1677ff;
     color:#fff
+}
+
+.register:hover{
+    background:#2a87ff
 }
 
 .logout{
@@ -153,7 +148,6 @@ header{
 
 .container{
     width:min(900px,94%);
-
     margin:55px auto 100px
 }
 
@@ -162,11 +156,8 @@ header{
 
 .card{
     background:#0d131b;
-
     border:1px solid #1c2633;
-
     border-radius:20px;
-
     padding:30px
 }
 
@@ -176,23 +167,13 @@ header{
 .success-icon{
     width:75px;
     height:75px;
-
     margin:0 auto 20px;
-
     border-radius:24px;
-
     display:grid;
     place-items:center;
-
     font-size:34px;
-
-    background:
-        rgba(50,210,120,.1);
-
-    border:
-        1px solid
-        rgba(50,210,120,.25);
-
+    background:rgba(50,210,120,.1);
+    border:1px solid rgba(50,210,120,.25);
     color:#72e6a2
 }
 
@@ -215,13 +196,9 @@ header{
 
 .product{
     margin-top:30px;
-
     padding:22px;
-
     border-radius:14px;
-
     background:#090f16;
-
     border:1px solid #1d2937
 }
 
@@ -232,9 +209,7 @@ header{
 
 .product-category{
     margin-top:5px;
-
     color:#5eacff;
-
     font-size:12px;
     font-weight:800
 }
@@ -244,39 +219,28 @@ header{
 
 .details{
     display:grid;
-
     grid-template-columns:1fr 1fr;
-
     gap:10px;
-
     margin-top:20px
 }
 
 .detail{
     padding:15px;
-
     background:#0d151e;
-
     border:1px solid #1d2937;
-
     border-radius:10px
 }
 
 .detail-label{
     font-size:10px;
-
     color:#718096;
-
     text-transform:uppercase
 }
 
 .detail-value{
     font-size:14px;
-
     font-weight:900;
-
     margin-top:5px;
-
     word-break:break-word
 }
 
@@ -285,11 +249,8 @@ header{
 
 .key{
     margin-top:20px;
-
     padding:20px;
-
     border-radius:13px;
-
     background:
         radial-gradient(
             circle at 50% 0,
@@ -297,7 +258,6 @@ header{
             transparent 60%
         ),
         #080e15;
-
     border:1px solid #263c59
 }
 
@@ -308,17 +268,11 @@ header{
 
 .key-value{
     font-family:monospace;
-
     font-size:20px;
-
     font-weight:900;
-
     letter-spacing:1px;
-
     margin-top:8px;
-
     word-break:break-all;
-
     color:#fff
 }
 
@@ -327,27 +281,18 @@ header{
 
 .buttons{
     display:flex;
-
     gap:10px;
-
     margin-top:22px
 }
 
 .btn{
     flex:1;
-
     border:0;
-
     cursor:pointer;
-
     padding:14px 20px;
-
     border-radius:10px;
-
     font-size:12px;
-
     font-weight:900;
-
     text-align:center
 }
 
@@ -362,9 +307,7 @@ header{
 
 .secondary{
     background:#101820;
-
     border:1px solid #263546;
-
     color:#fff
 }
 
@@ -373,22 +316,12 @@ header{
 
 .notice{
     margin-top:18px;
-
     padding:15px;
-
     border-radius:10px;
-
-    background:
-        rgba(22,119,255,.07);
-
-    border:
-        1px solid
-        rgba(22,119,255,.18);
-
+    background:rgba(22,119,255,.07);
+    border:1px solid rgba(22,119,255,.18);
     color:#9eb0c5;
-
     font-size:12px;
-
     line-height:1.6
 }
 
@@ -397,9 +330,7 @@ header{
 
 .loading{
     text-align:center;
-
     color:#8995a7;
-
     padding:50px
 }
 
@@ -408,9 +339,7 @@ header{
 
 .error{
     text-align:center;
-
     padding:40px;
-
     color:#ff9999
 }
 
@@ -419,13 +348,9 @@ header{
 
 footer{
     border-top:1px solid #1c2531;
-
     padding:30px 3%;
-
     text-align:center;
-
     color:#657184;
-
     font-size:12px
 }
 
@@ -436,6 +361,15 @@ footer{
 
     .nav{
         display:none
+    }
+
+    .header-buttons{
+        gap:6px
+    }
+
+    .header-btn{
+        padding:9px 11px;
+        font-size:11px
     }
 
     .card{
@@ -506,20 +440,12 @@ footer{
 </nav>
 
 
-<!--
-    BURASI LOGIN.HTML İLE SENKRON
-    panelmarket_token
-    panelmarket_user
--->
+<!-- LOGIN.HTML İLE AYNI SİSTEM -->
 
 <div
     class="header-buttons"
     id="authButtons"
->
-
-    <!-- JS dolduracak -->
-
-</div>
+></div>
 
 
 </div>
@@ -558,26 +484,19 @@ footer{
    LOGIN.HTML'DEKİ GERÇEK ANAHTARLAR
 ========================================================= */
 
-const TOKEN_KEY =
-    "panelmarket_token";
-
-const USER_KEY =
-    "panelmarket_user";
+const TOKEN_KEY = "panelmarket_token";
+const USER_KEY = "panelmarket_user";
 
 
 /* =========================================================
-   TOKEN
+   TOKEN OKU
 ========================================================= */
 
 function getToken(){
 
     try{
 
-        return (
-            localStorage.getItem(
-                TOKEN_KEY
-            ) || ""
-        );
+        return localStorage.getItem(TOKEN_KEY) || "";
 
     }catch(error){
 
@@ -594,7 +513,7 @@ function getToken(){
 
 
 /* =========================================================
-   USER
+   USER OKU
 ========================================================= */
 
 function getUser(){
@@ -602,14 +521,10 @@ function getUser(){
     try{
 
         const raw =
-            localStorage.getItem(
-                USER_KEY
-            );
+            localStorage.getItem(USER_KEY);
 
         if(!raw){
-
             return null;
-
         }
 
         return JSON.parse(raw);
@@ -629,43 +544,19 @@ function getUser(){
 
 
 /* =========================================================
-   LOGIN.HTML İLE AYNI OTURUM KONTROLÜ
+   LOGIN KONTROLÜ
+   TOKEN VARSA GİRİŞ YAPILMIŞTIR
 ========================================================= */
 
 function isLoggedIn(){
 
-    const token =
-        getToken();
-
-    const user =
-        getUser();
-
-    /*
-       login.html başarılı girişte:
-
-       localStorage.setItem(
-           "panelmarket_token",
-           data.token
-       );
-
-       localStorage.setItem(
-           "panelmarket_user",
-           JSON.stringify(data.user)
-       );
-
-       Bu yüzden ikisini birlikte kontrol ediyoruz.
-    */
-
-    return !!(
-        token &&
-        user
-    );
+    return !!getToken();
 
 }
 
 
 /* =========================================================
-   HEADER'I GÜNCELLE
+   HEADER
 ========================================================= */
 
 function updateAuthHeader(){
@@ -676,9 +567,7 @@ function updateAuthHeader(){
         );
 
     if(!box){
-
         return;
-
     }
 
 
@@ -729,10 +618,15 @@ function updateAuthHeader(){
 
 
 /* =========================================================
-   ÇIKIŞ
+   ÇIKIŞ YAP
 ========================================================= */
 
 function logoutUser(){
+
+    /*
+       Önce tarayıcıdaki PanelMarket
+       oturum bilgilerini temizle.
+    */
 
     try{
 
@@ -741,6 +635,14 @@ function logoutUser(){
         );
 
         localStorage.removeItem(
+            USER_KEY
+        );
+
+        sessionStorage.removeItem(
+            TOKEN_KEY
+        );
+
+        sessionStorage.removeItem(
             USER_KEY
         );
 
@@ -755,8 +657,10 @@ function logoutUser(){
 
 
     /*
-       Sunucu tarafındaki cookie/session
-       varsa onu da kapatmayı deniyoruz.
+       Sunucuda logout endpoint'i varsa
+       cookie/session temizlenmesini dene.
+       Başarısız olsa bile local oturum
+       temizlenmiş olur.
     */
 
     fetch(
@@ -768,8 +672,12 @@ function logoutUser(){
     ).catch(function(){});
 
 
+    /*
+       index.html'e dön.
+    */
+
     window.location.replace(
-        "/login.html"
+        "/index.html"
     );
 
 }
@@ -835,15 +743,14 @@ if(!orderId){
 
 
 /* =========================================================
-   SİPARİŞ
+   SİPARİŞİ YÜKLE
 ========================================================= */
 
 async function loadOrder(){
 
-
-    /* ---------------------------------------------
-       GERÇEK LOGIN KONTROLÜ
-    --------------------------------------------- */
+    /*
+       Login kontrolü
+    */
 
     if(!isLoggedIn()){
 
@@ -887,15 +794,9 @@ async function loadOrder(){
 
     try{
 
-
         const token =
             getToken();
 
-
-        /*
-           login.html'deki API sistemiyle uyumlu:
-           Authorization + credentials include
-        */
 
         const headers = {
 
@@ -904,6 +805,11 @@ async function loadOrder(){
 
         };
 
+
+        /*
+           Login'de alınan token'ı
+           API'ye gönder.
+        */
 
         if(token){
 
@@ -953,18 +859,14 @@ async function loadOrder(){
         }
 
 
-        /* ---------------------------------------------
+        /* =================================================
            OTURUM GEÇERSİZ
-        --------------------------------------------- */
+        ================================================= */
 
         if(
             res.status === 401 ||
             res.status === 403
         ){
-
-            /*
-               Token gerçekten geçersizse temizle.
-            */
 
             localStorage.removeItem(
                 TOKEN_KEY
@@ -973,7 +875,6 @@ async function loadOrder(){
             localStorage.removeItem(
                 USER_KEY
             );
-
 
             updateAuthHeader();
 
@@ -1067,25 +968,20 @@ async function loadOrder(){
 
                 <div class="center">
 
-
                     <div class="success-icon">
                         ✓
                     </div>
 
-
                     <h1>
                         Satın Alma Tamamlandı
                     </h1>
-
 
                     <p>
                         Paneliniz başarıyla
                         hesabınıza tanımlandı.
                     </p>
 
-
                 </div>
-
 
 
                 <div class="product">
@@ -1105,7 +1001,6 @@ async function loadOrder(){
                         PanelMarket Lisanslı Ürün
 
                     </div>
-
 
 
                     <div class="details">
@@ -1128,7 +1023,6 @@ async function loadOrder(){
                         </div>
 
 
-
                         <div class="detail">
 
                             <div class="detail-label">
@@ -1144,7 +1038,6 @@ async function loadOrder(){
                             </div>
 
                         </div>
-
 
 
                         <div class="detail">
@@ -1166,7 +1059,6 @@ async function loadOrder(){
                             </div>
 
                         </div>
-
 
 
                         <div class="detail">
@@ -1191,16 +1083,11 @@ async function loadOrder(){
                     </div>
 
 
-
                     <div class="key">
 
-
                         <div class="key-label">
-
                             LİSANS ANAHTARI
-
                         </div>
-
 
                         <div class="key-value">
 
@@ -1211,21 +1098,16 @@ async function loadOrder(){
 
                         </div>
 
-
                     </div>
 
 
-
                     <div class="buttons">
-
 
                         <button
                             class="btn primary"
                             onclick="copyKey('${escapeJs(licenseKey)}')"
                         >
-
                             LİSANS ANAHTARINI KOPYALA
-
                         </button>
 
 
@@ -1233,14 +1115,10 @@ async function loadOrder(){
                             href="/siparislerim.html"
                             class="btn secondary"
                         >
-
                             SİPARİŞLERİME GİT
-
                         </a>
 
-
                     </div>
-
 
 
                     <div class="notice">
@@ -1274,7 +1152,6 @@ async function loadOrder(){
 
     }catch(e){
 
-
         console.error(
             "ORDER LOAD ERROR:",
             e
@@ -1292,15 +1169,11 @@ async function loadOrder(){
                 </h2>
 
                 <p
-                    style="
-                        margin-top:10px
-                    "
+                    style="margin-top:10px"
                 >
-
                     ${escapeHtml(
                         e.message
                     )}
-
                 </p>
 
                 <br>
@@ -1436,7 +1309,7 @@ function escapeJs(str){
 
 
 /* =========================================================
-   SAYFA AÇILIR AÇILMAZ HEADER
+   SAYFA AÇILINCA HEADER'I GÜNCELLE
 ========================================================= */
 
 updateAuthHeader();
@@ -1445,4 +1318,3 @@ updateAuthHeader();
 
 </body>
 </html>
-```
