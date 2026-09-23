@@ -114,6 +114,7 @@ header{
 
 /* =========================================
    HEADER BUTONLARI
+   INDEX.HTML İLE AYNI
 ========================================= */
 
 .header-buttons{
@@ -130,7 +131,7 @@ header{
 
 
 /* =========================================
-   HEADER BUTONLARI
+   INDEX.HTML BUTON TEMELİ
 ========================================= */
 
 #headerButtons a.btn,
@@ -279,10 +280,11 @@ header{
 
 
 /* =========================================
-   ÇIKIŞ
+   ÇIKIŞ YAP
+   INDEX.HTML İLE BİREBİR AYNI
 ========================================= */
 
-#headerButtons #userButtons button.logout-button{
+#headerButtons #userButtons button.btn.blue.logout-button{
 
     box-sizing:border-box !important;
 
@@ -292,6 +294,7 @@ header{
     justify-content:center !important;
 
     width:auto !important;
+
     min-width:0 !important;
 
     min-height:42px !important;
@@ -301,12 +304,13 @@ header{
 
     margin:0 !important;
 
-    border:1px solid #1677ff !important;
-
     border-radius:9px !important;
 
     background:#1677ff !important;
+
     background-color:#1677ff !important;
+
+    border:1px solid #1677ff !important;
 
     color:#fff !important;
 
@@ -333,21 +337,21 @@ header{
     cursor:pointer !important;
 
     appearance:none !important;
+
     -webkit-appearance:none !important;
 
     outline:none !important;
 
     transition:none !important;
+
 }
 
 
 /* =========================================
-   ÇIKIŞ HOVER / ACTIVE / FOCUS
+   ÇIKIŞ HOVER
 ========================================= */
 
-#headerButtons #userButtons button.logout-button:hover,
-#headerButtons #userButtons button.logout-button:active,
-#headerButtons #userButtons button.logout-button:focus{
+#headerButtons #userButtons button.btn.blue.logout-button:hover{
 
     background:#1677ff !important;
 
@@ -360,6 +364,49 @@ header{
     box-shadow:none !important;
 
     outline:none !important;
+
+}
+
+
+/* =========================================
+   ÇIKIŞ ACTIVE
+========================================= */
+
+#headerButtons #userButtons button.btn.blue.logout-button:active{
+
+    background:#1677ff !important;
+
+    background-color:#1677ff !important;
+
+    border:1px solid #1677ff !important;
+
+    color:#fff !important;
+
+    box-shadow:none !important;
+
+    outline:none !important;
+
+}
+
+
+/* =========================================
+   ÇIKIŞ FOCUS
+========================================= */
+
+#headerButtons #userButtons button.btn.blue.logout-button:focus{
+
+    background:#1677ff !important;
+
+    background-color:#1677ff !important;
+
+    border:1px solid #1677ff !important;
+
+    color:#fff !important;
+
+    box-shadow:none !important;
+
+    outline:none !important;
+
 }
 
 
@@ -397,6 +444,8 @@ header{
     gap:8px;
 
     min-height:42px;
+
+    height:42px;
 
     padding:11px 16px;
 
@@ -436,9 +485,11 @@ header{
 
     }
 
-    #headerButtons a.btn{
+    #headerButtons a.btn,
+    #headerButtons button.btn{
 
         min-height:40px !important;
+
         height:40px !important;
 
         padding:10px 13px !important;
@@ -447,12 +498,14 @@ header{
 
     }
 
-    #headerButtons #userButtons button.logout-button{
+    #headerButtons #userButtons button.btn.blue.logout-button{
 
         width:auto !important;
+
         min-width:0 !important;
 
         height:40px !important;
+
         min-height:40px !important;
 
         padding:10px 13px !important;
@@ -463,7 +516,20 @@ header{
 
     }
 
+    .cart-button{
+
+        min-height:40px;
+
+        height:40px;
+
+        padding:10px 13px;
+
+        font-size:12px;
+
+    }
+
 }
+
 
 /* =========================================
    SAYFA
@@ -1032,8 +1098,10 @@ footer{
             🛒 Sepet
         </a>
 
+        <!-- INDEX.HTML İLE AYNI BUTON SINIFI -->
+
         <button
-            class="logout-button"
+            class="btn blue logout-button"
             type="button"
             onclick="logoutUser()"
         >
