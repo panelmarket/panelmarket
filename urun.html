@@ -1,47 +1,33 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PanelMarket - Ürün Detayı</title>
 
-<link rel="stylesheet" href="/style.css">
-
 <style>
-
 *{
     margin:0;
     padding:0;
-    box-sizing:border-box
+    box-sizing:border-box;
 }
 
 body{
     font-family:Inter,Arial,sans-serif;
     background:#070a0f;
-    color:#f5f7fb
+    color:#f5f7fb;
 }
 
 a{
     text-decoration:none;
-    color:inherit
+    color:inherit;
 }
 
 button,
 input,
 select{
-    font-family:inherit
+    font-family:inherit;
 }
-
-
-/* =========================================
-   HEADER
-========================================= */
 
 header{
     position:sticky;
@@ -50,7 +36,7 @@ header{
     height:76px;
     background:rgba(7,10,15,.92);
     backdrop-filter:blur(18px);
-    border-bottom:1px solid #1c2531
+    border-bottom:1px solid #1c2531;
 }
 
 .header{
@@ -59,7 +45,7 @@ header{
     margin:auto;
     display:flex;
     align-items:center;
-    justify-content:space-between
+    justify-content:space-between;
 }
 
 .logo{
@@ -67,7 +53,7 @@ header{
     align-items:center;
     gap:11px;
     font-size:21px;
-    font-weight:900
+    font-weight:900;
 }
 
 .logo-icon{
@@ -77,110 +63,85 @@ header{
     display:grid;
     place-items:center;
     background:linear-gradient(135deg,#1677ff,#7347ff);
-    box-shadow:0 8px 30px rgba(22,119,255,.25)
+    box-shadow:0 8px 30px rgba(22,119,255,.25);
 }
 
 .nav{
     display:flex;
-    gap:28px
+    gap:28px;
 }
 
 .nav a{
     color:#8995a7;
-    font-size:13px
+    font-size:13px;
 }
 
 .nav a:hover{
-    color:#fff
+    color:#fff;
 }
 
-
-/* =========================================
-   INDEX.HTML HEADER BUTONLARI
-========================================= */
-
-#headerButtons{
-    display:flex;
-    align-items:center;
-}
-
-#guestButtons,
-#userButtons{
+.header-buttons{
     display:flex;
     align-items:center;
     gap:10px;
 }
 
-#guestButtons .btn,
-#userButtons .btn{
-    box-sizing:border-box;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
+.header-btn{
     min-height:42px;
     height:42px;
     padding:11px 16px;
     border-radius:9px;
     font-size:12px;
     font-weight:800;
-    line-height:1;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
     white-space:nowrap;
 }
 
-#guestButtons .btn.outline,
-#userButtons .btn.outline{
+.login{
     border:1px solid #273241;
 }
 
-#guestButtons .btn.blue,
-#userButtons .btn.blue{
+.register{
+    background:#1677ff;
     border:1px solid #1677ff;
 }
 
-#userButtons button.btn{
-    font-family:inherit;
+.logout{
+    border:1px solid #1677ff;
+    background:#1677ff;
+    color:#fff;
     cursor:pointer;
-    appearance:none;
-    -webkit-appearance:none;
 }
-
-
-/* =========================================
-   ÜRÜN
-========================================= */
 
 .container{
     width:min(1200px,94%);
-    margin:40px auto 80px
+    margin:40px auto 80px;
 }
 
 .back{
     display:inline-block;
     color:#6f7d90;
     font-size:13px;
-    margin-bottom:20px
+    margin-bottom:20px;
 }
 
 .back:hover{
-    color:#fff
+    color:#fff;
 }
 
 .product-detail{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:20px
+    gap:20px;
 }
 
 .card{
     background:#0d131b;
     border:1px solid #1c2633;
-    border-radius:18px
+    border-radius:18px;
 }
-
-
-/* =========================================
-   ÜRÜN GÖRSEL ALANI
-========================================= */
 
 .preview{
     min-height:430px;
@@ -189,7 +150,6 @@ header{
     justify-content:center;
     position:relative;
     overflow:hidden;
-
     background:
         radial-gradient(
             circle at center,
@@ -210,7 +170,7 @@ header{
     background:#0b1119;
     border:1px solid #33445a;
     padding:18px;
-    box-shadow:0 20px 70px rgba(22,119,255,.18)
+    box-shadow:0 20px 70px rgba(22,119,255,.18);
 }
 
 .product-preview-image{
@@ -227,90 +187,90 @@ header{
     width:42%;
     border-radius:8px;
     background:#268cff;
-    margin-bottom:20px
+    margin-bottom:20px;
 }
 
 .lines{
     display:grid;
-    gap:12px
+    gap:12px;
 }
 
 .lines i{
     height:9px;
     display:block;
     background:#28384b;
-    border-radius:8px
+    border-radius:8px;
 }
 
 .detail{
-    padding:30px
+    padding:30px;
 }
 
 .category{
     color:#5eacff;
     font-size:11px;
     font-weight:900;
-    text-transform:uppercase
+    text-transform:uppercase;
 }
 
 h1{
     font-size:38px;
     line-height:1.1;
-    margin-top:10px
+    margin-top:10px;
 }
 
 .description{
     color:#778497;
     font-size:14px;
     line-height:1.7;
-    margin-top:15px
+    margin-top:15px;
 }
 
 .info{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:9px;
-    margin-top:22px
+    margin-top:22px;
 }
 
 .info-box{
     padding:13px;
     border-radius:9px;
     background:#0b1118;
-    border:1px solid #192330
+    border:1px solid #192330;
 }
 
 .info-box small{
     display:block;
     color:#59687b;
-    font-size:9px
+    font-size:9px;
 }
 
 .info-box b{
     display:block;
     margin-top:5px;
-    font-size:12px
+    font-size:12px;
 }
 
 .license-title{
     margin-top:28px;
-    font-size:14px
+    font-size:14px;
 }
 
 .licenses{
     display:grid;
     gap:9px;
-    margin-top:12px
+    margin-top:12px;
 }
 
 .license{
     position:relative;
-    cursor:pointer
+    cursor:pointer;
 }
 
 .license input{
     position:absolute;
-    opacity:0
+    opacity:0;
 }
 
 .license-box{
@@ -321,23 +281,23 @@ h1{
     border:1px solid #202b39;
     background:#0b1118;
     border-radius:10px;
-    transition:.2s
+    transition:.2s;
 }
 
 .license input:checked + .license-box{
     border-color:#1677ff;
     background:rgba(22,119,255,.09);
-    box-shadow:0 0 0 1px rgba(22,119,255,.2)
+    box-shadow:0 0 0 1px rgba(22,119,255,.2);
 }
 
 .license-name{
     font-weight:800;
-    font-size:13px
+    font-size:13px;
 }
 
 .license-price{
     font-weight:900;
-    color:#fff
+    color:#fff;
 }
 
 .buy-area{
@@ -345,11 +305,11 @@ h1{
     align-items:center;
     justify-content:space-between;
     gap:15px;
-    margin-top:25px
+    margin-top:25px;
 }
 
 .price strong{
-    font-size:28px
+    font-size:28px;
 }
 
 .buy{
@@ -360,17 +320,12 @@ h1{
     color:#fff;
     font-weight:900;
     cursor:pointer;
-    box-shadow:0 12px 35px rgba(22,119,255,.22)
+    box-shadow:0 12px 35px rgba(22,119,255,.22);
 }
 
 .buy:hover{
-    background:#298cff
+    background:#298cff;
 }
-
-
-/* =========================================
-   ÜRÜN YÜKLENİYOR
-========================================= */
 
 .product-loading{
     opacity:.65;
@@ -380,19 +335,18 @@ h1{
     color:#ff6b6b !important;
 }
 
-
-/* =========================================
-   MOBİL
-========================================= */
+.loading{
+    color:#8995a7;
+}
 
 @media(max-width:800px){
 
     .product-detail{
-        grid-template-columns:1fr
+        grid-template-columns:1fr;
     }
 
     .preview{
-        min-height:300px
+        min-height:300px;
     }
 
     .preview.has-image{
@@ -404,49 +358,42 @@ h1{
     }
 
     .nav{
-        display:none
+        display:none;
     }
-
 }
 
-@media(max-width:700px){
+@media(max-width:600px){
 
-    #guestButtons,
-    #userButtons{
-        gap:8px;
+    .header-buttons{
+        gap:7px;
     }
 
-    #guestButtons .btn,
-    #userButtons .btn{
+    .header-btn{
         min-height:40px;
         height:40px;
-        padding:10px 13px;
-        font-size:12px;
+        padding:10px 12px;
+        font-size:11px;
     }
 
-}
-
-@media(max-width:500px){
-
     .detail{
-        padding:22px
+        padding:22px;
     }
 
     h1{
-        font-size:30px
+        font-size:30px;
     }
 
     .info{
-        grid-template-columns:1fr
+        grid-template-columns:1fr;
     }
 
     .buy-area{
         align-items:stretch;
-        flex-direction:column
+        flex-direction:column;
     }
 
     .buy{
-        text-align:center
+        text-align:center;
     }
 
     .preview{
@@ -456,175 +403,121 @@ h1{
     .product-preview-image{
         height:240px;
     }
-
 }
-
 </style>
-
 </head>
 
-
 <body>
-
-
-<!-- =========================================
-     HEADER
-========================================= -->
 
 <header>
 
 <div class="header">
 
-
-<a
-    href="/"
-    class="logo"
->
-
-<div class="logo-icon">
-P
-</div>
-
-PanelMarket
-
+<a href="/index.html" class="logo">
+    <span class="logo-icon">P</span>
+    <span>PanelMarket</span>
 </a>
-
 
 <nav class="nav">
-
-<a href="/index.html#urunler">
-Ürünler
-</a>
-
-<a href="/index.html#neden">
-Neden PanelMarket?
-</a>
-
-<a href="/destek.html">
-Destek
-</a>
-
+    <a href="/index.html#urunler">Ürünler</a>
+    <a href="/index.html#neden">Neden PanelMarket?</a>
+    <a href="/destek.html">Destek</a>
 </nav>
 
+<div class="header-buttons">
 
-<div
-    class="header-buttons"
-    id="headerButtons"
->
+    <div
+        id="guestButtons"
+        style="display:flex;gap:10px;align-items:center;"
+    >
+        <a
+            href="/login.html"
+            class="header-btn login"
+        >
+            Giriş Yap
+        </a>
 
+        <a
+            href="/register.html"
+            class="header-btn register"
+        >
+            Kayıt Ol
+        </a>
+    </div>
 
-<!-- ÇIKIŞ YAPILMIŞ -->
+    <div
+        id="userButtons"
+        style="display:none;gap:10px;align-items:center;"
+    >
 
-<div
-    id="guestButtons"
-    style="display:flex;gap:10px;align-items:center;"
->
+        <a
+            href="/hesabim.html"
+            class="header-btn login"
+        >
+            Hesabım
+        </a>
 
-<a
-    class="btn outline"
-    href="/login.html"
->
-Giriş Yap
-</a>
+        <button
+            type="button"
+            class="header-btn logout"
+            onclick="logoutUser()"
+        >
+            Çıkış Yap
+        </button>
 
-<a
-    class="btn blue"
-    href="/register.html"
->
-Kayıt Ol
-</a>
-
-</div>
-
-
-<!-- GİRİŞ YAPILMIŞ -->
-
-<div
-    id="userButtons"
-    style="display:none;gap:10px;align-items:center;"
->
-
-<a
-    class="btn outline"
-    href="/hesabim.html"
->
-Hesabım
-</a>
-
-<button
-    class="btn blue"
-    type="button"
-    onclick="logoutUser()"
->
-Çıkış Yap
-</button>
+    </div>
 
 </div>
-
-
-</div>
-
 
 </div>
 
 </header>
 
 
-
 <main class="container">
-
 
 <a
     href="/index.html"
     class="back"
 >
-← Ürünlere Dön
+    ← Ürünlere Dön
 </a>
 
 
 <div class="product-detail">
 
 
-<!-- =========================================
-     ÜRÜN GÖRSELİ
-========================================= -->
-
 <div
     class="card preview"
     id="productPreview"
 >
 
+    <div
+        class="preview-screen"
+        id="defaultPreview"
+    >
 
-<div
-    class="preview-screen"
-    id="defaultPreview"
->
+        <div class="top-line"></div>
 
-<div class="top-line"></div>
+        <div class="lines">
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+        </div>
 
-<div class="lines">
-
-<i></i>
-<i></i>
-<i></i>
-<i></i>
-
-</div>
-
-</div>
+    </div>
 
 
-<img
-    id="productImage"
-    class="product-preview-image"
-    src=""
-    alt="Ürün görseli"
-    style="display:none;"
->
-
+    <img
+        id="productImage"
+        class="product-preview-image"
+        src=""
+        alt="Ürün görseli"
+        style="display:none;"
+    >
 
 </div>
-
 
 
 <div class="card detail">
@@ -634,12 +527,12 @@ Hesabım
     class="category"
     id="productCategory"
 >
-Admin Paneli
+    Ürün
 </div>
 
 
 <h1 id="productName">
-Profesyonel Admin Paneli
+    Ürün yükleniyor...
 </h1>
 
 
@@ -647,71 +540,45 @@ Profesyonel Admin Paneli
     class="description"
     id="productDescription"
 >
-Kullanıcı, içerik, ayar ve sistem yönetimi
-için modern yönetim paneli.
+    Ürün bilgileri yükleniyor...
 </p>
 
 
 <div class="info">
 
+    <div class="info-box">
+        <small>TESLİMAT</small>
+        <b id="productDelivery">
+            Hemen
+        </b>
+    </div>
 
-<div class="info-box">
+    <div class="info-box">
+        <small>GÜNCELLEME</small>
+        <b id="productUpdate">
+            1 Yıl
+        </b>
+    </div>
 
-<small>
-TESLİMAT
-</small>
+    <div class="info-box">
+        <small>DESTEK</small>
+        <b id="productSupport">
+            30 Gün
+        </b>
+    </div>
 
-<b id="productDelivery">
-Hemen
-</b>
-
-</div>
-
-
-<div class="info-box">
-
-<small>
-GÜNCELLEME
-</small>
-
-<b id="productUpdate">
-1 Yıl
-</b>
-
-</div>
-
-
-<div class="info-box">
-
-<small>
-DESTEK
-</small>
-
-<b id="productSupport">
-30 Gün
-</b>
-
-</div>
-
-
-<div class="info-box">
-
-<small>
-LİSANS
-</small>
-
-<b>
-Site Lisansı
-</b>
-
-</div>
-
+    <div class="info-box">
+        <small>LİSANS</small>
+        <b>
+            Site Lisansı
+        </b>
+    </div>
 
 </div>
 
 
 <div class="license-title">
-Lisans Seçimi
+    Lisans Seçimi
 </div>
 
 
@@ -730,14 +597,14 @@ Lisans Seçimi
 <div class="license-box">
 
 <span class="license-name">
-1 Site
+    1 Site
 </span>
 
 <span
     class="license-price"
     id="price1"
 >
-₺1.499
+    ₺0,00
 </span>
 
 </div>
@@ -756,14 +623,14 @@ Lisans Seçimi
 <div class="license-box">
 
 <span class="license-name">
-3 Site
+    3 Site
 </span>
 
 <span
     class="license-price"
     id="price3"
 >
-₺2.499
+    ₺0,00
 </span>
 
 </div>
@@ -782,14 +649,14 @@ Lisans Seçimi
 <div class="license-box">
 
 <span class="license-name">
-Sınırsız Site
+    Sınırsız Site
 </span>
 
 <span
     class="license-price"
     id="priceUnlimited"
 >
-₺4.999
+    ₺0,00
 </span>
 
 </div>
@@ -802,11 +669,10 @@ Sınırsız Site
 
 <div class="buy-area">
 
-
 <div class="price">
 
 <strong id="productPrice">
-₺1.499
+    ₺0,00
 </strong>
 
 </div>
@@ -815,94 +681,74 @@ Sınırsız Site
 <button
     class="buy"
     id="addToCart"
+    type="button"
 >
-SEPETE EKLE →
+    SEPETE EKLE →
 </button>
 
-
 </div>
 
 
 </div>
 
-
 </div>
-
 
 </main>
 
 
-
 <script>
 
-
-/* =========================================
-   OTURUM KONTROLÜ
-========================================= */
+/* =========================================================
+   GİRİŞ KONTROLÜ
+========================================================= */
 
 async function checkLogin(){
 
     const token =
-        localStorage.getItem(
-            "panelmarket_token"
-        ) ||
-        sessionStorage.getItem(
-            "panelmarket_token"
-        ) ||
+        localStorage.getItem("panelmarket_token") ||
+        sessionStorage.getItem("panelmarket_token") ||
         "";
-
 
     try{
 
-        const headers = {
+        const headers={
             "Accept":"application/json"
         };
 
-
         if(token){
-
-            headers.Authorization =
-                "Bearer " + token;
-
+            headers.Authorization=
+                "Bearer "+token;
         }
 
+        const response=await fetch(
+            "/api/auth/me?t="+Date.now(),
+            {
+                method:"GET",
+                headers:headers,
+                credentials:"include",
+                cache:"no-store"
+            }
+        );
 
-        const response =
-            await fetch(
-                "/api/auth/me?t=" +
-                Date.now(),
-                {
-                    method:"GET",
-                    headers:headers,
-                    credentials:"include",
-                    cache:"no-store"
-                }
+        const data=
+            await response.json().catch(
+                ()=>({})
             );
-
-
-        const data =
-            await response
-                .json()
-                .catch(()=>({}));
-
 
         if(
             response.ok &&
             data &&
-            data.authenticated === true &&
+            data.authenticated===true &&
             data.user
         ){
 
             showLoggedIn();
 
-
             try{
 
                 localStorage.setItem(
                     "panelmarket_user",
-                    JSON.stringify(
-                        data.user
-                    )
+                    JSON.stringify(data.user)
                 );
 
             }catch(error){}
@@ -913,7 +759,6 @@ async function checkLogin(){
 
         }
 
-
     }catch(error){
 
         console.error(
@@ -921,23 +766,17 @@ async function checkLogin(){
             error
         );
 
-
-        const savedUser =
+        const savedUser=
             localStorage.getItem(
                 "panelmarket_user"
             );
 
-
-        const savedToken =
+        const savedToken=
             localStorage.getItem(
                 "panelmarket_token"
             );
 
-
-        if(
-            savedUser &&
-            savedToken
-        ){
+        if(savedUser && savedToken){
 
             showLoggedIn();
 
@@ -946,96 +785,59 @@ async function checkLogin(){
             showLoggedOut();
 
         }
-
     }
-
 }
 
-
-
-/* =========================================
-   GİRİŞ YAPILMIŞ
-========================================= */
 
 function showLoggedIn(){
 
-    const guestButtons =
+    const guestButtons=
         document.getElementById(
             "guestButtons"
         );
 
-
-    const userButtons =
+    const userButtons=
         document.getElementById(
             "userButtons"
         );
 
-
     if(guestButtons){
-
-        guestButtons.style.display =
-            "none";
-
+        guestButtons.style.display="none";
     }
-
 
     if(userButtons){
-
-        userButtons.style.display =
-            "flex";
-
+        userButtons.style.display="flex";
     }
-
 }
 
-
-
-/* =========================================
-   GİRİŞ YAPILMAMIŞ
-========================================= */
 
 function showLoggedOut(){
 
-    const guestButtons =
+    const guestButtons=
         document.getElementById(
             "guestButtons"
         );
 
-
-    const userButtons =
+    const userButtons=
         document.getElementById(
             "userButtons"
         );
 
-
     if(guestButtons){
-
-        guestButtons.style.display =
-            "flex";
-
+        guestButtons.style.display="flex";
     }
-
 
     if(userButtons){
-
-        userButtons.style.display =
-            "none";
-
+        userButtons.style.display="none";
     }
-
 }
 
-
-
-/* =========================================
-   ÇIKIŞ YAP
-========================================= */
 
 async function logoutUser(){
 
     try{
 
-        const token =
+        const token=
             localStorage.getItem(
                 "panelmarket_token"
             ) ||
@@ -1044,20 +846,14 @@ async function logoutUser(){
             ) ||
             "";
 
-
-        const headers = {
-            "Accept":
-                "application/json"
+        const headers={
+            "Accept":"application/json"
         };
 
-
         if(token){
-
-            headers.Authorization =
-                "Bearer " + token;
-
+            headers.Authorization=
+                "Bearer "+token;
         }
-
 
         await fetch(
             "/api/logout",
@@ -1069,7 +865,6 @@ async function logoutUser(){
             }
         );
 
-
     }catch(error){
 
         console.error(
@@ -1077,9 +872,7 @@ async function logoutUser(){
             error
         );
 
-
     }finally{
-
 
         try{
 
@@ -1099,137 +892,130 @@ async function logoutUser(){
                 "panelmarket_user"
             );
 
-        }catch(error){
+        }catch(error){}
 
-            console.error(
-                "Oturum temizleme hatası:",
-                error
-            );
-
-        }
-
-
-        window.location.href =
+        window.location.href=
             "/index.html";
-
     }
-
 }
 
 
+/* =========================================================
+   ÜRÜN
+========================================================= */
 
-/* =========================================
-   ÜRÜN ID
-========================================= */
-
-const params =
+const params=
     new URLSearchParams(
         location.search
     );
 
-
-const id =
+const id=
     params.get("id") ||
     "admin-panel";
 
+let product=null;
 
-let product = null;
-
-let prices = {
+let prices={
     "1-site":0,
     "3-site":0,
     "unlimited":0
 };
 
 
-
-/* =========================================
-   FİYAT GÜNCELLE
-========================================= */
+/* =========================================================
+   FİYAT
+========================================================= */
 
 function updatePrice(){
 
-    const selected =
+    const selected=
         document.querySelector(
             'input[name="license"]:checked'
         );
 
-
     if(!selected){
-
         return;
-
     }
 
-
-    const price =
+    const price=
         prices[selected.value] || 0;
-
 
     document.getElementById(
         "productPrice"
-    ).textContent =
-        "₺" +
+    ).textContent=
+        "₺"+
         Number(price).toLocaleString(
-            "tr-TR"
+            "tr-TR",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
         );
 
 
     document.getElementById(
         "price1"
-    ).textContent =
-        "₺" +
+    ).textContent=
+        "₺"+
         Number(
             prices["1-site"] || 0
         ).toLocaleString(
-            "tr-TR"
+            "tr-TR",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
         );
 
 
     document.getElementById(
         "price3"
-    ).textContent =
-        "₺" +
+    ).textContent=
+        "₺"+
         Number(
             prices["3-site"] || 0
         ).toLocaleString(
-            "tr-TR"
+            "tr-TR",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
         );
 
 
     document.getElementById(
         "priceUnlimited"
-    ).textContent =
-        "₺" +
+    ).textContent=
+        "₺"+
         Number(
             prices["unlimited"] || 0
         ).toLocaleString(
-            "tr-TR"
+            "tr-TR",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
         );
-
 }
 
 
-
-/* =========================================
-   ÜRÜN GÖRSELİNİ GÖSTER
-========================================= */
+/* =========================================================
+   ÜRÜN GÖRSELİ
+========================================================= */
 
 function showProductImage(imageUrl){
 
-    const preview =
+    const preview=
         document.getElementById(
             "productPreview"
         );
 
-
-    const image =
+    const image=
         document.getElementById(
             "productImage"
         );
 
-
-    const defaultPreview =
+    const defaultPreview=
         document.getElementById(
             "defaultPreview"
         );
@@ -1240,37 +1026,33 @@ function showProductImage(imageUrl){
         String(imageUrl).trim()
     ){
 
-        image.src =
+        const url=
             String(imageUrl).trim();
 
+        image.src=url;
 
-        image.alt =
+        image.alt=
             product?.name ||
             "Ürün görseli";
 
-
-        image.style.display =
+        image.style.display=
             "block";
 
-
-        defaultPreview.style.display =
+        defaultPreview.style.display=
             "none";
-
 
         preview.classList.add(
             "has-image"
         );
 
 
-        image.onload = function(){
+        image.onload=function(){
 
-            image.style.display =
+            image.style.display=
                 "block";
 
-
-            defaultPreview.style.display =
+            defaultPreview.style.display=
                 "none";
-
 
             preview.classList.add(
                 "has-image"
@@ -1279,21 +1061,18 @@ function showProductImage(imageUrl){
         };
 
 
-        image.onerror = function(){
+        image.onerror=function(){
 
             console.error(
                 "Ürün görseli yüklenemedi:",
-                imageUrl
+                url
             );
 
-
-            image.style.display =
+            image.style.display=
                 "none";
 
-
-            defaultPreview.style.display =
+            defaultPreview.style.display=
                 "block";
-
 
             preview.classList.remove(
                 "has-image"
@@ -1303,37 +1082,31 @@ function showProductImage(imageUrl){
 
     }else{
 
-        image.style.display =
+        image.style.display=
             "none";
 
-
-        defaultPreview.style.display =
+        defaultPreview.style.display=
             "block";
-
 
         preview.classList.remove(
             "has-image"
         );
-
     }
-
 }
 
 
-
-/* =========================================
-   ÜRÜNÜ API'DEN GETİR
-========================================= */
+/* =========================================================
+   ÜRÜNÜ YÜKLE
+========================================================= */
 
 async function loadProduct(){
 
-    const nameElement =
+    const nameElement=
         document.getElementById(
             "productName"
         );
 
-
-    const descriptionElement =
+    const descriptionElement=
         document.getElementById(
             "productDescription"
         );
@@ -1346,12 +1119,11 @@ async function loadProduct(){
 
     try{
 
-        const response =
+        const response=
             await fetch(
-                "/api/products/" +
-                encodeURIComponent(id) +
-                "?t=" +
-                Date.now(),
+                "/api/products/"+
+                encodeURIComponent(id)+
+                "?t="+Date.now(),
                 {
                     method:"GET",
                     headers:{
@@ -1364,10 +1136,10 @@ async function loadProduct(){
             );
 
 
-        const data =
-            await response
-                .json()
-                .catch(()=>({}));
+        const data=
+            await response.json().catch(
+                ()=>({})
+            );
 
 
         if(!response.ok){
@@ -1392,86 +1164,74 @@ async function loadProduct(){
         }
 
 
-        product = data;
+        product=data;
 
-
-        /* =================================
-           ÜRÜN BİLGİLERİ
-        ================================= */
 
         document.getElementById(
             "productName"
-        ).textContent =
+        ).textContent=
             product.name || "";
 
 
         document.getElementById(
             "productCategory"
-        ).textContent =
+        ).textContent=
             product.category || "";
 
 
         document.getElementById(
             "productDescription"
-        ).textContent =
+        ).textContent=
             product.description || "";
 
 
         document.getElementById(
             "productDelivery"
-        ).textContent =
+        ).textContent=
             product.delivery ||
             "Hemen";
 
 
         document.getElementById(
             "productUpdate"
-        ).textContent =
+        ).textContent=
             product.update ||
             "1 Yıl";
 
 
         document.getElementById(
             "productSupport"
-        ).textContent =
+        ).textContent=
             product.support ||
             "30 Gün";
 
 
-        /* =================================
-           GÖRSEL
-        ================================= */
+        /* GERÇEK SUPABASE ÜRÜN GÖRSELİ */
 
         showProductImage(
             product.image_url || ""
         );
 
 
-        /* =================================
-           FİYATLAR
-        ================================= */
-
-        const basePrice =
+        const basePrice=
             Number(
                 product.price || 0
             );
 
 
-        prices = {
-
+        prices={
             "1-site":
                 basePrice,
 
             "3-site":
                 Math.round(
-                    basePrice * 1.667
+                    basePrice*1.667
                 ),
 
             "unlimited":
                 Math.round(
-                    basePrice * 3.334
+                    basePrice*3.334
                 )
-
         };
 
 
@@ -1482,24 +1242,21 @@ async function loadProduct(){
             "product-loading"
         );
 
-
         descriptionElement.classList.remove(
             "product-error"
         );
 
 
-        /* =================================
-           LİSANS DEĞİŞİKLİKLERİ
-        ================================= */
-
-        document.querySelectorAll(
-            'input[name="license"]'
-        ).forEach(input=>{
-
-            input.onchange =
-                updatePrice;
-
-        });
+        document
+            .querySelectorAll(
+                'input[name="license"]'
+            )
+            .forEach(
+                input=>{
+                    input.onchange=
+                        updatePrice;
+                }
+            );
 
 
     }catch(error){
@@ -1510,11 +1267,11 @@ async function loadProduct(){
         );
 
 
-        nameElement.textContent =
+        nameElement.textContent=
             "Ürün bulunamadı";
 
 
-        descriptionElement.textContent =
+        descriptionElement.textContent=
             error.message ||
             "Bu ürün artık mevcut değil.";
 
@@ -1526,88 +1283,74 @@ async function loadProduct(){
 
         document.getElementById(
             "productCategory"
-        ).textContent =
+        ).textContent=
             "ÜRÜN BULUNAMADI";
 
 
         document.getElementById(
             "productDelivery"
-        ).textContent =
-            "-";
+        ).textContent="-";
 
 
         document.getElementById(
             "productUpdate"
-        ).textContent =
-            "-";
+        ).textContent="-";
 
 
         document.getElementById(
             "productSupport"
-        ).textContent =
-            "-";
+        ).textContent="-";
 
 
         document.getElementById(
             "price1"
-        ).textContent =
-            "₺0";
+        ).textContent="₺0,00";
 
 
         document.getElementById(
             "price3"
-        ).textContent =
-            "₺0";
+        ).textContent="₺0,00";
 
 
         document.getElementById(
             "priceUnlimited"
-        ).textContent =
-            "₺0";
+        ).textContent="₺0,00";
 
 
         document.getElementById(
             "productPrice"
-        ).textContent =
-            "₺0";
+        ).textContent="₺0,00";
 
 
-        const image =
+        const image=
             document.getElementById(
                 "productImage"
             );
 
-
-        const defaultPreview =
+        const defaultPreview=
             document.getElementById(
                 "defaultPreview"
             );
 
 
         if(image){
-
-            image.style.display =
+            image.style.display=
                 "none";
-
         }
 
 
         if(defaultPreview){
-
-            defaultPreview.style.display =
+            defaultPreview.style.display=
                 "block";
-
         }
-
     }
-
 }
 
 
-
-/* =========================================
+/* =========================================================
    SEPETE EKLE
-========================================= */
+   GÖRSEL DE KAYDEDİLİYOR
+========================================================= */
 
 document.getElementById(
     "addToCart"
@@ -1620,11 +1363,10 @@ document.getElementById(
         );
 
         return;
-
     }
 
 
-    const selected =
+    const selected=
         document.querySelector(
             'input[name="license"]:checked'
         );
@@ -1637,22 +1379,23 @@ document.getElementById(
         );
 
         return;
-
     }
 
 
-    const selectedPrice =
-        prices[
-            selected.value
-        ] || 0;
+    const selectedPrice=
+        prices[selected.value] || 0;
 
 
-    const licenseNameElement =
-        selected.parentElement
-            .querySelector(
-                ".license-name"
-            );
+    const licenseNameElement=
+        selected.parentElement.querySelector(
+            ".license-name"
+        );
 
+
+    /*
+      BURADA ÜRÜNÜN GÖRSELİ DE
+      LOCALSTORAGE'A KAYDEDİLİYOR.
+    */
 
     const cart={
 
@@ -1673,8 +1416,10 @@ document.getElementById(
                 : selected.value,
 
         price:
-            selectedPrice
+            selectedPrice,
 
+        image_url:
+            product.image_url || ""
     };
 
 
@@ -1684,23 +1429,24 @@ document.getElementById(
     );
 
 
-    location.href =
-        "/sepet.html";
+    /*
+      SEPET SAYFASINA GİT
+    */
 
+    window.location.href=
+        "/sepet.html";
 };
 
 
-
-/* =========================================
+/* =========================================================
    BAŞLAT
-========================================= */
+========================================================= */
 
 checkLogin();
 
 loadProduct();
 
 </script>
-
 
 </body>
 </html>
