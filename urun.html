@@ -70,6 +70,8 @@ header{
 
     font-size:21px;
     font-weight:900;
+
+    flex-shrink:0;
 }
 
 .logo-icon{
@@ -100,11 +102,14 @@ header{
 .nav{
     display:flex;
     gap:28px;
+    align-items:center;
 }
 
 .nav a{
     color:#8995a7;
     font-size:13px;
+    font-weight:600;
+    white-space:nowrap;
 }
 
 .nav a:hover{
@@ -114,24 +119,27 @@ header{
 
 /* =========================================
    HEADER BUTONLARI
-   INDEX.HTML İLE AYNI
+   INDEX.HTML MANTIĞI
 ========================================= */
 
 .header-buttons{
     display:flex;
     align-items:center;
+    justify-content:flex-end;
+    flex-shrink:0;
 }
 
 #guestButtons,
 #userButtons{
     display:flex;
     align-items:center;
+    justify-content:flex-end;
     gap:10px;
 }
 
 
 /* =========================================
-   INDEX.HTML BUTON TEMELİ
+   HEADER BUTON TEMELİ
 ========================================= */
 
 #headerButtons a.btn,
@@ -145,7 +153,6 @@ header{
     justify-content:center !important;
 
     width:auto !important;
-
     min-width:0 !important;
 
     min-height:42px !important;
@@ -179,17 +186,17 @@ header{
 
     outline:none !important;
 
+    cursor:pointer;
 }
 
 
 /* =========================================
-   GİRİŞ
+   GİRİŞ YAP
 ========================================= */
 
-#headerButtons a.btn.outline{
+#headerButtons #guestButtons a.btn.outline{
 
     background:transparent !important;
-
     background-color:transparent !important;
 
     border:1px solid #273241 !important;
@@ -198,18 +205,39 @@ header{
 
 }
 
+#headerButtons #guestButtons a.btn.outline:hover{
+
+    background:#101720 !important;
+    background-color:#101720 !important;
+
+    border-color:#344255 !important;
+
+    color:#fff !important;
+
+}
+
 
 /* =========================================
-   KAYIT
+   KAYIT OL
 ========================================= */
 
-#headerButtons a.btn.blue{
+#headerButtons #guestButtons a.btn.blue{
 
     background:#1677ff !important;
-
     background-color:#1677ff !important;
 
     border:1px solid #1677ff !important;
+
+    color:#fff !important;
+
+}
+
+#headerButtons #guestButtons a.btn.blue:hover{
+
+    background:#1677ff !important;
+    background-color:#1677ff !important;
+
+    border-color:#1677ff !important;
 
     color:#fff !important;
 
@@ -230,7 +258,6 @@ header{
     justify-content:center !important;
 
     width:auto !important;
-
     min-width:0 !important;
 
     min-height:42px !important;
@@ -243,7 +270,6 @@ header{
     border-radius:9px !important;
 
     background:transparent !important;
-
     background-color:transparent !important;
 
     border:1px solid #273241 !important;
@@ -268,11 +294,73 @@ header{
 
 #headerButtons #userButtons a.btn.outline:hover{
 
-    background:transparent !important;
+    background:#101720 !important;
+    background-color:#101720 !important;
 
-    background-color:transparent !important;
+    border-color:#344255 !important;
 
-    border-color:#273241 !important;
+    color:#fff !important;
+
+}
+
+
+/* =========================================
+   SEPET
+   INDEX HEADER İLE UYUMLU
+========================================= */
+
+#headerButtons #userButtons .cart-button{
+
+    position:relative;
+
+    box-sizing:border-box !important;
+
+    display:inline-flex !important;
+
+    align-items:center !important;
+    justify-content:center !important;
+
+    gap:7px;
+
+    width:auto !important;
+    min-width:0 !important;
+
+    min-height:42px !important;
+    height:42px !important;
+
+    padding:11px 16px !important;
+
+    margin:0 !important;
+
+    border-radius:9px !important;
+
+    background:#101720 !important;
+
+    border:1px solid #273241 !important;
+
+    color:#fff !important;
+
+    font-family:Inter,Arial,sans-serif !important;
+
+    font-size:12px !important;
+
+    font-weight:800 !important;
+
+    line-height:1 !important;
+
+    white-space:nowrap !important;
+
+    text-decoration:none !important;
+
+    box-shadow:none !important;
+
+}
+
+#headerButtons #userButtons .cart-button:hover{
+
+    background:#151f2b !important;
+
+    border-color:#344255 !important;
 
     color:#fff !important;
 
@@ -281,7 +369,6 @@ header{
 
 /* =========================================
    ÇIKIŞ YAP
-   INDEX.HTML İLE BİREBİR AYNI
 ========================================= */
 
 #headerButtons #userButtons button.btn.blue.logout-button{
@@ -294,7 +381,6 @@ header{
     justify-content:center !important;
 
     width:auto !important;
-
     min-width:0 !important;
 
     min-height:42px !important;
@@ -307,7 +393,6 @@ header{
     border-radius:9px !important;
 
     background:#1677ff !important;
-
     background-color:#1677ff !important;
 
     border:1px solid #1677ff !important;
@@ -337,7 +422,6 @@ header{
     cursor:pointer !important;
 
     appearance:none !important;
-
     -webkit-appearance:none !important;
 
     outline:none !important;
@@ -346,57 +430,11 @@ header{
 
 }
 
-
-/* =========================================
-   ÇIKIŞ HOVER
-========================================= */
-
-#headerButtons #userButtons button.btn.blue.logout-button:hover{
-
-    background:#1677ff !important;
-
-    background-color:#1677ff !important;
-
-    border:1px solid #1677ff !important;
-
-    color:#fff !important;
-
-    box-shadow:none !important;
-
-    outline:none !important;
-
-}
-
-
-/* =========================================
-   ÇIKIŞ ACTIVE
-========================================= */
-
-#headerButtons #userButtons button.btn.blue.logout-button:active{
-
-    background:#1677ff !important;
-
-    background-color:#1677ff !important;
-
-    border:1px solid #1677ff !important;
-
-    color:#fff !important;
-
-    box-shadow:none !important;
-
-    outline:none !important;
-
-}
-
-
-/* =========================================
-   ÇIKIŞ FOCUS
-========================================= */
-
+#headerButtons #userButtons button.btn.blue.logout-button:hover,
+#headerButtons #userButtons button.btn.blue.logout-button:active,
 #headerButtons #userButtons button.btn.blue.logout-button:focus{
 
     background:#1677ff !important;
-
     background-color:#1677ff !important;
 
     border:1px solid #1677ff !important;
@@ -406,68 +444,6 @@ header{
     box-shadow:none !important;
 
     outline:none !important;
-
-}
-
-
-/* =========================================
-   KAYIT HOVER
-========================================= */
-
-#headerButtons a.btn.blue:hover{
-
-    background:#1677ff !important;
-
-    background-color:#1677ff !important;
-
-    border-color:#1677ff !important;
-
-    color:#fff !important;
-
-}
-
-
-/* =========================================
-   SEPET BUTONU
-========================================= */
-
-.cart-button{
-
-    position:relative;
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:8px;
-
-    min-height:42px;
-
-    height:42px;
-
-    padding:11px 16px;
-
-    border-radius:9px;
-
-    background:#101720;
-
-    border:1px solid #273241;
-
-    color:#fff;
-
-    font-size:12px;
-
-    font-weight:800;
-
-    cursor:pointer;
-
-}
-
-.cart-button:hover{
-
-    background:#151f2b;
 
 }
 
@@ -476,7 +452,34 @@ header{
    MOBİL HEADER
 ========================================= */
 
+@media(max-width:850px){
+
+    .nav{
+        display:none;
+    }
+
+}
+
 @media(max-width:700px){
+
+    header{
+        height:68px;
+    }
+
+    .header{
+        width:94%;
+    }
+
+    .logo{
+        font-size:18px;
+        gap:8px;
+    }
+
+    .logo-icon{
+        width:36px;
+        height:36px;
+        border-radius:10px;
+    }
 
     #guestButtons,
     #userButtons{
@@ -489,24 +492,7 @@ header{
     #headerButtons button.btn{
 
         min-height:40px !important;
-
         height:40px !important;
-
-        padding:10px 13px !important;
-
-        font-size:12px !important;
-
-    }
-
-    #headerButtons #userButtons button.btn.blue.logout-button{
-
-        width:auto !important;
-
-        min-width:0 !important;
-
-        height:40px !important;
-
-        min-height:40px !important;
 
         padding:10px 13px !important;
 
@@ -516,15 +502,32 @@ header{
 
     }
 
-    .cart-button{
+    #headerButtons #userButtons .cart-button{
 
-        min-height:40px;
+        min-height:40px !important;
+        height:40px !important;
 
-        height:40px;
+        padding:10px 13px !important;
 
-        padding:10px 13px;
+        font-size:12px !important;
 
-        font-size:12px;
+        border-radius:9px !important;
+
+    }
+
+    #headerButtons #userButtons button.btn.blue.logout-button{
+
+        width:auto !important;
+        min-width:0 !important;
+
+        height:40px !important;
+        min-height:40px !important;
+
+        padding:10px 13px !important;
+
+        font-size:12px !important;
+
+        border-radius:9px !important;
 
     }
 
@@ -933,12 +936,6 @@ footer{
 
 @media(max-width:850px){
 
-    .nav{
-
-        display:none;
-
-    }
-
     .product-layout{
 
         grid-template-columns:1fr;
@@ -1053,7 +1050,9 @@ footer{
 >
 
 
-    <!-- GİRİŞ YAPILMAMIŞ -->
+    <!-- =====================================
+         GİRİŞ YAPILMAMIŞ
+    ====================================== -->
 
     <div
         id="guestButtons"
@@ -1077,7 +1076,9 @@ footer{
     </div>
 
 
-    <!-- GİRİŞ YAPILMIŞ -->
+    <!-- =====================================
+         GİRİŞ YAPILMIŞ
+    ====================================== -->
 
     <div
         id="userButtons"
@@ -1097,8 +1098,6 @@ footer{
         >
             🛒 Sepet
         </a>
-
-        <!-- INDEX.HTML İLE AYNI BUTON SINIFI -->
 
         <button
             class="btn blue logout-button"
@@ -1200,9 +1199,10 @@ function escapeHtml(value){
 
 function format(value){
 
-    return Number(
-        value || 0
-    ).toLocaleString(
+    const number =
+        Number(value || 0);
+
+    return number.toLocaleString(
         "tr-TR",
         {
             minimumFractionDigits:2,
@@ -1253,7 +1253,90 @@ function getToken(){
 
 
 /* =========================================
+   GİRİŞ YAPILMIŞ HEADER
+========================================= */
+
+function showLoggedIn(){
+
+    const guestButtons =
+        document.getElementById(
+            "guestButtons"
+        );
+
+    const userButtons =
+        document.getElementById(
+            "userButtons"
+        );
+
+
+    if(guestButtons){
+
+        guestButtons.style.setProperty(
+            "display",
+            "none",
+            "important"
+        );
+
+    }
+
+
+    if(userButtons){
+
+        userButtons.style.setProperty(
+            "display",
+            "flex",
+            "important"
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   GİRİŞ YAPILMAMIŞ HEADER
+========================================= */
+
+function showLoggedOut(){
+
+    const guestButtons =
+        document.getElementById(
+            "guestButtons"
+        );
+
+    const userButtons =
+        document.getElementById(
+            "userButtons"
+        );
+
+
+    if(guestButtons){
+
+        guestButtons.style.setProperty(
+            "display",
+            "flex",
+            "important"
+        );
+
+    }
+
+
+    if(userButtons){
+
+        userButtons.style.setProperty(
+            "display",
+            "none",
+            "important"
+        );
+
+    }
+
+}
+
+
+/* =========================================
    OTURUM KONTROLÜ
+   INDEX.HTML İLE AYNI MANTIK
 ========================================= */
 
 async function checkLogin(){
@@ -1265,7 +1348,10 @@ async function checkLogin(){
     try{
 
         const headers = {
-            "Accept":"application/json"
+
+            "Accept":
+                "application/json"
+
         };
 
 
@@ -1279,11 +1365,12 @@ async function checkLogin(){
 
         const response =
             await fetch(
-                "/api/auth/me?t=" + Date.now(),
+                "/api/auth/me?t=" +
+                Date.now(),
                 {
                     method:"GET",
 
-                    headers,
+                    headers:headers,
 
                     credentials:"include",
 
@@ -1319,7 +1406,14 @@ async function checkLogin(){
                     )
                 );
 
-            }catch{}
+            }catch(error){
+
+                console.warn(
+                    "Kullanıcı bilgisi kaydedilemedi:",
+                    error
+                );
+
+            }
 
         }else{
 
@@ -1337,9 +1431,11 @@ async function checkLogin(){
 
 
         /*
-         * API geçici olarak cevap vermezse
-         * kayıtlı token varsa kullanıcıyı
-         * çıkış yapmış gibi göstermiyoruz.
+         * INDEX.HTML'DEKİ FALLBACK MANTIĞI:
+         *
+         * API geçici cevap vermese bile
+         * localStorage/sessionStorage'da token
+         * varsa kullanıcıyı giriş yapmış göster.
          */
 
         if(token){
@@ -1358,89 +1454,22 @@ async function checkLogin(){
 
 
 /* =========================================
-   GİRİŞ YAPILMIŞ
-========================================= */
-
-function showLoggedIn(){
-
-    const guestButtons =
-        document.getElementById(
-            "guestButtons"
-        );
-
-    const userButtons =
-        document.getElementById(
-            "userButtons"
-        );
-
-
-    if(guestButtons){
-
-        guestButtons.style.display =
-            "none";
-
-    }
-
-
-    if(userButtons){
-
-        userButtons.style.display =
-            "flex";
-
-    }
-
-}
-
-
-/* =========================================
-   GİRİŞ YAPILMAMIŞ
-========================================= */
-
-function showLoggedOut(){
-
-    const guestButtons =
-        document.getElementById(
-            "guestButtons"
-        );
-
-    const userButtons =
-        document.getElementById(
-            "userButtons"
-        );
-
-
-    if(guestButtons){
-
-        guestButtons.style.display =
-            "flex";
-
-    }
-
-
-    if(userButtons){
-
-        userButtons.style.display =
-            "none";
-
-    }
-
-}
-
-
-/* =========================================
    ÇIKIŞ
 ========================================= */
 
 async function logoutUser(){
 
+    const token =
+        getToken();
+
+
     try{
 
-        const token =
-            getToken();
-
-
         const headers = {
-            "Accept":"application/json"
+
+            "Accept":
+                "application/json"
+
         };
 
 
@@ -1457,7 +1486,7 @@ async function logoutUser(){
             {
                 method:"POST",
 
-                headers,
+                headers:headers,
 
                 credentials:"include",
 
@@ -1475,6 +1504,11 @@ async function logoutUser(){
 
 
     }finally{
+
+        /*
+         * INDEX.HTML İLE AYNI ŞEKİLDE
+         * TÜM OTURUM VERİLERİNİ TEMİZLE.
+         */
 
         try{
 
@@ -1494,14 +1528,26 @@ async function logoutUser(){
                 "panelmarket_user"
             );
 
-        }catch{}
+        }catch(error){
+
+            console.warn(
+                "Oturum temizleme hatası:",
+                error
+            );
+
+        }
 
 
         showLoggedOut();
 
 
-        window.location.href =
-            "/index.html";
+        /*
+         * Çıkıştan sonra ana sayfaya dön.
+         */
+
+        window.location.replace(
+            "/index.html"
+        );
 
     }
 
@@ -1544,7 +1590,9 @@ function createProductImage(
 
             onerror="
                 this.style.display='none';
-                this.nextElementSibling.style.display='flex';
+                if(this.nextElementSibling){
+                    this.nextElementSibling.style.display='flex';
+                }
             "
         >
 
@@ -1556,6 +1604,79 @@ function createProductImage(
         </div>
 
     `;
+
+}
+
+
+/* =========================================
+   API ÜRÜN CEVABINI NORMALLEŞTİR
+========================================= */
+
+function normalizeProductResponse(data){
+
+    if(!data){
+
+        return null;
+
+    }
+
+
+    /*
+     * API:
+     * { product: {...} }
+     */
+
+    if(
+        data.product &&
+        typeof data.product === "object"
+    ){
+
+        return data.product;
+
+    }
+
+
+    /*
+     * API:
+     * { data: {...} }
+     */
+
+    if(
+        data.data &&
+        !Array.isArray(data.data) &&
+        typeof data.data === "object"
+    ){
+
+        if(
+            data.data.id ||
+            data.data.name ||
+            data.data.title
+        ){
+
+            return data.data;
+
+        }
+
+    }
+
+
+    /*
+     * API direkt:
+     * { id, name, ... }
+     */
+
+    if(
+        data.id ||
+        data.name ||
+        data.title
+    ){
+
+        return data;
+
+    }
+
+
+    return null;
 
 }
 
@@ -1579,10 +1700,9 @@ async function getProduct(){
     }
 
 
-    /*
-     * Önce doğrudan:
-     * /api/products/:id
-     */
+    /* =====================================
+       1. DOĞRUDAN ÜRÜN
+    ====================================== */
 
     try{
 
@@ -1623,13 +1743,18 @@ async function getProduct(){
                 );
 
 
+        const directProduct =
+            normalizeProductResponse(
+                data
+            );
+
+
         if(
             response.ok &&
-            data &&
-            data.id
+            directProduct
         ){
 
-            return data;
+            return directProduct;
 
         }
 
@@ -1643,14 +1768,14 @@ async function getProduct(){
     }
 
 
-    /*
-     * Direkt endpoint çalışmazsa
-     * /api/products listesinden bul.
-     */
+    /* =====================================
+       2. ÜRÜN LİSTESİNDEN BUL
+    ====================================== */
 
     const response =
         await fetch(
-            "/api/products?t=" + Date.now(),
+            "/api/products?t=" +
+            Date.now(),
             {
                 method:"GET",
 
@@ -1706,6 +1831,15 @@ async function getProduct(){
 
         products =
             data.data;
+
+    }else if(
+        data &&
+        data.data &&
+        Array.isArray(data.data.products)
+    ){
+
+        products =
+            data.data.products;
 
     }
 
@@ -1835,9 +1969,7 @@ async function loadProduct(){
 
 
         document.title =
-            escapeHtml(
-                productName
-            ) +
+            productName +
             " - PanelMarket";
 
 
@@ -1984,9 +2116,7 @@ async function loadProduct(){
 
 
         /*
-         * Ürünü global değişkende tutuyoruz.
-         * Sepete eklerken tekrar API çağrısı
-         * yapmak gerekmiyor.
+         * Sepet için global ürün bilgisi.
          */
 
         window.currentProduct = {
@@ -2071,8 +2201,8 @@ function addToCart(){
 
 
     /*
-     * SEPET SAYFASININ BEKLEDİĞİ
-     * FORMATLA BİREBİR AYNI.
+     * SEPET.HTML TARAFININ BEKLEDİĞİ
+     * VERİ YAPISI.
      */
 
     const cart = {
@@ -2154,9 +2284,7 @@ function addToCart(){
 
 
         /*
-         * Kısa gecikme ile sepete gönder.
-         * Böylece kullanıcı "eklendi" mesajını
-         * görebilir.
+         * Sepet sayfasına geç.
          */
 
         setTimeout(
@@ -2191,10 +2319,22 @@ function addToCart(){
    BAŞLAT
 ========================================= */
 
-checkLogin();
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
 
-loadProduct();
+        /*
+         * Header oturum kontrolü
+         */
+        checkLogin();
 
+        /*
+         * Ürün yükleme
+         */
+        loadProduct();
+
+    }
+);
 
 </script>
 
