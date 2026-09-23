@@ -1,15 +1,24 @@
 <!doctype html>
 <html lang="tr">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+>
+
 <title>PanelMarket</title>
 
 <link rel="stylesheet" href="/style.css">
 
 <style>
+
 /* =========================================
-   HEADER BUTONLARI - AYNI ORANTI
+   HEADER BUTONLARI
+   URUN.HTML İLE AYNI
 ========================================= */
 
 #headerButtons{
@@ -24,69 +33,394 @@
   gap:10px;
 }
 
+
+/* =========================================
+   TÜM HEADER BUTONLARI
+========================================= */
+
 #guestButtons .btn,
 #userButtons .btn{
+
   box-sizing:border-box;
+
   display:inline-flex;
+
   align-items:center;
   justify-content:center;
+
+  width:auto;
+  min-width:0;
+
   min-height:42px;
   height:42px;
+
   padding:11px 16px;
+
+  margin:0;
+
   border-radius:9px;
+
+  font-family:Inter,Arial,sans-serif;
+
   font-size:12px;
+
   font-weight:800;
+
   line-height:1;
+
+  letter-spacing:normal;
+
   white-space:nowrap;
+
+  text-decoration:none;
+
+  text-transform:none;
+
+  box-shadow:none;
+
+  opacity:1;
+
+  outline:none;
 }
+
+
+/* =========================================
+   GİRİŞ YAP
+========================================= */
 
 #guestButtons .btn.outline,
 #userButtons .btn.outline{
+
+  background:transparent;
+
+  background-color:transparent;
+
   border:1px solid #273241;
+
+  color:#fff;
+
 }
 
-#guestButtons .btn.blue,
-#userButtons .btn.blue{
+#guestButtons .btn.outline:hover,
+#userButtons .btn.outline:hover{
+
+  background:transparent;
+
+  background-color:transparent;
+
+  border-color:#273241;
+
+  color:#fff;
+
+}
+
+
+/* =========================================
+   KAYIT OL
+========================================= */
+
+#guestButtons .btn.blue{
+
+  background:#1677ff;
+
+  background-color:#1677ff;
+
   border:1px solid #1677ff;
+
+  color:#fff;
+
 }
 
-#userButtons button.btn{
-  font-family:inherit;
-  cursor:pointer;
-  appearance:none;
-  -webkit-appearance:none;
+#guestButtons .btn.blue:hover{
+
+  background:#1677ff;
+
+  background-color:#1677ff;
+
+  border-color:#1677ff;
+
+  color:#fff;
+
 }
+
+
+/* =========================================
+   HESABIM
+========================================= */
+
+#userButtons .btn.outline{
+
+  box-sizing:border-box;
+
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
+
+  width:auto;
+  min-width:0;
+
+  min-height:42px;
+  height:42px;
+
+  padding:11px 16px;
+
+  margin:0;
+
+  border-radius:9px;
+
+  background:transparent;
+
+  background-color:transparent;
+
+  border:1px solid #273241;
+
+  color:#fff;
+
+  font-family:Inter,Arial,sans-serif;
+
+  font-size:12px;
+
+  font-weight:800;
+
+  line-height:1;
+
+  white-space:nowrap;
+
+  text-decoration:none;
+
+  box-shadow:none;
+
+}
+
+#userButtons .btn.outline:hover{
+
+  background:transparent;
+
+  background-color:transparent;
+
+  border-color:#273241;
+
+  color:#fff;
+
+}
+
+
+/* =========================================
+   ÇIKIŞ YAP
+   URUN.HTML İLE AYNI RENK
+   AYNI YAZI
+   AYNI BOYUT
+========================================= */
+
+#userButtons button.btn.blue{
+
+  box-sizing:border-box;
+
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
+
+  width:auto;
+  min-width:0;
+
+  min-height:42px;
+  height:42px;
+
+  padding:11px 16px;
+
+  margin:0;
+
+  border-radius:9px;
+
+  background:#1677ff;
+
+  background-color:#1677ff;
+
+  border:1px solid #1677ff;
+
+  color:#fff;
+
+  font-family:Inter,Arial,sans-serif;
+
+  font-size:12px;
+
+  font-weight:800;
+
+  line-height:1;
+
+  letter-spacing:normal;
+
+  white-space:nowrap;
+
+  text-decoration:none;
+
+  text-transform:none;
+
+  box-shadow:none;
+
+  opacity:1;
+
+  cursor:pointer;
+
+  appearance:none;
+
+  -webkit-appearance:none;
+
+  outline:none;
+
+  transition:none;
+
+}
+
+
+/* =========================================
+   ÇIKIŞ HOVER
+   RENK DEĞİŞMEYECEK
+========================================= */
+
+#userButtons button.btn.blue:hover{
+
+  background:#1677ff;
+
+  background-color:#1677ff;
+
+  border:1px solid #1677ff;
+
+  border-color:#1677ff;
+
+  color:#fff;
+
+  box-shadow:none;
+
+  outline:none;
+
+}
+
+
+/* =========================================
+   ÇIKIŞ ACTIVE
+========================================= */
+
+#userButtons button.btn.blue:active{
+
+  background:#1677ff;
+
+  background-color:#1677ff;
+
+  border:1px solid #1677ff;
+
+  border-color:#1677ff;
+
+  color:#fff;
+
+  box-shadow:none;
+
+  outline:none;
+
+}
+
+
+/* =========================================
+   ÇIKIŞ FOCUS
+========================================= */
+
+#userButtons button.btn.blue:focus{
+
+  background:#1677ff;
+
+  background-color:#1677ff;
+
+  border:1px solid #1677ff;
+
+  border-color:#1677ff;
+
+  color:#fff;
+
+  box-shadow:none;
+
+  outline:none;
+
+}
+
+
+/* =========================================
+   MOBİL
+========================================= */
 
 @media (max-width:700px){
 
   #guestButtons,
   #userButtons{
+
     gap:8px;
+
   }
+
 
   #guestButtons .btn,
   #userButtons .btn{
+
     min-height:40px;
+
     height:40px;
+
     padding:10px 13px;
+
     font-size:12px;
+
+    border-radius:9px;
+
+  }
+
+
+  #userButtons button.btn.blue{
+
+    width:auto;
+
+    min-width:0;
+
+    height:40px;
+
+    min-height:40px;
+
+    padding:10px 13px;
+
+    font-size:12px;
+
+    border-radius:9px;
+
   }
 
 }
+
 </style>
 
 </head>
 
+
 <body>
+
 
 <header>
 
   <div class="header">
 
-    <a class="logo" href="/">
-      <span class="logo-icon">P</span>
+
+    <a
+      class="logo"
+      href="/"
+    >
+
+      <span class="logo-icon">
+        P
+      </span>
+
       PanelMarket
+
     </a>
+
 
     <nav>
 
@@ -110,7 +444,10 @@
       id="headerButtons"
     >
 
-      <!-- Giriş yapılmamış kullanıcı -->
+
+      <!-- =================================
+           GİRİŞ YAPILMAMIŞ
+      ================================== -->
 
       <div
         id="guestButtons"
@@ -124,6 +461,7 @@
           Giriş Yap
         </a>
 
+
         <a
           class="btn blue"
           href="/register.html"
@@ -134,7 +472,9 @@
       </div>
 
 
-      <!-- Giriş yapılmış kullanıcı -->
+      <!-- =================================
+           GİRİŞ YAPILMIŞ
+      ================================== -->
 
       <div
         id="userButtons"
@@ -148,6 +488,7 @@
           Hesabım
         </a>
 
+
         <button
           class="btn blue"
           type="button"
@@ -158,6 +499,7 @@
 
       </div>
 
+
     </div>
 
   </div>
@@ -167,19 +509,30 @@
 
 <section class="hero">
 
+
   <div class="badge">
+
     ● Profesyonel yazılım mağazası
+
   </div>
 
+
   <h1>
+
     İhtiyacın olan
+
     <span>panel burada.</span>
+
   </h1>
 
+
   <p>
+
     Profesyonel web panelleri ve hazır yazılım çözümlerini tek bir mağazadan keşfet.
     Lisans, teslimat, güncelleme ve destek seçenekleriyle ihtiyacına uygun paneli seç.
+
   </p>
+
 
   <div class="actions">
 
@@ -189,6 +542,7 @@
     >
       Ürünleri İncele →
     </a>
+
 
     <a
       class="btn outline"
@@ -203,6 +557,7 @@
 
 
 <div class="features">
+
 
   <div class="card feature">
 
@@ -263,6 +618,7 @@
 
   </div>
 
+
 </div>
 
 
@@ -278,9 +634,11 @@
   id="urunler"
 >
 
+
   <h2>
     Panel Mağazası
   </h2>
+
 
   <p class="muted">
     Satışta bulunan hazır yazılım ve yönetim panelleri
@@ -288,6 +646,7 @@
 
 
   <div class="tools">
+
 
     <input
       id="q"
@@ -349,12 +708,14 @@
   id="neden"
 >
 
+
   <h2>
     Neden PanelMarket?
   </h2>
 
 
   <div class="why-grid">
+
 
     <div class="card">
 
@@ -394,6 +755,7 @@
 
     </div>
 
+
   </div>
 
 </section>
@@ -403,6 +765,7 @@
 
 
 <footer>
+
 
   <div class="footer">
 
@@ -416,6 +779,7 @@
 
   </div>
 
+
 </footer>
 
 
@@ -423,14 +787,27 @@
 
 let ps = [];
 
+
+/* =================================
+   HTML GÜVENLİĞİ
+================================= */
+
 function escapeHtml(v){
+
   return String(v ?? "")
+
     .replaceAll("&","&amp;")
+
     .replaceAll("<","&lt;")
+
     .replaceAll(">","&gt;")
+
     .replaceAll('"',"&quot;")
+
     .replaceAll("'","&#039;");
-}   
+
+}
+
 
 /* =================================
    OTURUM KONTROLÜ
@@ -439,19 +816,25 @@ function escapeHtml(v){
 async function checkLogin(){
 
   const token =
+
     localStorage.getItem(
       "panelmarket_token"
     ) ||
+
     sessionStorage.getItem(
       "panelmarket_token"
     ) ||
+
     "";
 
 
   try{
 
     const headers = {
-      "Accept":"application/json"
+
+      "Accept":
+        "application/json"
+
     };
 
 
@@ -464,28 +847,48 @@ async function checkLogin(){
 
 
     const response =
+
       await fetch(
-        "/api/auth/me?t=" + Date.now(),
+
+        "/api/auth/me?t=" +
+        Date.now(),
+
         {
+
           method:"GET",
+
           headers,
+
           credentials:"include",
+
           cache:"no-store"
+
         }
+
       );
 
 
     const data =
+
       await response
+
         .json()
-        .catch(()=>({}));
+
+        .catch(
+          ()=>({})
+        );
 
 
     if(
+
       response.ok &&
+
       data &&
+
       data.authenticated === true &&
+
       data.user
+
     ){
 
       showLoggedIn();
@@ -494,8 +897,13 @@ async function checkLogin(){
       try{
 
         localStorage.setItem(
+
           "panelmarket_user",
-          JSON.stringify(data.user)
+
+          JSON.stringify(
+            data.user
+          )
+
         );
 
       }catch{}
@@ -510,24 +918,32 @@ async function checkLogin(){
   }catch(error){
 
     console.error(
+
       "Oturum kontrolü başarısız:",
+
       error
+
     );
 
 
     const savedUser =
+
       localStorage.getItem(
         "panelmarket_user"
       );
 
 
     const savedToken =
+
       localStorage.getItem(
         "panelmarket_token"
       );
 
 
-    if(savedUser && savedToken){
+    if(
+      savedUser &&
+      savedToken
+    ){
 
       showLoggedIn();
 
@@ -549,12 +965,14 @@ async function checkLogin(){
 function showLoggedIn(){
 
   const guestButtons =
+
     document.getElementById(
       "guestButtons"
     );
 
 
   const userButtons =
+
     document.getElementById(
       "userButtons"
     );
@@ -585,12 +1003,14 @@ function showLoggedIn(){
 function showLoggedOut(){
 
   const guestButtons =
+
     document.getElementById(
       "guestButtons"
     );
 
 
   const userButtons =
+
     document.getElementById(
       "userButtons"
     );
@@ -623,18 +1043,23 @@ async function logoutUser(){
   try{
 
     const token =
+
       localStorage.getItem(
         "panelmarket_token"
       ) ||
+
       sessionStorage.getItem(
         "panelmarket_token"
       ) ||
+
       "";
 
 
     const headers = {
+
       "Accept":
         "application/json"
+
     };
 
 
@@ -647,21 +1072,32 @@ async function logoutUser(){
 
 
     await fetch(
+
       "/api/logout",
+
       {
+
         method:"POST",
+
         headers,
+
         credentials:"include",
+
         cache:"no-store"
+
       }
+
     );
 
 
   }catch(error){
 
     console.error(
+
       "Çıkış API hatası:",
+
       error
+
     );
 
   }finally{
@@ -708,6 +1144,7 @@ async function load(){
   try{
 
     const response =
+
       await fetch(
         "/api/products"
       );
@@ -722,8 +1159,55 @@ async function load(){
     }
 
 
-    ps =
+    const data =
       await response.json();
+
+
+    /*
+     * API direkt dizi döndürürse
+     */
+
+    if(Array.isArray(data)){
+
+      ps = data;
+
+    }
+
+
+    /*
+     * API {products:[...]} döndürürse
+     */
+
+    else if(
+      data &&
+      Array.isArray(data.products)
+    ){
+
+      ps = data.products;
+
+    }
+
+
+    /*
+     * API {data:[...]} döndürürse
+     */
+
+    else if(
+      data &&
+      Array.isArray(data.data)
+    ){
+
+      ps = data.data;
+
+    }
+
+
+    else{
+
+      ps = [];
+
+    }
+
 
     render();
 
@@ -731,8 +1215,11 @@ async function load(){
   }catch(error){
 
     console.error(
+
       "Ürün yükleme hatası:",
+
       error
+
     );
 
 
@@ -742,6 +1229,7 @@ async function load(){
     document.getElementById(
       "products"
     ).innerHTML =
+
       '<div class="empty">Ürünler yüklenemedi.</div>';
 
   }
@@ -768,32 +1256,46 @@ function render(){
 
 
   const q =
+
     (queryInput?.value || "")
+
       .toLowerCase()
+
       .trim();
 
 
   const c =
+
     categoryInput?.value ||
+
     "all";
 
 
   const filtered =
+
     ps.filter(p=>{
 
+
       const name =
+
         String(
           p.name || ""
-        ).toLowerCase();
+        )
+
+        .toLowerCase();
 
 
       const description =
+
         String(
           p.description || ""
-        ).toLowerCase();
+        )
+
+        .toLowerCase();
 
 
       const category =
+
         String(
           p.category || ""
         );
@@ -807,8 +1309,11 @@ function render(){
         &&
 
         (
+
           name.includes(q) ||
+
           description.includes(q)
+
         )
 
       );
@@ -818,60 +1323,108 @@ function render(){
 
   products.innerHTML =
 
+
     filtered.map(p=>`
+
 
       <article class="product">
 
-       <div class="visual">
-  ${
-    p.image_url
-      ? `
-        <img
-          src="${escapeHtml(p.image_url)}"
-          alt="${escapeHtml(p.name || "Ürün")}"
-          style="
-            width:100%;
-            height:100%;
-            display:block;
-            object-fit:cover;
-            border-radius:inherit;
-          "
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-        >
-        <div
-          class="screen"
-          style="display:none;"
-        >
-          <i></i>
-          <i></i>
-          <i></i>
+
+        <div class="visual">
+
+          ${
+
+            p.image_url
+
+              ?
+
+              `
+
+                <img
+
+                  src="${escapeHtml(
+                    p.image_url
+                  )}"
+
+                  alt="${escapeHtml(
+                    p.name || "Ürün"
+                  )}"
+
+                  style="
+                    width:100%;
+                    height:100%;
+                    display:block;
+                    object-fit:cover;
+                    border-radius:inherit;
+                  "
+
+                  onerror="
+                    this.style.display='none';
+                    this.nextElementSibling.style.display='flex';
+                  "
+
+                >
+
+
+                <div
+                  class="screen"
+                  style="display:none;"
+                >
+
+                  <i></i>
+                  <i></i>
+                  <i></i>
+
+                </div>
+
+              `
+
+              :
+
+              `
+
+                <div class="screen">
+
+                  <i></i>
+                  <i></i>
+                  <i></i>
+
+                </div>
+
+              `
+
+          }
+
         </div>
-      `
-      : `
-        <div class="screen">
-          <i></i>
-          <i></i>
-          <i></i>
-        </div>
-      `
-  }
-</div>
 
 
         <div class="body">
 
+
           <div class="category">
-            ${p.category || ""}
+
+            ${escapeHtml(
+              p.category || ""
+            )}
+
           </div>
 
 
           <h3>
-            ${p.name || ""}
+
+            ${escapeHtml(
+              p.name || ""
+            )}
+
           </h3>
 
 
           <p>
-            ${p.description || ""}
+
+            ${escapeHtml(
+              p.description || ""
+            )}
+
           </p>
 
 
@@ -879,30 +1432,60 @@ function render(){
 
 
             <div>
+
               LİSANS
+
               <br>
-              <b>1 Site</b>
+
+              <b>
+                1 Site
+              </b>
+
             </div>
 
 
             <div>
+
               TESLİMAT
+
               <br>
-              <b>${p.delivery || ""}</b>
+
+              <b>
+                ${escapeHtml(
+                  p.delivery || ""
+                )}
+              </b>
+
             </div>
 
 
             <div>
+
               GÜNCELLEME
+
               <br>
-              <b>${p.update || ""}</b>
+
+              <b>
+                ${escapeHtml(
+                  p.update || ""
+                )}
+              </b>
+
             </div>
 
 
             <div>
+
               DESTEK
+
               <br>
-              <b>${p.support || ""}</b>
+
+              <b>
+                ${escapeHtml(
+                  p.support || ""
+                )}
+              </b>
+
             </div>
 
 
@@ -914,45 +1497,69 @@ function render(){
 
             <div>
 
+
               ${
+
                 p.oldPrice
+
                 ?
+
                 `<span class="old">
+
                   ₺${Number(
                     p.oldPrice
                   ).toLocaleString("tr-TR")}
+
                 </span>`
+
                 :
+
                 ""
+
               }
 
 
               <span class="price">
+
                 ₺${Number(
                   p.price || 0
                 ).toLocaleString("tr-TR")}
+
               </span>
+
 
             </div>
 
 
             <a
+
               class="btn blue"
-              href="/urun.html?id=${encodeURIComponent(p.id)}"
+
+              href="/urun.html?id=${encodeURIComponent(
+                p.id
+              )}"
+
             >
+
               SATIN AL
+
             </a>
 
 
           </div>
 
+
         </div>
+
 
       </article>
 
+
     `).join("")
 
+
     ||
+
 
     '<div class="empty">Ürün bulunamadı.</div>';
 
@@ -969,5 +1576,7 @@ load();
 
 </script>
 
+
 </body>
+
 </html>
