@@ -236,8 +236,6 @@ header{
 
     border-color:#1677ff !important;
 
-    color:#fff !important;
-
 }
 
 
@@ -992,10 +990,6 @@ footer{
 <body>
 
 
-<!-- =========================================
-     HEADER
-========================================= -->
-
 <header>
 
 <div class="header">
@@ -1099,10 +1093,6 @@ footer{
 
 </header>
 
-
-<!-- =========================================
-     İÇERİK
-========================================= -->
 
 <main class="container">
 
@@ -1814,82 +1804,519 @@ async function getProduct(){
 
 
 /* =========================================
-   LİSANS BİLGİSİNİ NORMALLEŞTİR
+   DEĞERİ GEÇERLİ ID OLARAK AL
+========================================= */
+
+function validId(value){
+
+    if(
+        value === undefined ||
+        value === null
+    ){
+
+        return "";
+
+    }
+
+
+    if(
+        typeof value === "object"
+    ){
+
+        return String(
+            value.id ??
+            value.licenseId ??
+            value.license_id ??
+            value.packageId ??
+            value.package_id ??
+            value.key ??
+            ""
+        ).trim();
+
+    }
+
+
+    return String(value).trim();
+
+}
+
+
+/* =========================================
+   LİSANS ID BUL
+   TÜM OLASI API YAPILARI
+========================================= */
+
+function findLicenseId(product){
+
+    if(
+        !product ||
+        typeof product !== "object"
+    ){
+
+        return "";
+
+    }
+
+
+    /* -------------------------------------
+       DOĞRUDAN ALANLAR
+    ------------------------------------- */
+
+    const directValues = [
+
+        product.licenseId,
+
+        product.license_id,
+
+        product.licenseID,
+
+        product.license_id_value,
+
+        product.packageId,
+
+        product.package_id,
+
+        product.packageID,
+
+        product.selectedLicenseId,
+
+        product.selected_license_id,
+
+        product.selectedPackageId,
+
+        product.selected_package_id,
+
+        product.licenseKey,
+
+        product.license_key
+
+    ];
+
+
+    for(const value of directValues){
+
+        const id =
+            validId(value);
+
+
+        if(id){
+
+            return id;
+
+        }
+
+    }
+
+
+    /* -------------------------------------
+       NESNE OLARAK LİSANS
+    ------------------------------------- */
+
+    const licenseObjects = [
+
+        product.license,
+
+        product.selectedLicense,
+
+        product.selected_license,
+
+        product.selectedPackage,
+
+        product.selected_package,
+
+        product.licenseOption,
+
+        product.license_option,
+
+        product.package,
+
+        product.selectedPlan,
+
+        product.selected_plan
+
+    ];
+
+
+    for(
+        const licenseObject
+        of licenseObjects
+    ){
+
+        if(
+            licenseObject &&
+            typeof licenseObject === "object"
+        ){
+
+            const id =
+                validId(
+                    licenseObject.id
+                ) ||
+
+                validId(
+                    licenseObject.licenseId
+                ) ||
+
+                validId(
+                    licenseObject.license_id
+                ) ||
+
+                validId(
+                    licenseObject.packageId
+                ) ||
+
+                validId(
+                    licenseObject.package_id
+                );
+
+
+            if(id){
+
+                return id;
+
+            }
+
+        }
+
+    }
+
+
+    /* -------------------------------------
+       LİSANS LİSTELERİ
+    ------------------------------------- */
+
+    const lists = [
+
+        product.licenses,
+
+        product.licenseOptions,
+
+        product.license_options,
+
+        product.licenseList,
+
+        product.license_list,
+
+        product.packages,
+
+        product.licensePackages,
+
+        product.license_packages,
+
+        product.plans,
+
+        product.options
+
+    ];
+
+
+    for(
+        const list
+        of lists
+    ){
+
+        if(
+            !Array.isArray(list) ||
+            list.length === 0
+        ){
+
+            continue;
+
+        }
+
+
+        for(
+            const item
+            of list
+        ){
+
+            const id =
+                validId(item);
+
+
+            if(id){
+
+                return id;
+
+            }
+
+        }
+
+    }
+
+
+    /* -------------------------------------
+       NESTED DATA
+    ------------------------------------- */
+
+    if(
+        product.data &&
+        typeof product.data === "object"
+    ){
+
+        const nestedId =
+            findLicenseId(
+                product.data
+            );
+
+
+        if(nestedId){
+
+            return nestedId;
+
+        }
+
+    }
+
+
+    return "";
+
+}
+
+
+/* =========================================
+   LİSANS ADI BUL
+========================================= */
+
+function findLicenseName(product){
+
+    if(
+        !product ||
+        typeof product !== "object"
+    ){
+
+        return "1 Site";
+
+    }
+
+
+    const directNameValues = [
+
+        product.licenseName,
+
+        product.license_name,
+
+        product.licenseTitle,
+
+        product.license_title,
+
+        product.packageName,
+
+        product.package_name,
+
+        product.selectedLicenseName,
+
+        product.selected_license_name,
+
+        product.planName,
+
+        product.plan_name
+
+    ];
+
+
+    for(
+        const value
+        of directNameValues
+    ){
+
+        if(
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== ""
+        ){
+
+            return String(value).trim();
+
+        }
+
+    }
+
+
+    const objectValues = [
+
+        product.license,
+
+        product.selectedLicense,
+
+        product.selected_license,
+
+        product.package,
+
+        product.selectedPackage,
+
+        product.selected_package
+
+    ];
+
+
+    for(
+        const object
+        of objectValues
+    ){
+
+        if(
+            object &&
+            typeof object === "object"
+        ){
+
+            const name =
+
+                object.name ||
+
+                object.title ||
+
+                object.licenseName ||
+
+                object.license_name ||
+
+                object.packageName ||
+
+                object.package_name ||
+
+                "";
+
+
+            if(String(name).trim()){
+
+                return String(name).trim();
+
+            }
+
+        }
+
+    }
+
+
+    const lists = [
+
+        product.licenses,
+
+        product.licenseOptions,
+
+        product.license_options,
+
+        product.packages,
+
+        product.licensePackages,
+
+        product.license_packages
+
+    ];
+
+
+    for(
+        const list
+        of lists
+    ){
+
+        if(
+            Array.isArray(list) &&
+            list.length > 0
+        ){
+
+            const first =
+                list[0];
+
+
+            if(
+                first &&
+                typeof first === "object"
+            ){
+
+                const name =
+
+                    first.name ||
+
+                    first.title ||
+
+                    first.licenseName ||
+
+                    first.license_name ||
+
+                    first.packageName ||
+
+                    first.package_name ||
+
+                    "";
+
+
+                if(String(name).trim()){
+
+                    return String(name).trim();
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    return "1 Site";
+
+}
+
+
+/* =========================================
+   LİSANS ANA BİLGİSİ
 ========================================= */
 
 function getLicenseInfo(product){
 
-    const licenseName = String(
-
-        product?.licenseName ??
-
-        product?.license_name ??
-
-        product?.license ??
-
-        product?.packageName ??
-
-        product?.package_name ??
-
-        product?.licenseTitle ??
-
-        product?.license_title ??
-
-        "1 Site"
-
-    ).trim();
+    const id =
+        findLicenseId(
+            product
+        );
 
 
-    const licenseId = String(
-
-        product?.licenseId ??
-
-        product?.license_id ??
-
-        product?.licenseKey ??
-
-        product?.license_key ??
-
-        product?.packageId ??
-
-        product?.package_id ??
-
-        ""
-
-    ).trim();
+    const name =
+        findLicenseName(
+            product
+        );
 
 
-    const licenseKey = String(
+    let key = "";
 
-        product?.licenseKey ??
 
-        product?.license_key ??
+    if(
+        product &&
+        typeof product === "object"
+    ){
 
-        product?.licenseId ??
+        key =
 
-        product?.license_id ??
+            validId(
+                product.licenseKey
+            ) ||
 
-        product?.packageKey ??
+            validId(
+                product.license_key
+            ) ||
 
-        product?.package_key ??
+            validId(
+                product.packageKey
+            ) ||
 
-        licenseId ??
+            validId(
+                product.package_key
+            ) ||
 
-        ""
+            id;
 
-    ).trim();
+    }
 
 
     return {
 
-        name:
-            licenseName || "1 Site",
-
         id:
-            licenseId,
+            id,
+
+        name:
+            name || "1 Site",
 
         key:
-            licenseKey
+            key || id
 
     };
 
@@ -1915,6 +2342,15 @@ async function loadProduct(){
 
         const product =
             await getProduct();
+
+
+        /*
+         * GELEN GERÇEK ÜRÜNÜ DEBUG İÇİN
+         * GLOBAL ALANA DA KOY.
+         */
+
+        window.__panelmarketProduct =
+            product;
 
 
         const productId =
@@ -1961,14 +2397,26 @@ async function loadProduct(){
             "PanelMarket ürünü.";
 
 
-        /* =====================================
-           LİSANS BİLGİSİNİ TEK YERDE OLUŞTUR
-        ====================================== */
-
         const license =
             getLicenseInfo(
                 product
             );
+
+
+        /*
+         * TARAYICI KONSOLUNDA GERÇEK
+         * LİSANS YAPISINI GÖRMEK İÇİN.
+         */
+
+        console.log(
+            "PanelMarket ürün:",
+            product
+        );
+
+        console.log(
+            "PanelMarket lisans:",
+            license
+        );
 
 
         document.title =
@@ -2110,9 +2558,9 @@ async function loadProduct(){
         `;
 
 
-        /* =====================================
-           TÜM LİSANS ALANLARINI KORU
-        ====================================== */
+        /*
+         * ÜRÜNÜ GLOBALDE TAM HALİYLE TUT.
+         */
 
         window.currentProduct = {
 
@@ -2188,7 +2636,7 @@ async function loadProduct(){
 
 /* =========================================
    SEPETE EKLE
-   LİSANS FIX
+   KESİN LİSANS FIX
 ========================================= */
 
 function addToCart(){
@@ -2212,30 +2660,53 @@ function addToCart(){
 
 
     /*
-     * ÖNEMLİ:
-     *
-     * Artık yalnızca licenseName göndermiyoruz.
-     *
-     * Ödeme sayfasının kullanabileceği
-     * bütün lisans alanlarını birlikte
-     * saklıyoruz.
+     * LİSANS ID'Yİ TEKRAR KONTROL ET.
      */
 
-    const licenseName =
-        String(
-            product.licenseName ||
-            product.license ||
-            "1 Site"
-        ).trim();
-
-
-    const licenseId =
+    let licenseId =
         String(
             product.licenseId ||
             product.license_id ||
             ""
         ).trim();
 
+
+    /*
+     * Gerekirse gerçek API ürününden
+     * tekrar bul.
+     */
+
+    if(
+        !licenseId &&
+        window.__panelmarketProduct
+    ){
+
+        licenseId =
+            findLicenseId(
+                window.__panelmarketProduct
+            );
+
+    }
+
+
+    /*
+     * Lisans adı
+     */
+
+    const licenseName =
+        String(
+            product.licenseName ||
+            product.license ||
+            findLicenseName(
+                window.__panelmarketProduct || product
+            ) ||
+            "1 Site"
+        ).trim();
+
+
+    /*
+     * Lisans anahtarı
+     */
 
     const licenseKey =
         String(
@@ -2246,9 +2717,30 @@ function addToCart(){
         ).trim();
 
 
+    /*
+     * Gerçek ID yoksa BOŞ lisanslı
+     * sepet oluşturma.
+     */
+
+    if(!licenseId){
+
+        console.error(
+            "PanelMarket: Üründe lisans ID bulunamadı.",
+            window.__panelmarketProduct
+        );
+
+
+        alert(
+            "Bu ürün için geçerli lisans bilgisi alınamadı. Ürün lisans tanımı kontrol edilmelidir."
+        );
+
+        return;
+
+    }
+
+
     const cart = {
 
-        /* Ürün */
         productId:
             String(
                 product.id
@@ -2270,11 +2762,6 @@ function addToCart(){
                 product.image_url ||
                 ""
             ),
-
-
-        /* =================================
-           LİSANS
-        ================================= */
 
         licenseName:
             licenseName,
@@ -2299,19 +2786,20 @@ function addToCart(){
 
     try{
 
+        /*
+         * SEPETE KAYDET
+         */
+
         localStorage.setItem(
-
             "panelmarket_cart",
-
             JSON.stringify(
                 cart
             )
-
         );
 
 
         /*
-         * Eski sepet sistemiyle uyumluluk.
+         * ESKİ LİSANS SİSTEMİYLE UYUMLULUK
          */
 
         localStorage.setItem(
@@ -2328,6 +2816,45 @@ function addToCart(){
                     licenseKey
 
             })
+        );
+
+
+        /*
+         * KAYDIN GERÇEKTEN YAPILDIĞINI KONTROL ET
+         */
+
+        const savedCart =
+            JSON.parse(
+                localStorage.getItem(
+                    "panelmarket_cart"
+                ) || "null"
+            );
+
+
+        if(
+            !savedCart ||
+            String(
+                savedCart.productId || ""
+            ) !== String(
+                product.id
+            ) ||
+            String(
+                savedCart.licenseId || ""
+            ) !== String(
+                licenseId
+            )
+        ){
+
+            throw new Error(
+                "Sepet lisans bilgisi doğrulanamadı."
+            );
+
+        }
+
+
+        console.log(
+            "PanelMarket sepet kaydı:",
+            savedCart
         );
 
 
@@ -2363,10 +2890,6 @@ function addToCart(){
 
         }
 
-
-        /*
-         * Sepet sayfasına geç.
-         */
 
         setTimeout(
             function(){
