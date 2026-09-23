@@ -7190,182 +7190,6 @@ app.get(
 
 
 /* =========================================================
-   STATIC
-   ========================================================= */
-
-app.use(
-  express.static(
-    __dirname,
-    {
-      extensions:
-        ["html"]
-    }
-  )
-);
-
-
-const pages = [
-
-  "index",
-
-  "urun",
-
-  "sepet",
-
-  "odeme",
-
-  "siparislerim",
-
-  "hesabim",
-
-  "teslimat",
-
-  "login",
-
-  "register",
-
-  "admin",
-
-  "reset-password"
-];
-
-
-for (
-  const page of pages
-) {
-
-  app.get(
-    `/${page}.html`,
-    (
-      req,
-      res
-    ) =>
-      res.sendFile(
-        path.join(
-          __dirname,
-          `${page}.html`
-        )
-      )
-  );
-}
-
-
-app.get(
-  "/",
-  (
-    req,
-    res
-  ) =>
-    res.sendFile(
-      path.join(
-        __dirname,
-        "index.html"
-      )
-    )
-);
-
-
-app.use(
-  (
-    req,
-    res
-  ) => {
-
-    if (
-      req.path.startsWith(
-        "/api/"
-      )
-    ) {
-
-      return res.status(404).json({
-
-        ok: false,
-
-        error:
-          "API adresi bulunamadı."
-      });
-    }
-
-
-    res.status(404).send(`
-<!doctype html>
-<html lang="tr">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1"
->
-
-<title>PanelMarket - 404</title>
-
-<style>
-
-body{
-  margin:0;
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  background:#070a0f;
-  color:#fff;
-  font-family:Arial,sans-serif
-}
-
-.box{
-  text-align:center;
-  padding:45px;
-  border:1px solid #1d2835;
-  border-radius:22px;
-  background:#0d131b
-}
-
-a{
-  display:inline-block;
-  margin-top:20px;
-  padding:13px 22px;
-  border-radius:10px;
-  background:#1677ff;
-  color:#fff;
-  text-decoration:none;
-  font-weight:800
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="box">
-
-<h1>Sayfa bulunamadı</h1>
-
-<p>
-Aradığınız PanelMarket sayfası mevcut değil.
-</p>
-
-<a href="/">
-Ana Sayfaya Dön
-</a>
-
-</div>
-
-</body>
-
-</html>
-`);
-  }
-);
-
-
-/* =========================================================
-   START
-   ========================================================= */
-
-/* =========================================================
    PRODUCT REVIEWS / RATINGS API
    ========================================================= */
 
@@ -7702,6 +7526,182 @@ app.post("/api/reviews/:reviewId/vote", requireAuth, async (req, res) => {
 });
 
 
+
+/* =========================================================
+   STATIC
+   ========================================================= */
+
+app.use(
+  express.static(
+    __dirname,
+    {
+      extensions:
+        ["html"]
+    }
+  )
+);
+
+
+const pages = [
+
+  "index",
+
+  "urun",
+
+  "sepet",
+
+  "odeme",
+
+  "siparislerim",
+
+  "hesabim",
+
+  "teslimat",
+
+  "login",
+
+  "register",
+
+  "admin",
+
+  "reset-password"
+];
+
+
+for (
+  const page of pages
+) {
+
+  app.get(
+    `/${page}.html`,
+    (
+      req,
+      res
+    ) =>
+      res.sendFile(
+        path.join(
+          __dirname,
+          `${page}.html`
+        )
+      )
+  );
+}
+
+
+app.get(
+  "/",
+  (
+    req,
+    res
+  ) =>
+    res.sendFile(
+      path.join(
+        __dirname,
+        "index.html"
+      )
+    )
+);
+
+
+app.use(
+  (
+    req,
+    res
+  ) => {
+
+    if (
+      req.path.startsWith(
+        "/api/"
+      )
+    ) {
+
+      return res.status(404).json({
+
+        ok: false,
+
+        error:
+          "API adresi bulunamadı."
+      });
+    }
+
+
+    res.status(404).send(`
+<!doctype html>
+<html lang="tr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1"
+>
+
+<title>PanelMarket - 404</title>
+
+<style>
+
+body{
+  margin:0;
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  background:#070a0f;
+  color:#fff;
+  font-family:Arial,sans-serif
+}
+
+.box{
+  text-align:center;
+  padding:45px;
+  border:1px solid #1d2835;
+  border-radius:22px;
+  background:#0d131b
+}
+
+a{
+  display:inline-block;
+  margin-top:20px;
+  padding:13px 22px;
+  border-radius:10px;
+  background:#1677ff;
+  color:#fff;
+  text-decoration:none;
+  font-weight:800
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>Sayfa bulunamadı</h1>
+
+<p>
+Aradığınız PanelMarket sayfası mevcut değil.
+</p>
+
+<a href="/">
+Ana Sayfaya Dön
+</a>
+
+</div>
+
+</body>
+
+</html>
+`);
+  }
+);
+
+
+/* =========================================================
+   START
+   ========================================================= */
 
 app.listen(
   PORT,
